@@ -1,0 +1,482 @@
+/* =========================================================
+   editor-canvas.js — 编辑页画布：由 state 驱动渲染四种结构
+   结构4（复合图片列表）为完整实现；结构1/2/3 复用变体库的
+   布局与类名，只把文案与列表项换成 state 里的数据。
+   ========================================================= */
+(function () {
+  'use strict';
+
+  var icon = window.icon;
+  var D = window.DATA;
+
+  /* ---------- 小工具 ---------- */
+  function esc(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+  function hexToRgb(hex) {
+    var h = String(hex || '').replace('#', '');
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    if (h.length < 6) return null;
+    var n = parseInt(h.slice(0, 6), 16);
+    if (isNaN(n)) return null;
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
+  function isDark(hex) {
+    var c = hexToRgb(hex);
+    if (!c) return true;
+    return (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b) < 140;
+  }
+  function shadowCss(sh) {
+    if (!sh || !sh.on) return 'none';
+    return (sh.x || 0) + 'px ' + (sh.y || 0) + 'px ' + (sh.blur || 0) + 'px ' + (sh.spread || 0) + 'px rgba(0,0,0,.32)';
+  }
+  function style(obj) {
+    return Object.keys(obj)
+      .filter(function (k) { return obj[k] !== '' && obj[k] != null; })
+      .map(function (k) { return k + ':' + obj[k]; })
+      .join(';');
+  }
+
+  /* ---- 单位（px/rem）与 统一/独立 尺寸输出 ---- */
+  function dimVal(s, v) {
+    var n = Number(v) || 0;
+    if (s.unit === 'rem') n = n / 16;
+    return (Math.round(n * 100) / 100) + (s.unit === 'rem' ? 'rem' : 'px');
+  }
+  function padCSS(s, o, f) {
+    if ((o[f + 'Mode'] || 'uni') === 'ind') {
+      return [o[f + 'T'], o[f + 'R'], o[f + 'B'], o[f + 'L']].map(function (v) { return dimVal(s, v || 0); }).join(' ');
+    }
+    return dimVal(s, o[f]);
+  }
+  function radiusCSS(s, o, f) {
+    if ((o[f + 'Mode'] || 'uni') === 'ind') {
+      return [o[f + 'Tl'], o[f + 'Tr'], o[f + 'Br'], o[f + 'Bl']].map(function (v) { return dimVal(s, v || 0); }).join(' ');
+    }
+    return dimVal(s, o[f]);
+  }
+  /* 间距：统一=单值；独立= 行(row) 列(column) */
+  function gapCSS(s) {
+    var g = s.layout;
+    if ((g.gapMode || 'uni') === 'ind') return dimVal(s, g.gapY || 0) + ' ' + dimVal(s, g.gapX || 0);
+    return dimVal(s, g.gap);
+  }
+  function gapH(s) {
+    var g = s.layout;
+    return dimVal(s, (g.gapMode || 'uni') === 'ind' ? (g.gapX || 0) : g.gap);
+  }
+
+  /* ---------- 主题：浅色/深色容器时同步库内变量 ---------- */
+  function themeVars(bg) {
+    if (!isDark(bg)) {
+      return '--ink:#14161a;--ink-soft:#2b2f37;--body:#4b5260;--muted:#7b8290;' +
+        '--line:#e7e3db;--line-strong:#d6d1c7;--paper:#ffffff;--sand:#f6f2ec;--sand-deep:#eee8de;--accent:#9a7b4f;color:#14161a';
+    }
+    return '--ink:#f4f2ee;--ink-soft:#e3e0d9;--body:#b7bbc3;--muted:#8c919b;' +
+      '--line:rgba(255,255,255,.14);--line-strong:rgba(255,255,255,.26);' +
+      '--paper:transparent;--sand:rgba(255,255,255,.06);--sand-deep:rgba(255,255,255,.1);--accent:#c8a86a;color:#f4f2ee';
+  }
+
+  /* ---------- 容器 / 卡片 / 图片 样式 ---------- */
+  function containerStyle(s) {
+    var c = s.container;
+    return style({
+      background: c.bgOn ? c.bg : 'transparent',
+      'border-radius': radiusCSS(s, c, 'radius'),
+      padding: padCSS(s, c, 'pad'),
+      border: c.borderOn ? dimVal(s, c.borderWidth) + ' solid ' + c.border : '0',
+      'box-shadow': shadowCss(c.shadow),
+      'box-sizing': 'border-box',
+      color: isDark(c.bgOn ? c.bg : '#ffffff') ? '#f4f2ee' : '#14161a'
+    }) + ';' + themeVars(c.bgOn ? c.bg : '#ffffff');
+  }
+
+  function cardStyle(s) {
+    var c = s.card;
+    return style({
+      background: c.bgOn ? c.bg : 'transparent',
+      'border-radius': radiusCSS(s, c, 'radius'),
+      padding: padCSS(s, c, 'pad'),
+      border: c.borderOn ? dimVal(s, c.borderWidth) + ' solid ' + c.border : '0',
+      'box-shadow': shadowCss(c.shadow)
+    });
+  }
+
+  function mediaStyle(s) {
+    var g = s.img;
+    var st = {
+      'border-radius': radiusCSS(s, g, 'radius'),
+      background: g.bgOn ? g.bg : 'transparent',
+      border: g.borderOn ? '1px solid ' + g.border : '0',
+      padding: padCSS(s, g, 'pad')
+    };
+    if (g.ratio !== 'none') st['aspect-ratio'] = g.ratio.replace(':', '/');
+    return style(st);
+  }
+
+  function imgStyle(s) {
+    var g = s.img;
+    var filters = { none: 'none', gray: 'grayscale(1)', blur: 'blur(2px) saturate(.9)', zoom: 'none' };
+    var st = {
+      filter: filters[g.effect] || 'none',
+      transform: g.effect === 'zoom' ? 'scale(1.08)' : 'none',
+      'object-position': g.align === 'left' ? 'left center' : g.align === 'right' ? 'right center' : 'center'
+    };
+    if (g.ratio === 'none') st.height = 'auto';
+    return style(st);
+  }
+
+  /* ---------- 文案块（标题/副标题/简介/按钮） ---------- */
+  function btnHTML(s, extra) {
+    var b = s.text.button;
+    if (!s.show.button || !b.on) return '';
+    var theme = b.theme || 'ghost';
+    var lightBg = !isDark(s.container.bgOn ? s.container.bg : '#ffffff');
+    // 浅色容器上的描边/白色按钮会看不见，自动换成深色
+    if (lightBg && (theme === 'ghost' || theme === 'light')) theme = 'dark';
+    var cls = 'ed-btn ed-btn--' + theme;
+    var ic = b.icon === 'left' ? icon('arrow') : '';
+    var icR = b.icon === 'right' ? icon('arrow') : '';
+    return '<a class="' + cls + (extra ? ' ' + extra : '') + '" href="' + esc(b.link || '#') + '">' +
+      ic + '<span>' + esc(b.text) + '</span>' + icR + '</a>';
+  }
+
+  function textBlock(s, opts) {
+    var t = s.text;
+    var align = s.layout.textAlign;
+    var has = (s.show.title && t.title) || (s.show.subtitle && t.subtitle) ||
+      (s.show.intro && t.intro) || (s.show.button && t.button.on);
+    if (!has) return '';
+    var tb = s.layout.textBg;
+    var st = style({
+      'text-align': align,
+      'align-items': align === 'center' ? 'center' : align === 'right' ? 'flex-end' : 'flex-start',
+      background: tb.on ? tb.color : 'transparent',
+      'border-radius': tb.on ? radiusCSS(s, tb, 'radius') : '0',
+      padding: tb.on ? padCSS(s, tb, 'pad') : undefined
+    });
+    var out = '<div class="ed-card__text is-' + align + '" style="' + st + '">';
+    if (s.show.title && t.title) out += '<h3>' + esc(t.title) + '</h3>';
+    if (s.show.subtitle && t.subtitle) out += '<p class="ed-sub">' + esc(t.subtitle) + '</p>';
+    if (s.show.intro && t.intro) out += '<p class="ed-p">' + esc(t.intro) + '</p>';
+    out += btnHTML(s);
+    out += '</div>';
+    return out;
+  }
+
+  /* ---------- 单张图卡（结构4） ---------- */
+  function cardHTML(s, item, i, extra) {
+    var hideText = s.video.on && s.video.hideText;
+    return '<article class="ed-card' + (hideText ? ' ed-captionless' : '') + '" data-idx="' + i + '"' +
+      ' style="' + (extra || '') + cardStyle(s) + '">' +
+      '<figure class="ed-card__media" style="' + mediaStyle(s) + '">' +
+        '<img src="' + esc(item.img) + '" alt="' + esc(s.seo.alt ? s.seo.altText : '') + '"' +
+          (s.seo.titleAttr ? ' title="' + esc(s.seo.titleText) + '"' : '') +
+          ' style="' + imgStyle(s) + '" loading="lazy" decoding="async">' +
+        '<span class="ed-scrim"></span>' +
+        (s.video.on && s.video.mask ? '<span class="ed-mask"></span>' : '') +
+        (s.video.on && s.video.icon ? '<span class="ed-play"><i>' + icon('play') + '</i></span>' : '') +
+        (hideText ? '' : textBlock(s, i)) +
+      '</figure>' +
+    '</article>';
+  }
+
+  /* ---------- 结构4：图文卡片列表 ---------- */
+
+  /* 瀑布拼排模板：3 列 × R 行，按真实图片数 1–10 各一套。
+     每套都带「跨行大格 + 小格」穿插，保证瀑布错落感；全部无洞（逐格铺满）。 */
+  var MASONRY = {
+    1:  { r: 2, cells: [[1,1,3,4]] },
+    2:  { r: 2, cells: [[1,1,3,3],[1,3,3,4]] },
+    3:  { r: 2, cells: [[1,1,2,3],[2,1,3,3],[1,3,3,4]] },
+    4:  { r: 3, cells: [[1,1,3,3],[3,1,4,3],[1,3,2,4],[2,3,4,4]] },
+    5:  { r: 3, cells: [[1,1,3,2],[1,2,2,3],[2,2,4,3],[1,3,4,4],[3,1,4,2]] },
+    6:  { r: 3, cells: [[1,1,3,2],[1,2,2,3],[2,2,3,3],[1,3,3,4],[3,1,4,2],[3,2,4,4]] },
+    7:  { r: 3, cells: [[1,1,3,2],[1,2,2,3],[2,2,3,3],[1,3,3,4],[3,1,4,2],[3,2,4,3],[3,3,4,4]] },
+    8:  { r: 3, cells: [[1,1,3,2],[1,2,2,3],[2,2,3,3],[1,3,2,4],[2,3,3,4],[3,1,4,2],[3,2,4,3],[3,3,4,4]] },
+    9:  { r: 4, cells: [[1,1,3,2],[1,2,2,3],[2,2,3,3],[1,3,3,4],[3,1,4,2],[3,2,4,3],[3,3,5,4],[4,1,5,2],[4,2,5,3]] },
+    10: { r: 4, cells: [[1,1,3,2],[1,2,2,3],[2,2,3,3],[1,3,3,4],[3,1,4,2],[3,2,4,3],[3,3,4,4],[4,1,5,2],[4,2,5,3],[4,3,5,4]] }
+  };
+
+  /* 主次宫格模板：第 1 格 = 主图大格，其余小格，按数量 1–10 各一套（全部无洞） */
+  var BENTO = {
+    1:  { r: 1, cells: [[1,1,2,4]] },
+    2:  { r: 1, cells: [[1,1,2,3],[1,3,2,4]] },
+    3:  { r: 2, cells: [[1,1,3,3],[1,3,2,4],[2,3,3,4]] },
+    4:  { r: 3, cells: [[1,1,3,3],[1,3,2,4],[2,3,3,4],[3,1,4,4]] },
+    5:  { r: 3, cells: [[1,1,3,3],[1,3,2,4],[2,3,3,4],[3,1,4,2],[3,2,4,4]] },
+    6:  { r: 3, cells: [[1,1,3,3],[1,3,2,4],[2,3,3,4],[3,1,4,2],[3,2,4,3],[3,3,4,4]] },
+    7:  { r: 4, cells: [[1,1,3,3],[1,3,2,4],[2,3,3,4],[3,1,4,2],[3,2,4,3],[3,3,4,4],[4,1,5,4]] },
+    8:  { r: 4, cells: [[1,1,3,3],[1,3,2,4],[2,3,3,4],[3,1,4,2],[3,2,4,3],[3,3,4,4],[4,1,5,3],[4,3,5,4]] },
+    9:  { r: 4, cells: [[1,1,3,3],[1,3,2,4],[2,3,3,4],[3,1,4,2],[3,2,4,3],[3,3,4,4],[4,1,5,2],[4,2,5,3],[4,3,5,4]] },
+    10: { r: 5, cells: [[1,1,3,3],[1,3,2,4],[2,3,3,4],[3,1,4,2],[3,2,4,3],[3,3,4,4],[4,1,5,2],[4,2,5,3],[4,3,5,4],[5,1,6,4]] }
+  };
+
+  /* 主次宫格行高：1/2 张单行更高，3/4 张主图行一致（图1 同尺寸），5+ 恢复标准 */
+  function bentoRow(n) {
+    if (n === 1) return 'clamp(200px,20vw,300px)';
+    if (n === 2) return 'clamp(180px,18vw,270px)';
+    if (n === 3) return 'clamp(140px,13vw,190px)';
+    return 'clamp(100px,11vw,164px)';
+  }
+
+  /* 拼排型布局：按数量取模板渲染格子 */
+  function masonryCells(s, items, tpl, rowsClamp) {
+    return items.map(function (it, i) {
+      var a = tpl.cells[i];
+      return '<li class="m4__cell"' +
+        ' style="grid-area:' + a.join('/') + ';border-radius:' + radiusCSS(s, s.card, 'radius') + ';' +
+          'background:' + (s.img.bgOn ? s.img.bg : '#1b1f25') + '">' +
+        '<img src="' + esc(it.img) + '" alt="' + esc(s.seo.alt ? s.seo.altText : '') + '"' +
+          ' style="' + imgStyle(s) + ';width:100%;height:100%;object-fit:cover" loading="lazy" decoding="async">' +
+        (i === 0 ? '<span class="ed-scrim"></span>' + textBlock(s, i) : '') +
+      '</li>';
+    }).join('');
+  }
+
+  function renderM4(s) {
+    var items = s.items;
+    var cols = s.layout.columns;
+    var mode = s.layout.mode; // grid | waterfall | bento
+    var body;
+
+    if (mode === 'waterfall' || mode === 'bento') {
+      /* 按「图文列表」真实数量取模板（1–10，超出截到 10） */
+      var n = Math.min(items.length, 10);
+      var tpl = (mode === 'waterfall' ? MASONRY : BENTO)[n] || (mode === 'waterfall' ? MASONRY : BENTO)[10];
+      var cls = mode === 'waterfall' ? 'm4 m4--b' : 'm4 m4--d';
+      /* 瀑布：1–3 张用高行；主次宫格：1/2/3 张更高，4 张主图行一致 + 图4 底部行更高 */
+      var rowsClamp = mode === 'waterfall'
+        ? (n <= 3 ? 'clamp(150px,17vw,250px)' : 'clamp(96px,10.6vw,158px)')
+        : bentoRow(n);
+      var rowsCss = 'repeat(' + tpl.r + ',' + rowsClamp + ')';
+      var cells = masonryCells(s, items.slice(0, n), tpl, rowsClamp);
+      body = '<div class="' + cls + '">' +
+        '<ul class="m4__grid" style="grid-template-columns:repeat(3,minmax(0,1fr));' +
+          'grid-template-rows:' + rowsCss + ';gap:' + gapCSS(s) + '">' + cells + '</ul></div>';
+    } else {
+      var cards = items.map(function (it, i) {
+        var one = items.length === 1 ? ' grid-column:1 / -1;' : '';
+        return cardHTML(s, it, i, one);
+      }).join('');
+      var pages = Math.max(1, Math.ceil(items.length / cols));
+      var carousel = s.carousel.on && items.length > cols;
+      if (carousel) {
+        body = '<div style="position:relative;overflow:hidden">' +
+          '<div class="ed-track" style="--cols:' + cols + ';--gap-px:' + gapH(s) + ';--gap:' + gapH(s) + ';' +
+            'transform:translateX(-' + (s._page % pages) * 100 + '%)">' + cards + '</div>' +
+          (s.carousel.arrows
+            ? '<div class="ed-arrows"><i>' + icon('arrow', 'ed-flip') + '</i><i>' + icon('arrow') + '</i></div>'
+            : '') +
+        '</div>';
+        if (s.carousel.dots && pages > 1) {
+          body += '<div class="ed-dots" style="color:' + (isDark(s.container.bgOn ? s.container.bg : '#0b0b0c') ? '#fff' : '#14161a') + '">';
+          for (var p = 0; p < pages; p++) body += '<i class="' + (p === s._page % pages ? 'is-on' : '') + '"></i>';
+          body += '</div>';
+        }
+      } else {
+        body = '<div class="ed-list" style="--cols:' + cols + ';gap:' + gapCSS(s) + '">' + cards + '</div>';
+      }
+    }
+
+    return '<div class="ed-mod" style="' + containerStyle(s) + '">' + body + '</div>';
+  }
+
+  /* ---------- 通用头部（结构1 用） ---------- */
+  function headerHTML(s) {
+    var t = s.text;
+    var out = '<div class="ed-head" style="text-align:' + s.layout.textAlign + '">';
+    if (s.show.subtitle && t.subtitle) out += '<p class="ed-head__sub">' + esc(t.subtitle) + '</p>';
+    if (s.show.title && t.title) out += '<h2>' + esc(t.title) + '</h2>';
+    if (s.show.intro && t.intro) out += '<p class="ed-head__p"' +
+      (s.layout.textAlign === 'center' ? ' style="margin-inline:auto"' : '') + '>' + esc(t.intro) + '</p>';
+    out += btnHTML(s, 'ed-head__btn');
+    out += '</div>';
+    return out;
+  }
+
+  /* ---------- 结构1：中心图 + 左右双排列表 ----------
+     画布只渲染模块本身（不带头部文字/按钮）；数量由「列表项」内容决定 */
+  function renderM1(s) {
+    var dir = s.layout.dir || 'v';
+    var items = s.items;
+    function split(arr) {
+      if (dir === 'v') {
+        var half = Math.ceil(arr.length / 2);
+        return [arr.slice(0, half), arr.slice(half)];
+      }
+      /* 横向：列表项左右并排，阅读顺序左右交替（左 1/3/5…，右 2/4/6…） */
+      return [
+        arr.filter(function (_, i) { return i % 2 === 0; }),
+        arr.filter(function (_, i) { return i % 2 === 1; })
+      ];
+    }
+    var groups = split(items);
+    var vert = (s.layout.imgText === 'tb' || s.layout.imgText === 'bt');
+    /* 竖向：图文对齐 = 图标 + 文字一起左中右（textAlign 跟随 imgAlignX）；横向：文案不动 */
+    var textAlign = vert ? (s.layout.imgAlignX || 'center') : (s.layout.textAlign || 'left');
+    var taCls = 'm1__ta-' + textAlign;
+    function list(arr) {
+      return '<ul class="m1__list">' + arr.map(function (it) {
+        var badge = '<span class="m1__icon">' + icon(it.icon || 'sparkle') + '</span>';
+        return '<li class="m1__item">' + badge +
+          '<div class="m1__text ' + taCls + '"><h3>' + esc(it.title) + '</h3><p>' + esc(it.desc) + '</p></div></li>';
+      }).join('') + '</ul>';
+    }
+    var it = s.layout.imgText || 'tb';
+    /* 图片对齐 = 列表基于容器的对齐：竖向=水平左中右（图文对齐），横向=垂直上中下 */
+    var imgAlignCls = vert
+      ? 'm1--imgx-' + (s.layout.imgAlignX || 'center')
+      : 'm1--imgy-' + (s.layout.imgAlignY || 'center');
+    var cls = 'm1 m1--a m1--it-' + it + ' ' + imgAlignCls + ' count-' + items.length + ' ' + (dir === 'h' ? 'is-h' : 'is-v') +
+      (dir === 'h' && items.length > 4 ? ' is-h-dense' : '');
+
+    /* 图文比例：主内容（图片） vs 列表项（文字），三栏 fr */
+    var mainRatio = s.layout.mainRatio || 6;
+    var listRatio = s.layout.listRatio || 6;
+    var gridStyle = 'grid-template-columns:minmax(0,' + listRatio + 'fr) minmax(0,' + mainRatio + 'fr) minmax(0,' + listRatio + 'fr)';
+
+    /* 主图：图片 / 地图 */
+    var hero = s.hero || {};
+    var heroHTML;
+    if (hero.type === 'map') {
+      heroHTML = '<div class="m1__map">' +
+        '<span class="m1__map-addr">' + esc(hero.address || '未填写地址') + '</span>' +
+        '<span class="m1__map-pin"></span>' +
+        '<span class="m1__map-zoom">Z' + (hero.zoom || 14) + '</span>' +
+      '</div>';
+    } else {
+      var heroSrc = hero.url || hero.img || (items[0] && items[0].img) || '';
+      heroHTML = '<img src="' + esc(heroSrc) + '" alt="' + esc(s.seo.alt && s.seo.altText ? s.seo.altText : '主视觉') + '">';
+    }
+
+    return '<div class="ed-mod" style="' + containerStyle(s) + '">' +
+      '<div class="' + cls + '">' +
+        '<div class="m1__grid" style="' + gridStyle + '">' +
+          '<div class="m1__col m1__col--left">' + list(groups[0]) + '</div>' +
+          '<figure class="m1__media">' + heroHTML + '</figure>' +
+          '<div class="m1__col m1__col--right">' + list(groups[1]) + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ---------- 结构2：文案 + 列表 | 整图 ---------- */
+  function renderM2(s) {
+    var t = s.text;
+    var mode = s.layout.mode === 'grid' ? 'check' : s.layout.mode;
+    var list;
+    if (mode === 'check') {
+      list = '<ul class="m2__list m2__list--check">' + s.items.slice(0, 6).map(function (it) {
+        return '<li class="m2__item">' + icon('checkCircle', 'is-accent') + '<span>' + esc(it.title) + '</span></li>';
+      }).join('') + '</ul>';
+    } else if (mode === 'num') {
+      list = '<ul class="m2__list m2__list--num">' + s.items.slice(0, 4).map(function (it, i) {
+        return '<li class="m2__item"><span class="m2__num">0' + (i + 1) + '</span>' +
+          '<div class="m2__text"><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div></li>';
+      }).join('') + '</ul>';
+    } else if (mode === 'stat') {
+      list = '<ul class="m2__list m2__list--stat">' + s.items.slice(0, 3).map(function (it) {
+        return '<li class="m2__item"><span class="m2__stat">' + esc(it.value || '18 yrs') + '</span>' +
+          '<div class="m2__text"><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div></li>';
+      }).join('') + '</ul>';
+    } else {
+      list = '<ul class="m2__list m2__list--icon">' + s.items.slice(0, 4).map(function (it) {
+        return '<li class="m2__item"><span class="m2__badge">' + icon(it.icon || 'sparkle') + '</span>' +
+          '<div class="m2__text"><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div></li>';
+      }).join('') + '</ul>';
+    }
+    var reversed = s.layout.reverse ? ' is-reversed' : '';
+    return '<div class="ed-mod" style="' + containerStyle(s) + '">' +
+      '<div class="m2 m2--list-' + mode + ' is-r45' + reversed + '">' +
+        '<div class="m2__grid">' +
+          '<div class="m2__body">' +
+            (s.show.subtitle && t.subtitle ? '<p class="m2__eyebrow">' + esc(t.subtitle) + '</p>' : '') +
+            (s.show.title && t.title ? '<h3 class="m2__title">' + esc(t.title) + '</h3>' : '') +
+            (s.show.intro && t.intro ? '<p class="m2__lede">' + esc(t.intro) + '</p>' : '') +
+            list + btnHTML(s, 'm2__cta') +
+          '</div>' +
+          '<figure class="m2__media"><img src="' + esc(s.items[0].img) + '" alt="' + esc(s.seo.alt ? s.seo.altText : '') + '"></figure>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ---------- 结构3：左文 + 左列表 | 右列表 ----------
+     列 1 = 左列表（apps / chips / steps / compact），列 2 = 右列表（cards / rows / tiles） */
+  function renderM3(s) {
+    var t = s.text;
+    var mode = s.layout.mode === 'grid' ? 'a' : s.layout.mode;
+    var split = s.layout.split || 8;
+    var col1 = s.items.slice(0, split);
+    var col2 = s.items.slice(split);
+    var apps = '<ul class="m3__apps">' + col1.slice(0, 8).map(function (it) {
+      return '<li class="m3__app">' + icon(it.icon || 'sparkle') + '<span>' + esc(it.title) + '</span></li>';
+    }).join('') + '</ul>';
+    var cards = '<ul class="m3__cards">' + col2.slice(0, 2).map(function (it) {
+      return '<li class="m3__card"><figure><img src="' + esc(it.img) + '" alt=""></figure>' +
+        '<h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></li>';
+    }).join('') + '</ul>';
+    var rows = '<ul class="m3__rows">' + col2.slice(0, 3).map(function (it) {
+      return '<li class="m3__row"><figure><img src="' + esc(it.img) + '" alt=""></figure>' +
+        '<div><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div></li>';
+    }).join('') + '</ul>';
+    var tiles = '<ul class="m3__tiles">' + col2.slice(0, 4).map(function (it) {
+      return '<li class="m3__tile"><img src="' + esc(it.img) + '" alt=""><span>' + esc(it.title) + '</span></li>';
+    }).join('') + '</ul>';
+
+    var intro = '<div class="m3__intro">' +
+      (s.show.subtitle && t.subtitle ? '<p class="m3__eyebrow">' + esc(t.subtitle) + '</p>' : '') +
+      (s.show.title && t.title ? '<h3 class="m3__title">' + esc(t.title) + '</h3>' : '') +
+      (s.show.intro && t.intro ? '<p class="m3__para">' + esc(t.intro) + '</p>' : '') +
+      '</div>';
+
+    var media = (col1[0] || s.items[0]);
+    var main = '<div class="m3__main">' + intro + apps + btnHTML(s) + '</div>';
+    var inner;
+    if (mode === 'b') {
+      inner = '<div class="m3__grid">' + main +
+        '<figure class="m3__media"><img src="' + esc(media.img) + '" alt=""></figure>' +
+        '<div class="m3__aside"><ul class="m3__compact">' + col1.slice(0, 4).map(function (it) {
+          return '<li>' + icon(it.icon || 'sparkle') + '<div><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div></li>';
+        }).join('') + '</ul></div></div>';
+    } else if (mode === 'c') {
+      inner = '<div class="m3__grid">' +
+        '<div class="m3__main">' + intro + '<ul class="m3__chips">' + col1.slice(0, 8).map(function (it) {
+          return '<li>' + icon(it.icon || 'sparkle') + esc(it.title) + '</li>';
+        }).join('') + '</ul>' + btnHTML(s) + '</div>' +
+        '<div class="m3__aside">' + rows + '</div></div>';
+    } else if (mode === 'd') {
+      inner = '<div class="m3__grid">' +
+        '<div class="m3__main">' + intro + '<ol class="m3__steps">' + col1.slice(0, 4).map(function (it, i) {
+          return '<li><span class="m3__step-no">0' + (i + 1) + '</span><div><h4>' + esc(it.title) +
+            '</h4><p>' + esc(it.desc) + '</p></div></li>';
+        }).join('') + '</ol>' + btnHTML(s) + '</div>' +
+        '<div class="m3__aside">' + tiles + '</div></div>';
+    } else {
+      inner = '<div class="m3__grid">' + main + '<div class="m3__aside">' + cards + '</div></div>';
+    }
+    return '<div class="ed-mod" style="' + containerStyle(s) + '"><div class="m3 m3--' + mode + '">' + inner + '</div></div>';
+  }
+
+  /* ---------- 对外 ---------- */
+  var LABELS = { m4: '复合列表', m1: '双排列表', m2: '单排列表', m3: '多排列表' };
+  var ICONS = { m4: 'grid', m1: 'layers', m2: 'image', m3: 'list' };
+
+  window.EdCanvas = {
+    LABELS: LABELS,
+    render: function (s) {
+      var inner;
+      if (s.structure === 'm1') inner = renderM1(s);
+      else if (s.structure === 'm2') inner = renderM2(s);
+      else if (s.structure === 'm3') inner = renderM3(s);
+      else inner = renderM4(s);
+      return '<div class="ed-select" style="width:' + s.layout.width + '%">' +
+        '<span class="ed-tag">' + icon(ICONS[s.structure] || 'grid') + LABELS[s.structure] + '</span>' +
+        inner +
+      '</div>';
+    }
+  };
+})();

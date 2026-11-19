@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模块结构 · 排版变体库</title>
+<meta name="description" content="四类模块的多种排版切换：双排列表 / 单排列表 / 多排列表 / 复合列表。">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/mod1.css">
+<link rel="stylesheet" href="assets/css/mod2.css">
+<link rel="stylesheet" href="assets/css/mod3.css">
+<link rel="stylesheet" href="assets/css/mod4.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar__inner">
+    <a class="topbar__brand" href="#top">
+      <span class="brand-mark"><i></i><i></i><i></i></span>
+      模块结构
+    </a>
+    <nav class="topbar__nav">
+      <a href="#m1"><b>01</b> 双排列表</a>
+      <a href="#m2"><b>02</b> 单排列表</a>
+      <a href="#m3"><b>03</b> 多排列表</a>
+      <a href="#m4"><b>04</b> 复合列表</a>
+    </nav>
+    <a class="topbar__cta" href="editor.html">
+      <span class="topbar__cta-long">装修编辑页</span>
+      <span class="topbar__cta-short">编辑</span>
+      ↗
+    </a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ 结构1 ============ -->
+  <section class="mod" id="m1">
+    <div class="mod__inner">
+      <header class="mod__head">
+        <span class="mod__num">01</span>
+        <div class="mod__titlewrap">
+          <h2 class="mod__title">双排列表</h2>
+          <p class="mod__desc">中心主图 + 左右两列卖点，可切换数量、方向与列表样式。</p>
+        </div>
+      </header>
+      <div class="ctrl" data-ctrl="m1"></div>
+      <div class="stage" data-stage="m1"></div>
+    </div>
+  </section>
+
+  <!-- ============ 结构2 ============ -->
+  <section class="mod" id="m2">
+    <div class="mod__inner">
+      <header class="mod__head">
+        <span class="mod__num">02</span>
+        <div class="mod__titlewrap">
+          <h2 class="mod__title">单排列表</h2>
+          <p class="mod__desc">一侧文案与列表，另一侧整图，可镜像、可换四种列表样式。</p>
+        </div>
+      </header>
+      <div class="ctrl" data-ctrl="m2"></div>
+      <div class="stage" data-stage="m2"></div>
+    </div>
+  </section>
+
+  <!-- ============ 结构3 ============ -->
+  <section class="mod" id="m3">
+    <div class="mod__inner">
+      <header class="mod__head">
+        <span class="mod__num">03</span>
+        <div class="mod__titlewrap">
+          <h2 class="mod__title">多排列表</h2>
+          <p class="mod__desc">左文左列表 + 右侧第二个列表，可换右侧形态与明暗主题。</p>
+        </div>
+      </header>
+      <div class="ctrl" data-ctrl="m3"></div>
+      <div class="stage" data-stage="m3"></div>
+    </div>
+  </section>
+
+  <!-- ============ 结构4 ============ -->
+  <section class="mod" id="m4">
+    <div class="mod__inner">
+      <header class="mod__head">
+        <span class="mod__num">04</span>
+        <div class="mod__titlewrap">
+          <h2 class="mod__title">复合列表</h2>
+          <p class="mod__desc">纯图片的复合拼排：网格 / 瀑布 / 主次宫格，按图片数量自动适配。</p>
+        </div>
+      </header>
+      <div class="ctrl" data-ctrl="m4"></div>
+      <div class="stage stage--full" data-stage="m4"></div>
+    </div>
+  </section>
+
+</main>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/mod1.js"></script>
+<script src="assets/js/mod2.js"></script>
+<script src="assets/js/mod3.js"></script>
+<script src="assets/js/mod4.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

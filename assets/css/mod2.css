@@ -1,0 +1,174 @@
+/* =========================================================
+   mod2.css — 结构2：一侧文案 + 列表，另一侧整图
+   ========================================================= */
+
+.m2 { --split: 45%; }
+.m2.is-r40 { --split: 40%; }
+.m2.is-r45 { --split: 45%; }
+.m2.is-r55 { --split: 55%; }
+
+.m2__grid {
+  display: grid;
+  /* --split 始终代表「图片占比」 */
+  grid-template-columns: minmax(0, 1fr) var(--split);
+  gap: clamp(24px, 4vw, 72px);
+  align-items: stretch;
+}
+.m2.is-reversed .m2__grid {
+  grid-template-columns: var(--split) minmax(0, 1fr);
+}
+.m2.is-reversed .m2__body { order: 2; }
+.m2.is-reversed .m2__media { order: 1; }
+
+/* ---------- 文案栏 ---------- */
+.m2__body { align-self: center; min-width: 0; }
+.m2__eyebrow {
+  font-size: 11.5px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 650;
+}
+.m2__title {
+  margin-top: 13px;
+  font-size: clamp(26px, 2.7vw, 42px);
+  line-height: 1.12;
+  letter-spacing: -.025em;
+  font-weight: 650;
+}
+.m2__lede {
+  margin-top: 16px;
+  color: var(--body);
+  font-size: clamp(13.8px, 1.02vw, 15.8px);
+  line-height: 1.68;
+  max-width: 52ch;
+}
+.m2__cta { margin-top: clamp(20px, 2.6vw, 30px); }
+.m2 .is-accent { color: var(--accent); }
+
+/* ---------- 图片 ---------- */
+.m2__media {
+  position: relative;
+  margin: 0;
+  border-radius: clamp(18px, 2vw, 28px);
+  overflow: hidden;
+  background: var(--sand-deep);
+  box-shadow: var(--shadow-m);
+}
+.m2__media img {
+  width: 100%;
+  height: 100%;
+  min-height: clamp(340px, 40vw, 560px);
+  object-fit: cover;
+}
+
+/* ---------- 列表：勾选网格 ---------- */
+.m2__list--check {
+  margin-top: clamp(20px, 2.4vw, 30px);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px 22px;
+}
+.m2__list--check .m2__item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: clamp(13.5px, 1vw, 15px);
+  font-weight: 620;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.m2__list--check .ic { width: 18px; height: 18px; }
+
+/* ---------- 列表：图标列表 ---------- */
+.m2__list--icon {
+  margin-top: clamp(20px, 2.4vw, 28px);
+  display: grid;
+  gap: clamp(13px, 1.5vw, 19px);
+}
+.m2__list--icon .m2__item { display: flex; align-items: flex-start; gap: 14px; }
+.m2__badge {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  color: var(--ink-soft);
+}
+.m2__badge .ic { width: 21px; height: 21px; }
+
+/* ---------- 列表：编号步骤 ---------- */
+.m2__list--num {
+  margin-top: clamp(20px, 2.4vw, 28px);
+  display: grid;
+}
+.m2__list--num .m2__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  padding: clamp(11px, 1.3vw, 15px) 0;
+  border-top: 1px solid var(--line);
+}
+.m2__list--num .m2__item:last-child { border-bottom: 1px solid var(--line); }
+.m2__num {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--accent);
+  padding-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 列表：数据行 ---------- */
+.m2__list--stat {
+  margin-top: clamp(20px, 2.4vw, 28px);
+  display: grid;
+}
+.m2__list--stat .m2__item {
+  display: grid;
+  grid-template-columns: minmax(92px, auto) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(14px, 2vw, 28px);
+  padding: clamp(13px, 1.5vw, 18px) 0;
+  border-top: 1px solid var(--line);
+}
+.m2__list--stat .m2__item:last-child { border-bottom: 1px solid var(--line); }
+.m2__stat {
+  font-size: clamp(23px, 2.3vw, 33px);
+  font-weight: 650;
+  letter-spacing: -.03em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* ---------- 列表通用文本 ---------- */
+.m2__text h4 {
+  font-size: clamp(14px, 1.05vw, 15.5px);
+  font-weight: 650;
+  line-height: 1.35;
+  letter-spacing: -.005em;
+}
+.m2__text p {
+  margin-top: 3px;
+  font-size: clamp(12.5px, .92vw, 13.5px);
+  line-height: 1.58;
+  color: var(--muted);
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 1080px) {
+  .m2__grid,
+  .m2.is-reversed .m2__grid { grid-template-columns: minmax(0, 1fr); gap: clamp(20px, 3.4vw, 34px); }
+  .m2__media,
+  .m2.is-reversed .m2__media { order: -1; }
+  .m2.is-reversed .m2__body { order: 0; }
+  .m2__media img { min-height: clamp(230px, 46vw, 400px); }
+  .m2__lede { max-width: none; }
+}
+@media (max-width: 620px) {
+  .m2__list--check { grid-template-columns: minmax(0, 1fr); }
+  .m2__list--stat .m2__item { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+}

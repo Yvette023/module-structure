@@ -1,0 +1,309 @@
+/* =========================================================
+   mod3.css — 结构3：左文 + 左列表 | 右列表
+   含深色主题（.mod.is-dark）
+   ========================================================= */
+
+/* ---------- 深色主题：只改该区块的变量 ---------- */
+.mod.is-dark {
+  background: #0e1014;
+  --ink: #f4f2ee;
+  --ink-soft: #e3e0d9;
+  --body: #b7bbc3;
+  --muted: #8c919b;
+  --line: rgba(255, 255, 255, .13);
+  --line-strong: rgba(255, 255, 255, .24);
+  --paper: #14171c;
+  --sand: #1a1e24;
+  --sand-deep: #232830;
+  --accent: #c8a86a;
+  color: var(--ink);
+}
+.mod.is-dark .ctrl {
+  background: rgba(255, 255, 255, .05);
+  border-color: rgba(255, 255, 255, .14);
+}
+.mod.is-dark .chip {
+  background: rgba(255, 255, 255, .06);
+  border-color: rgba(255, 255, 255, .22);
+  color: var(--body);
+}
+.mod.is-dark .chip:hover { border-color: #fff; color: #fff; }
+.mod.is-dark .chip.is-on { background: #fff; border-color: #fff; color: #111; }
+.mod.is-dark .chip:disabled { opacity: .3; }
+.mod.is-dark .btn { background: #fff; color: #111; }
+.mod.is-dark .btn:hover { background: #e8e5df; }
+.mod.is-dark .m3__app:hover { background: #1e232a; }
+.mod.is-dark .m3__dot { border-color: rgba(255, 255, 255, .18); }
+
+/* ---------- 布局骨架 ---------- */
+.m3__grid {
+  display: grid;
+  gap: clamp(24px, 3.4vw, 64px);
+  align-items: start;
+}
+.m3--a .m3__grid,
+.m3--c .m3__grid,
+.m3--d .m3__grid { grid-template-columns: minmax(0, 1.06fr) minmax(0, 1fr); }
+.m3--a .m3__grid { align-items: stretch; }
+.m3--a .m3__main {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 2.4vw, 34px);
+}
+.m3--a .m3__main > * { margin-block: 0; }
+.m3--a .m3__main .btn { align-self: flex-start; margin-top: 0; }
+/* 图标网格吸收多余高度，让两栏底部齐平 */
+.m3--a .m3__apps {
+  flex: 1 1 auto;
+  min-height: 0;
+  align-content: stretch;
+  margin-top: 0;
+}
+.m3--b .m3__grid {
+  grid-template-columns: minmax(0, 1fr) minmax(200px, .72fr) minmax(0, 1fr);
+  align-items: center;
+}
+.m3__main { min-width: 0; }
+.m3__aside { min-width: 0; }
+
+.m3__eyebrow {
+  font-size: 11.5px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 650;
+}
+.m3__title {
+  margin-top: 13px;
+  font-size: clamp(23px, 2.5vw, 38px);
+  line-height: 1.14;
+  letter-spacing: -.025em;
+  font-weight: 650;
+  max-width: 22ch;
+}
+.m3__para {
+  margin-top: 15px;
+  color: var(--body);
+  font-size: clamp(13.5px, 1vw, 15.5px);
+  line-height: 1.68;
+  max-width: 48ch;
+}
+.m3__main .btn { margin-top: clamp(22px, 2.6vw, 32px); }
+
+/* ---------- 左列表：4×2 图标网格 ---------- */
+.m3__apps {
+  margin-top: clamp(24px, 2.8vw, 36px);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.m3__app {
+  background: var(--paper);
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 9px;
+  padding: clamp(15px, 1.7vw, 23px) 8px;
+  text-align: center;
+  font-size: clamp(12px, .92vw, 13px);
+  font-weight: 620;
+  line-height: 1.35;
+  transition: background .3s ease;
+}
+.m3__app .ic { width: 24px; height: 24px; color: var(--accent); }
+
+/* ---------- 左列表：材质色板 ---------- */
+.m3__swatches {
+  margin-top: clamp(24px, 2.8vw, 34px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px clamp(14px, 1.6vw, 22px);
+}
+.m3__swatch {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  letter-spacing: .04em;
+  color: var(--body);
+  text-align: center;
+}
+.m3__dot {
+  width: clamp(44px, 4.4vw, 58px);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: var(--tone, #ccc);
+  border: 1px solid rgba(0, 0, 0, .08);
+  box-shadow: inset 0 -8px 16px rgba(0, 0, 0, .1);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.m3__swatch:hover .m3__dot {
+  transform: translateY(-2px);
+  box-shadow: inset 0 -8px 16px rgba(0, 0, 0, .1), 0 8px 18px -10px rgba(0, 0, 0, .5);
+}
+
+/* ---------- 左列表：横排标签 ---------- */
+.m3__chips {
+  margin-top: clamp(22px, 2.6vw, 32px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.m3__chips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  font-size: clamp(12px, .92vw, 13px);
+  font-weight: 620;
+  color: var(--ink-soft);
+  transition: background .25s, color .25s, border-color .25s;
+}
+.m3__chips li:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.m3__chips .ic { width: 17px; height: 17px; color: var(--accent); }
+.m3__chips li:hover .ic { color: inherit; }
+
+/* ---------- 左列表：编号步骤 ---------- */
+.m3__steps {
+  list-style: none;
+  margin: clamp(22px, 2.6vw, 32px) 0 0;
+  padding: 0;
+  display: grid;
+}
+.m3__steps li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  padding: clamp(12px, 1.4vw, 16px) 0;
+  border-top: 1px solid var(--line);
+}
+.m3__steps li:last-child { border-bottom: 1px solid var(--line); }
+.m3__step-no {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--accent);
+  padding-top: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.m3__steps h4 { font-size: 14.5px; font-weight: 650; }
+.m3__steps p { margin-top: 3px; font-size: 12.5px; color: var(--muted); line-height: 1.55; max-width: 40ch; }
+
+/* ---------- 右列表：大图卡 ---------- */
+.m3__cards { display: grid; gap: clamp(18px, 2.2vw, 30px); }
+.m3__card figure {
+  margin: 0 0 12px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--sand-deep);
+  aspect-ratio: 16 / 7.5;
+}
+.m3__card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .8s cubic-bezier(.2, .6, .3, 1);
+}
+.m3__card:hover img { transform: scale(1.045); }
+.m3__card h4 { font-size: clamp(15px, 1.15vw, 17px); font-weight: 650; }
+.m3__card p { margin-top: 5px; font-size: 13px; line-height: 1.6; color: var(--muted); max-width: 46ch; }
+
+/* ---------- 右列表：紧凑图标列表 ---------- */
+.m3__compact { display: grid; gap: clamp(15px, 1.9vw, 24px); }
+.m3__compact li { display: flex; gap: 13px; align-items: flex-start; }
+.m3__compact .ic { width: 22px; height: 22px; color: var(--accent); margin-top: 1px; }
+.m3__compact h4 { font-size: 14.5px; font-weight: 650; }
+.m3__compact p { margin-top: 2px; font-size: 12.5px; line-height: 1.55; color: var(--muted); }
+
+/* ---------- 右列表：缩略图文行 ---------- */
+.m3__rows { display: grid; gap: clamp(12px, 1.6vw, 20px); }
+.m3__row {
+  display: grid;
+  grid-template-columns: clamp(86px, 26%, 132px) minmax(0, 1fr);
+  gap: clamp(14px, 1.6vw, 20px);
+  align-items: center;
+  padding-bottom: clamp(12px, 1.6vw, 18px);
+  border-bottom: 1px solid var(--line);
+}
+.m3__row:last-child { border-bottom: 0; padding-bottom: 0; }
+.m3__row figure {
+  margin: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: var(--sand-deep);
+}
+.m3__row img { width: 100%; height: 100%; object-fit: cover; }
+.m3__row h4 { font-size: 14.5px; font-weight: 650; }
+.m3__row p { margin-top: 4px; font-size: 12.5px; line-height: 1.55; color: var(--muted); }
+
+/* ---------- 右列表：2×2 图片宫格 ---------- */
+.m3__tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 1.2vw, 16px);
+}
+.m3__tile {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3.3;
+  background: var(--sand-deep);
+}
+.m3__tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .8s cubic-bezier(.2, .6, .3, 1);
+}
+.m3__tile:hover img { transform: scale(1.05); }
+.m3__tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, .58), rgba(0, 0, 0, 0) 58%);
+}
+.m3__tile span {
+  position: absolute;
+  z-index: 1;
+  left: 13px;
+  bottom: 11px;
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 620;
+  letter-spacing: .01em;
+}
+
+/* ---------- 三段式中图 ---------- */
+.m3__media {
+  margin: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--sand-deep);
+  aspect-ratio: 3 / 4.2;
+}
+.m3__media img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 1080px) {
+  .m3--a .m3__grid,
+  .m3--c .m3__grid,
+  .m3--d .m3__grid { grid-template-columns: minmax(0, 1fr); }
+  .m3--b .m3__grid { grid-template-columns: minmax(0, 1fr) minmax(0, .8fr); }
+  .m3--b .m3__aside { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 22px; }
+  .m3__compact { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .m3__tiles { max-width: 640px; }
+}
+@media (max-width: 760px) {
+  .m3--b .m3__grid { grid-template-columns: minmax(0, 1fr); }
+  .m3--b .m3__media { aspect-ratio: 16 / 10; }
+  .m3__compact { grid-template-columns: minmax(0, 1fr); }
+  .m3__apps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .m3__chips li { padding: 7px 12px; }
+}

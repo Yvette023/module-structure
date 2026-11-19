@@ -1,0 +1,125 @@
+/* =========================================================
+   mod4.css — 结构4：复合图片列表
+   ========================================================= */
+
+.m4 { --m4-gap: 14px; --m4-r: 12px; }
+.m4.is-gap-s { --m4-gap: 6px; }
+.m4.is-gap-m { --m4-gap: 14px; }
+.m4.is-gap-l { --m4-gap: 26px; }
+.m4.is-r0 { --m4-r: 0px; }
+.m4.is-r12 { --m4-r: 12px; }
+.m4.is-r20 { --m4-r: 20px; }
+
+.m4__grid {
+  display: grid;
+  gap: var(--m4-gap);
+  grid-auto-rows: clamp(96px, 10.6vw, 158px);
+}
+
+.m4__cell {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--m4-r);
+  background: var(--sand-deep);
+  transition: border-radius .4s ease;
+}
+.m4__cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .9s cubic-bezier(.2, .6, .3, 1), filter .5s ease;
+}
+.m4__cell:hover img { transform: scale(1.045); }
+
+/* 图注 */
+.m4__cap {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 16px 16px 14px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  background: linear-gradient(to top, rgba(8, 10, 12, .72), rgba(8, 10, 12, 0));
+  color: #fff;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .45s ease, transform .45s ease;
+  pointer-events: none;
+}
+.m4.has-caps .m4__cell:hover .m4__cap,
+.m4.has-caps .m4__cell:focus-within .m4__cap { opacity: 1; transform: none; }
+.m4__cap b { font-size: 13.5px; font-weight: 620; letter-spacing: .01em; }
+.m4__cap em {
+  font-style: normal;
+  font-size: 10.5px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .78;
+  white-space: nowrap;
+}
+
+/* ---------- A · 双大图并列 ---------- */
+.m4--a .m4__grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: auto;
+}
+.m4--a .m4__cell { aspect-ratio: 4 / 3; }
+
+/* ---------- B · 瀑布拼排（5 图） ---------- */
+.m4--b .m4__grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, clamp(96px, 10.6vw, 158px));
+}
+.m4--b .m4__cell--1 { grid-area: 1 / 1 / 3 / 2; }
+.m4--b .m4__cell--2 { grid-area: 1 / 2 / 2 / 3; }
+.m4--b .m4__cell--3 { grid-area: 2 / 2 / 4 / 3; }
+.m4--b .m4__cell--4 { grid-area: 1 / 3 / 4 / 4; }
+.m4--b .m4__cell--5 { grid-area: 3 / 1 / 4 / 2; }
+
+/* ---------- C · 一大两小 ---------- */
+.m4--c .m4__grid {
+  grid-template-columns: 1.45fr 1fr;
+  grid-template-rows: repeat(2, clamp(120px, 13vw, 196px));
+}
+.m4--c .m4__cell--1 { grid-area: 1 / 1 / 3 / 2; }
+.m4--c .m4__cell--2 { grid-area: 1 / 2 / 2 / 3; }
+.m4--c .m4__cell--3 { grid-area: 2 / 2 / 3 / 3; }
+
+/* ---------- D · Bento 宫格（1 主 + 4 小） ---------- */
+.m4--d .m4__grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, clamp(100px, 11vw, 164px));
+}
+.m4--d .m4__cell--1 { grid-area: 1 / 1 / 3 / 3; }
+.m4--d .m4__cell--2 { grid-area: 1 / 3 / 2 / 4; }
+.m4--d .m4__cell--3 { grid-area: 2 / 3 / 3 / 4; }
+.m4--d .m4__cell--4 { grid-area: 3 / 1 / 4 / 2; }
+.m4--d .m4__cell--5 { grid-area: 3 / 2 / 4 / 4; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 900px) {
+  .m4--a .m4__grid { grid-template-columns: minmax(0, 1fr); }
+  .m4--b .m4__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(4, minmax(90px, 20vw));
+  }
+  .m4--b .m4__cell--1 { grid-area: 1 / 1 / 3 / 2; }
+  .m4--b .m4__cell--2 { grid-area: 1 / 2 / 2 / 3; }
+  .m4--b .m4__cell--3 { grid-area: 2 / 2 / 4 / 3; }
+  .m4--b .m4__cell--4 { grid-area: 3 / 1 / 4 / 2; }
+  .m4--b .m4__cell--5 { grid-area: 4 / 1 / 5 / 3; }
+  .m4--c .m4__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto; }
+  .m4--c .m4__cell { grid-area: auto !important; aspect-ratio: 4 / 3; }
+  .m4--c .m4__cell--1 { grid-column: 1 / -1 !important; aspect-ratio: 16 / 10; }
+  .m4--d .m4__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(4, minmax(90px, 19vw));
+  }
+  .m4--d .m4__cell--1 { grid-area: 1 / 1 / 3 / 3; }
+  .m4--d .m4__cell--2 { grid-area: 3 / 1 / 4 / 2; }
+  .m4--d .m4__cell--3 { grid-area: 3 / 2 / 4 / 3; }
+  .m4--d .m4__cell--4 { grid-area: 4 / 1 / 5 / 2; }
+  .m4--d .m4__cell--5 { grid-area: 4 / 2 / 5 / 3; }
+  .m4__cap { opacity: 1; transform: none; }
+}

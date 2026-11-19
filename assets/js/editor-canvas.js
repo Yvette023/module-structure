@@ -318,14 +318,18 @@
     /* 竖向：图文对齐 = 图标 + 文字一起左中右（textAlign 跟随 imgAlignX）；横向：文案不动 */
     var textAlign = vert ? (s.layout.imgAlignX || 'center') : (s.layout.textAlign || 'left');
     var taCls = 'm1__ta-' + textAlign;
-    function list(arr) {
-      return '<ul class="m1__list">' + arr.map(function (it) {
-        var badge = '<span class="m1__icon">' + icon(it.icon || 'sparkle') + '</span>';
+    var it = s.layout.imgText || 'tb';
+    /* 横向布局（lr/rl/inner/outer）：列表项内 图标:文字 宽度比例 */
+    var horiz = it === 'lr' || it === 'rl' || it === 'inner' || it === 'outer';
+    var iconFlex = horiz ? 'flex:' + (s.layout.iconRatio || 1) + ' 1 0%;' : '';
+    var textFlex = horiz ? 'flex:' + (s.layout.textRatio || 3) + ' 1 0%;' : '';
+    function list(arr, listStyle) {
+      return '<ul class="m1__list" style="' + listStyle + '">' + arr.map(function (it) {
+        var badge = '<span class="m1__icon" style="' + iconFlex + '">' + icon(it.icon || 'sparkle') + '</span>';
         return '<li class="m1__item">' + badge +
-          '<div class="m1__text ' + taCls + '"><h3>' + esc(it.title) + '</h3><p>' + esc(it.desc) + '</p></div></li>';
+          '<div class="m1__text ' + taCls + '" style="' + textFlex + '"><h3>' + esc(it.title) + '</h3><p>' + esc(it.desc) + '</p></div></li>';
       }).join('') + '</ul>';
     }
-    var it = s.layout.imgText || 'tb';
     /* 图片对齐 = 列表基于容器的对齐：竖向=水平左中右（图文对齐），横向=垂直上中下 */
     var imgAlignCls = vert
       ? 'm1--imgx-' + (s.layout.imgAlignX || 'center')
@@ -336,7 +340,21 @@
     /* 图文比例：主内容（图片） vs 列表项（文字），三栏 fr */
     var mainRatio = s.layout.mainRatio || 6;
     var listRatio = s.layout.listRatio || 6;
-    var gridStyle = 'grid-template-columns:minmax(0,' + listRatio + 'fr) minmax(0,' + mainRatio + 'fr) minmax(0,' + listRatio + 'fr)';
+    var gapMode = s.layout.gapMode || 'uni';
+    var rowGap, columnGap;
+    if (gapMode === 'ind') {
+      /* 独立：gapX = 行间距（列表项之间），gapY = 列间距（列表↔主图） */
+      rowGap = dimVal(s, s.layout.gapX || 0);
+      columnGap = dimVal(s, s.layout.gapY || 0);
+    } else {
+      rowGap = dimVal(s, s.layout.gap || 0);
+      columnGap = dimVal(s, s.layout.gap || 0);
+    }
+    var alignMap = { top: 'start', center: 'center', bottom: 'end' };
+    var gridStyle = 'grid-template-columns:minmax(0,' + listRatio + 'fr) minmax(0,' + mainRatio + 'fr) minmax(0,' + listRatio + 'fr);' +
+      'column-gap:' + columnGap + ';align-items:' + (alignMap[s.layout.valign] || 'center');
+    /* 行间距：覆盖 .m1--a 的 space-between，让 item 间固定间距 */
+    var listStyle = 'gap:' + rowGap + ';justify-content:flex-start';
 
     /* 主图：图片 / 地图 */
     var hero = s.hero || {};
@@ -355,9 +373,9 @@
     return '<div class="ed-mod" style="' + containerStyle(s) + '">' +
       '<div class="' + cls + '">' +
         '<div class="m1__grid" style="' + gridStyle + '">' +
-          '<div class="m1__col m1__col--left">' + list(groups[0]) + '</div>' +
+          '<div class="m1__col m1__col--left">' + list(groups[0], listStyle) + '</div>' +
           '<figure class="m1__media">' + heroHTML + '</figure>' +
-          '<div class="m1__col m1__col--right">' + list(groups[1]) + '</div>' +
+          '<div class="m1__col m1__col--right">' + list(groups[1], listStyle) + '</div>' +
         '</div>' +
       '</div>' +
     '</div>';

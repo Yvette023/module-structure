@@ -524,6 +524,18 @@ body.ed {
 .ed-mod .m1--it-bt .m1__icon { order: 2; margin: 14px auto 0; }
 .ed-mod .m1--it-bt .m1__text { order: 1; }
 .ed-mod .m1--it-bt .m1__text p { margin-inline: auto; }
+/* 横向布局：图标按 flex 比例拉伸，但保持圆形（aspect-ratio + min/max 封顶） */
+.ed-mod .m1--it-lr .m1__icon,
+.ed-mod .m1--it-rl .m1__icon,
+.ed-mod .m1--it-inner .m1__icon,
+.ed-mod .m1--it-outer .m1__icon {
+  width: auto;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  min-width: 30px;
+  max-width: 60px;
+  align-self: center;
+}
 /* lr（左图右文）：图标在文字左边 */
 .ed-mod .m1--it-lr .m1__item {
   display: flex; flex-direction: row; align-items: flex-start; gap: 14px; text-align: left;
@@ -553,6 +565,115 @@ body.ed {
 .ed-mod .m1--it-outer .m1__icon { margin: 0; flex: 0 0 auto; }
 .ed-mod .m1--it-outer .m1__col--left .m1__item { flex-direction: row; }
 .ed-mod .m1--it-outer .m1__col--right .m1__item { flex-direction: row-reverse; }
+
+/* ---------- 地图尺寸 / 地图地址 ---------- */
+.map-size {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--ui-line-2);
+}
+.map-size__title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ui-text);
+}
+.map-size__row {
+  display: flex;
+  gap: 8px;
+  margin-top: 9px;
+}
+.map-size__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: var(--ui-radius);
+  background: var(--ui-field);
+}
+.map-size__item b {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ui-text-2);
+}
+.map-size__item input {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--ui-text);
+  text-align: center;
+  outline: none;
+}
+.map-size__unit {
+  font-size: 11px;
+  color: var(--ui-text-3);
+  white-space: nowrap;
+}
+.map-addr {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--ui-line-2);
+}
+.map-addr__title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ui-text);
+  margin-bottom: 9px;
+}
+.map-addr__num {
+  display: inline-grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--ui-blue);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* ---------- 个性化风格 / 链接设置（标题 + 设置入口） ---------- */
+.hero-entry-sec {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--ui-line-2);
+}
+.hero-entry-sec__title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ui-text);
+}
+.hero-entry-sec__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 9px;
+  width: 100%;
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--ui-line);
+  border-radius: var(--ui-radius);
+  background: #fff;
+  color: var(--ui-text);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color .18s, background .18s;
+}
+.hero-entry-sec__btn:hover { border-color: var(--ui-blue); background: var(--ui-blue-soft); color: var(--ui-blue); }
 
 /* ---------- 主图设置面板 ---------- */
 .hero-thumb {

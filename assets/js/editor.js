@@ -68,8 +68,11 @@
         imgText: 'tb',
         imgAlignX: 'center',
         imgAlignY: 'center',
+        valign: 'center',
         mainRatio: 6,
         listRatio: 6,
+        iconRatio: 1,
+        textRatio: 3,
         split: 8,
         align: 'center',
         textAlign: 'left',
@@ -111,8 +114,10 @@
         type: 'image',
         img: D.m1.media,
         url: '',
-        address: '上海市静安区 · 南京西路',
-        zoom: 14
+        address: 'https://j.map.baidu.com/fb/Xsx',
+        zoom: 14,
+        w: 100,
+        h: 600
       },
       preset: '',
       _page: 0
@@ -392,9 +397,19 @@
             '<span class="hero-preview__pin"></span>' +
             '<span class="hero-preview__addr">' + esc(h.address || '未填写地址') + '</span>' +
           '</div>' +
-          row(label('地址')) + inp('hero.address', h.address, '输入地点 / 地址') +
-          row(label('缩放级别')) + range('hero.zoom', h.zoom, 3, 18, 1, '级') +
+          '<div class="map-size">' +
+            '<div class="map-size__title">地图尺寸</div>' +
+            '<div class="map-size__row">' +
+              '<span class="map-size__item"><b>W</b><input type="number" data-bind="hero.w" value="' + esc(h.w || 100) + '"><span class="map-size__unit">%</span></span>' +
+              '<span class="map-size__item"><b>H</b><input type="number" data-bind="hero.h" value="' + esc(h.h || 600) + '"><span class="map-size__unit">px</span></span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="map-addr">' +
+            '<div class="map-addr__title">地图地址 <span class="map-addr__num">①</span></div>' +
+            '<input class="finput" data-bind="hero.address" value="' + esc(h.address || 'https://j.map.baidu.com/fb/Xsx') + '" placeholder="地图地址">' +
+          '</div>' +
         '</div>';
+      body += heroStyleSection();
     } else {
       /* 图片预览（hover 显示「替换图片」按钮），下方再复制「图片风格」设置项 */
       var src = h.url || h.img || '';
@@ -402,7 +417,9 @@
           '<img src="' + esc(src) + '" alt="">' +
           '<span class="hero-thumb__hint">替换图片</span>' +
         '</button>';
-      body += imgPanel({ noAlign: true });
+      body += imgPanel({ main: true });
+      body += heroStyleSection();
+      body += heroLinkSection();
     }
     return body;
   }
@@ -595,10 +612,21 @@
       ], 'fseg--wide');
     }
     if (s.structure === 'm1') {
-      /* 双排列表：无宽度；图文比例 = 主内容 vs 列表项 */
+      /* 双排列表：无宽度；列中间距 + 图文比例 = 主内容 vs 列表项 */
+      body += row(label('上下对齐')) + seg('layout.valign', s.layout.valign, [
+        { v: 'top', l: '上' }, { v: 'center', l: '中' }, { v: 'bottom', l: '下' }
+      ], 'fseg--wide');
+      body += dimCtl({ label: '列中间距', field: 'layout.gap', modeBind: 'layout.gapMode', type: 'gap', min: 0, max: 80 });
       body += '<div class="frow" style="margin-top:14px"><span class="flabel" style="font-weight:600;color:#1f2328">图文比例</span></div>';
       body += row(label('主内容') + range('layout.mainRatio', s.layout.mainRatio, 1, 12, 1, ''));
       body += row(label('列表项') + range('layout.listRatio', s.layout.listRatio, 1, 12, 1, ''));
+      /* 横向布局：列表项内部 图标:文字 比例 */
+      var horiz = s.layout.imgText === 'lr' || s.layout.imgText === 'rl' ||
+        s.layout.imgText === 'inner' || s.layout.imgText === 'outer';
+      if (horiz) {
+        body += row(label('图片') + range('layout.iconRatio', s.layout.iconRatio, 1, 6, 1, ''));
+        body += row(label('文字') + range('layout.textRatio', s.layout.textRatio, 1, 12, 1, ''));
+      }
     } else {
       body += row(label('宽度')) + range('layout.width', s.layout.width, 30, 100, 1, '%');
     }
@@ -651,17 +679,34 @@
         { v: 'none', l: '原图' }, { v: 'gray', l: '黑白' },
         { v: 'blur', l: '柔化' }, { v: 'zoom', l: '放大裁切' }
       ]) +
-      row(label('图片背景') + sw('img.bgOn', g.bgOn)) +
-      (g.bgOn ? row(label('颜色') + color('img.bg', g.bg)) : '') +
-      row(label('图片描边') + sw('img.borderOn', g.borderOn)) +
-      (g.borderOn ? row(label('颜色') + color('img.border', g.border)) : '') +
-      dimCtl({ label: '圆角', field: 'img.radius', modeBind: 'img.radiusMode', type: 'corner', min: 0, max: 48 }) +
-      (opts.noAlign ? '' :
-        row(label('图片对齐')) + seg('img.align', g.align, [
-          { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
-        ], 'fseg--wide')) +
-      dimCtl({ label: '内边距', field: 'img.pad', modeBind: 'img.padMode', type: 'box', min: 0, max: 40 });
+      (opts.main ? '' :
+        row(label('图片背景') + sw('img.bgOn', g.bgOn)) +
+        (g.bgOn ? row(label('颜色') + color('img.bg', g.bg)) : '') +
+        row(label('图片描边') + sw('img.borderOn', g.borderOn)) +
+        (g.borderOn ? row(label('颜色') + color('img.border', g.border)) : '') +
+        dimCtl({ label: '圆角', field: 'img.radius', modeBind: 'img.radiusMode', type: 'corner', min: 0, max: 48 }) +
+        (opts.noAlign ? '' :
+          row(label('图片对齐')) + seg('img.align', g.align, [
+            { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
+          ], 'fseg--wide')) +
+        dimCtl({ label: '内边距', field: 'img.pad', modeBind: 'img.padMode', type: 'box', min: 0, max: 40 }));
     return body;
+  }
+
+  /* 个性化风格：标题 + 一个设置入口 */
+  function heroStyleSection() {
+    return '<div class="hero-entry-sec">' +
+      '<div class="hero-entry-sec__title">个性化风格</div>' +
+      '<button type="button" class="hero-entry-sec__btn">设置</button>' +
+    '</div>';
+  }
+
+  /* 链接：标题 + 一个设置入口 */
+  function heroLinkSection() {
+    return '<div class="hero-entry-sec">' +
+      '<div class="hero-entry-sec__title">链接</div>' +
+      '<button type="button" class="hero-entry-sec__btn">链接设置</button>' +
+    '</div>';
   }
 
   function videoPanel() {

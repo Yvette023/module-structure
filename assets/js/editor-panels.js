@@ -235,29 +235,18 @@
       body += row(label('图文位置') + sw('layout.reverse', s.layout.reverse));
     }
     if (s.structure === 'm1') {
-      /* 双排列表：全部 6 种图文布局（tb/bt/lr/rl/inner/outer）均统一支持「容器对齐」（字段与tab组上下排列） */
+      /* 双排列表：竖向 = 「图文对齐」(图标+文字 一起左中右)；横向 = 「图片对齐」(图标 上中下) + 「文案对齐」(左中右) */
       var vert = isVert(s);
-      var m1HBind = vert ? 'layout.imgAlignX' : 'layout.textAlign';
-      var m1HVal = vert ? (s.layout.imgAlignX || 'center') : (s.layout.textAlign || 'left');
-      var m1VVal = s.layout.valign || 'center';
-
-      body += alignDualField('容器对齐',
-        m1HBind, m1HVal, [
-          { v: 'left', icon: 'alignBoxLeft' },
-          { v: 'center', icon: 'alignBoxCenter' },
-          { v: 'right', icon: 'alignBoxRight' }
-        ],
-        'layout.valign', m1VVal, [
-          { v: 'top', icon: 'alignBoxTop' },
-          { v: 'center', icon: 'alignBoxMiddle' },
-          { v: 'bottom', icon: 'alignBoxBottom' }
-        ]
-      );
-
-      /* 横向布局下（lr/rl/inner/outer）：提供图标自身的垂直对齐调节 */
-      if (!vert) {
-        body += row(label('图片对齐')) + seg('layout.imgAlignY', s.layout.imgAlignY || 'center', [
+      if (vert) {
+        body += row(label('图文对齐')) + seg('layout.imgAlignX', s.layout.imgAlignX, [
+          { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
+        ], 'fseg--wide');
+      } else {
+        body += row(label('图片对齐')) + seg('layout.imgAlignY', s.layout.imgAlignY, [
           { v: 'top', l: '上' }, { v: 'center', l: '中' }, { v: 'bottom', l: '下' }
+        ], 'fseg--wide');
+        body += row(label('文案对齐')) + seg('layout.textAlign', s.layout.textAlign, [
+          { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
         ], 'fseg--wide');
       }
     } else if (s.structure !== 'm5') {
@@ -271,7 +260,10 @@
       ], 'fseg--wide');
     }
     if (s.structure === 'm1') {
-      /* 双排列表：无宽度；列中间距 + 图文比例 = 主内容 vs 列表项 */
+      /* 双排列表：上下对齐（主图 vs 列表），列中间距 + 图文比例 */
+      body += row(label('上下对齐')) + seg('layout.valign', s.layout.valign, [
+        { v: 'top', l: '上' }, { v: 'center', l: '中' }, { v: 'bottom', l: '下' }
+      ], 'fseg--wide');
       body += dimCtl({ label: '列中间距', field: 'layout.gap', modeBind: 'layout.gapMode', type: 'gap', min: 0, max: 80 });
       body += '<div class="frow" style="margin-top:14px"><span class="flabel" style="font-weight:600;color:#1f2328">图文比例</span></div>';
       body += row(label('主内容') + range('layout.mainRatio', s.layout.mainRatio, 1, 12, 1, ''));

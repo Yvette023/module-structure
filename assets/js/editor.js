@@ -251,6 +251,10 @@
     obj[last] = v;
   }
 
+  /* ================= 布局判定 Helper ================= */
+  function isVert(s)  { return s.layout.imgText === 'tb' || s.layout.imgText === 'bt'; }
+  function isHoriz(s) { return !isVert(s); }
+
   /* ================= 控件片段 ================= */
   function esc(v) {
     return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;')
@@ -736,7 +740,7 @@
     }
     if (s.structure === 'm1') {
       /* 双排列表：竖向 = 「图文对齐」(图标+文字 一起左中右)；横向 = 「图片对齐」(图标 上中下，文案不动) */
-      var vert = s.layout.imgText === 'tb' || s.layout.imgText === 'bt';
+      var vert = isVert(s);
       if (vert) {
         body += row(label('图文对齐')) + seg('layout.imgAlignX', s.layout.imgAlignX, [
           { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
@@ -769,8 +773,7 @@
       body += row(label('主内容') + range('layout.mainRatio', s.layout.mainRatio, 1, 12, 1, ''));
       body += row(label('列表项') + range('layout.listRatio', s.layout.listRatio, 1, 12, 1, ''));
       /* 横向布局：列表项内部 图标:文字 比例 */
-      var horiz = s.layout.imgText === 'lr' || s.layout.imgText === 'rl' ||
-        s.layout.imgText === 'inner' || s.layout.imgText === 'outer';
+      var horiz = isHoriz(s);
       if (horiz) {
         body += row(label('图片') + range('layout.iconRatio', s.layout.iconRatio, 1, 6, 1, ''));
         body += row(label('文字') + range('layout.textRatio', s.layout.textRatio, 1, 12, 1, ''));

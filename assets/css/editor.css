@@ -405,6 +405,7 @@ body.ed {
   box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
 }
 .ed-arrows .ic { width: 15px; height: 15px; }
+.ed-flip { transform: rotate(180deg); }
 
 /* 窄屏下，画布里的拼排型 m4 退化为均匀两列（!important 压过内联 grid-area） */
 @media (max-width: 900px) {
@@ -502,9 +503,6 @@ body.ed {
 
 /* ---------- 双排列表 图片对齐（列表基于容器的对齐） ---------- */
 /* 竖向布局（图标上/下）：图标水平对齐 左/中/右 */
-.ed-mod .m1--imgx-left .m1__icon { display: flex; margin: 0 auto 14px 0; }
-.ed-mod .m1--imgx-right .m1__icon { display: flex; margin: 0 0 14px auto; }
-
 /* 横向布局（图标左/右）：图标垂直对齐 上/中/下（只动图标，文案不随动） */
 .ed-mod .m1--imgy-top .m1__icon { align-self: flex-start; }
 .ed-mod .m1--imgy-center .m1__icon { align-self: center; }
@@ -607,10 +605,9 @@ body.ed {
 /* ---------- 双排列表 图文布局（图标相对文字的位置；主图始终居中，左右列表在两侧） ---------- */
 /* tb（上图下文）：默认双列均布，图标在上、文字居中（无需额外规则） */
 /* bt（下图上文）：图标移到文字下方 */
-.ed-mod .m1--it-bt .m1__item { display: flex; flex-direction: column; text-align: center; }
-.ed-mod .m1--it-bt .m1__icon { order: 2; margin: 14px auto 0; }
+.ed-mod .m1--it-bt .m1__item { display: flex; flex-direction: column; }
+.ed-mod .m1--it-bt .m1__icon { order: 2; display: flex; }
 .ed-mod .m1--it-bt .m1__text { order: 1; }
-.ed-mod .m1--it-bt .m1__text p { margin-inline: auto; }
 /* 横向布局：图标按 flex 比例拉伸，但保持圆形（aspect-ratio + min/max 封顶） */
 .ed-mod .m1--it-lr .m1__icon,
 .ed-mod .m1--it-rl .m1__icon,
@@ -631,14 +628,22 @@ body.ed {
   display: flex; flex-direction: row; align-items: flex-start; gap: 14px; text-align: left;
 }
 .ed-mod .m1--it-lr .m1__icon { margin: 0; flex: 0 0 auto; }
-.ed-mod .m1--it-lr .m1__text p { margin-left: 0; margin-right: auto; }
 /* rl（右图左文）：图标在文字右边 */
 .ed-mod .m1--it-rl .m1__item {
   display: flex; flex-direction: row; align-items: flex-start; gap: 14px; text-align: right;
 }
 .ed-mod .m1--it-rl .m1__icon { margin: 0; order: 2; flex: 0 0 auto; }
 .ed-mod .m1--it-rl .m1__text { order: 1; }
-.ed-mod .m1--it-rl .m1__text p { margin-right: 0; margin-left: auto; }
+
+/* 图文对齐（必须在 bt/lr/rl 之后，才能覆盖默认居中） */
+/* 竖向 tb：图标在文字上方 → 对齐时改左右 margin，保留 14px 下间距 */
+.ed-mod .m1--it-tb.m1--imgx-left .m1__icon { display: flex; margin: 0 auto 14px 0; }
+.ed-mod .m1--it-tb.m1--imgx-right .m1__icon { display: flex; margin: 0 0 14px auto; }
+.ed-mod .m1--it-tb.m1--imgx-center .m1__icon { display: flex; margin: 0 auto 14px; }
+/* 竖向 bt：图标在文字下方 → 14px 上间距 */
+.ed-mod .m1--it-bt.m1--imgx-left .m1__icon { display: flex; margin: 14px auto 0 0; }
+.ed-mod .m1--it-bt.m1--imgx-right .m1__icon { display: flex; margin: 14px 0 0 auto; }
+.ed-mod .m1--it-bt.m1--imgx-center .m1__icon { display: flex; margin: 14px auto 0; }
 
 /* inner（图片靠内）：图标都朝向主图 —— 左列图标在右、右列图标在左；文案对齐由「文案对齐」独立控制 */
 .ed-mod .m1--it-inner .m1__item {
@@ -924,6 +929,16 @@ body.ed {
 .ed-mod .m2__media img { width: 100%; height: 100%; object-fit: cover; }
 .ed-mod .m3__media img { max-height: 620px; object-fit: cover; }
 
+/* 图片蒙层（「图片风格 → 开启蒙层」）：盖在图片上的黑色半透明遮罩 */
+.ed-imgmask {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.ed-mod .m3__card figure,
+.ed-mod .m3__row figure,
+.ed-mod .m3__media { position: relative; }
+
 /* ================= 通用按钮 ================= */
 .ed-btn {
   display: inline-flex;
@@ -1023,6 +1038,12 @@ body.ed {
   box-shadow: 0 1px 3px rgba(16, 24, 40, .12);
   font-weight: 600;
 }
+
+/* ---- 结构5：轮播列表 / 列1 两个 Tab ---- */
+.m5-tabsec { border-bottom: 1px solid var(--ui-line-2); }
+.m5-tabsec .ed-coltab { padding-top: 10px; }
+.m5-tabsec__body { padding: 4px 14px 14px; }
+.m5-tabctx { font-size: 11.5px; color: var(--ui-text-3); margin: 4px 0 2px; }
 
 /* ---- 手风琴区块 ---- */
 .sec { border-bottom: 1px solid var(--ui-line-2); }

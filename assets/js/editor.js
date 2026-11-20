@@ -14,6 +14,7 @@
 
   /* ================= 结构基础信息 ================= */
   var STRUCTURES = [
+    { id: 'm5', name: '轮播列表' },
     { id: 'm4', name: '复合列表' },
     { id: 'm1', name: '双排列表' },
     { id: 'm2', name: '单排列表' },
@@ -21,6 +22,12 @@
   ];
 
   var MODES = {
+    m5: { label: '列表样式', options: [
+      { v: 'icon', l: '图标列表' },
+      { v: 'num', l: '编号列表' },
+      { v: 'check', l: '勾选列表' },
+      { v: 'row', l: '图文行' }
+    ], def: 'icon' },
     m4: { label: '列表布局', options: [
       { v: 'grid', l: '网格排布' },
       { v: 'waterfall', l: '瀑布拼排' },
@@ -49,7 +56,7 @@
   /* ================= 默认状态 ================= */
   function defaults(structure) {
     var m4 = structure === 'm4' || !structure;
-    return {
+    var base = {
       structure: structure || 'm4',
       unit: 'px',
       items: [],
@@ -103,7 +110,9 @@
         ratio: '3:4', effect: 'none', align: 'center',
         radius: 0, radiusMode: 'uni', radiusTl: 0, radiusTr: 0, radiusBr: 0, radiusBl: 0,
         pad: 0, padMode: 'uni', padT: 0, padR: 0, padB: 0, padL: 0,
-        bgOn: false, bg: '#22262e', borderOn: false, border: '#2a2f38'
+        bgOn: false, bg: '#22262e', borderOn: false, border: '#2a2f38',
+        /* 蒙层：开启后在图片上叠一层黑色半透明遮罩，透明度 0–1 */
+        mask: { on: false, opacity: 0.3 }
       },
       video: { on: false, ratio: '无', playMode: '点击播放', loop: false, muted: false, autoplay: false, icon: true, controls: false, hideText: false, mask: true },
       carousel: { on: false, loop: true, arrows: false, dots: true, interval: 5000 },
@@ -127,6 +136,17 @@
       preset: '',
       _page: 0
     };
+    if (structure === 'm5') {
+      base.carousel.on = true;
+      base.carousel.arrows = true;
+      base.carousel.dots = true;
+      base.carousel.auto = false;
+      base.layout.position = 'left';
+      base.layout.gap = 12;
+      base.container.pad = 0; /* 整幅背景图铺满组件，不做内边距 */
+      base.container.padMode = 'uni';
+    }
+    return base;
   }
 
   var VALUES = ['18 yrs', '42', '4.9'];
@@ -139,6 +159,20 @@
         { img: imgs[0], title: t, desc: '', icon: 'grid' },
         { img: imgs[1], title: t, desc: '', icon: 'grid' }
       ];
+    }
+    if (structure === 'm5') {
+      /* 轮播页：每页 = 一张整幅背景图 + 标题文案 + 一组列表（列1，默认 3 页） */
+      return D.m5.slides.slice(0, 3).map(function (sl) {
+        return {
+          img: sl.img,
+          title: sl.title,
+          subtitle: sl.eyebrow,
+          intro: sl.lede,
+          list1: sl.list1.map(function (it, i) {
+            return { img: imgs[i % imgs.length], icon: it.icon, title: it.title };
+          })
+        };
+      });
     }
     if (structure === 'm3') {
       /* 列 1 = 8 项（左列表），列 2 = 4 项（右列表） */
@@ -170,7 +204,7 @@
 
   /* ================= 状态 ================= */
   var state = load() || init('m4');
-  var ui = { tab: 'design', open: { hero: true, items: true, video: false, text: false, button: false, link: false, more: true }, more: 'layout', sel: 0, col: 1, m1tab: 'hero' };
+  var ui = { tab: 'design', open: { hero: true, items: true, video: false, text: false, button: false, link: false, more: true }, more: 'layout', sel: 0, col: 1, m1tab: 'hero', sub: 0, m5tab: 'slides' };
 
   function init(structure) {
     var s = defaults(structure);
@@ -486,8 +520,66 @@
     return { start: Math.min(split, s.items.length), end: s.items.length };
   }
 
+  /* ================= 结构5：轮播列表面板 =================
+     两个 Tab：轮播列表（管理轮播页） / 列1（管理选中轮播页的列表） */
+  function m5Slide() {
+    return state.items[Math.min(ui.sel, state.items.length - 1)] || state.items[0] || {};
+  }
+  function m5SlideItems() {
+    return m5Slide().list1 || [];
+  }
+  function m5ItemsSection() {
+    var slides = state.items;
+    var list = m5SlideItems();
+    var sub = Math.max(0, Math.min(ui.sub, list.length - 1));
+
+    var tabs = '<div class="ed-coltab ed-coltab--m5">' +
+      '<button type="button" data-act="m5-tab" data-value="slides"' + (ui.m5tab === 'slides' ? ' class="is-on"' : '') + '>轮播列表</button>' +
+      '<button type="button" data-act="m5-tab" data-value="list"' + (ui.m5tab === 'list' ? ' class="is-on"' : '') + '>列 1</button>' +
+    '</div>';
+
+    var body;
+    if (ui.m5tab === 'list') {
+      /* 列1：选中轮播页里的那一组列表 */
+      var innerThumbs = list.map(function (it, i) {
+        return '<div class="thumb' + (sub === i ? ' is-on' : '') + '" data-act="sub" data-idx="' + i + '">' +
+          '<span class="thumb__del" data-act="del-sub" data-idx="' + i + '">' + icon('trash') + '</span>' +
+          '<span class="thumb__box"><img src="' + esc(it.img) + '" alt=""></span>' +
+          '<span class="thumb__no">列表项' + (i + 1) + '</span>' +
+        '</div>';
+      }).join('');
+      var addInnerBtn = '<div class="thumb thumb--add" data-act="add-sub">' +
+        '<span class="thumb__box">' + icon('plus') + '</span>' +
+        '<span class="thumb__no">新增</span></div>';
+      body = '<div class="m5-tabctx">轮播 ' + (ui.sel + 1) + ' · 列 1 的列表项</div>' +
+        row(
+          '<span class="fcount">' + (sub + 1) + '/' + list.length + '</span>' +
+          '<button class="flink" data-act="add-sub">' + icon('plus') + '新增</button>') +
+        '<div class="thumbs">' + innerThumbs + addInnerBtn + '</div>';
+    } else {
+      /* 轮播列表：轮播页缩略图 */
+      var slideThumbs = slides.map(function (it, i) {
+        return '<div class="thumb' + (ui.sel === i ? ' is-on' : '') + '" data-act="sel" data-idx="' + i + '">' +
+          '<span class="thumb__del" data-act="del" data-idx="' + i + '">' + icon('trash') + '</span>' +
+          '<span class="thumb__box"><img src="' + esc(it.img) + '" alt=""></span>' +
+          '<span class="thumb__no">图片' + (i + 1) + '</span>' +
+        '</div>';
+      }).join('');
+      var addSlideBtn = '<div class="thumb thumb--add" data-act="add">' +
+        '<span class="thumb__box">' + icon('plus') + '</span>' +
+        '<span class="thumb__no">新增</span></div>';
+      body = row(
+        '<span class="fcount">' + (ui.sel + 1) + '/' + slides.length + '</span>' +
+        '<button class="flink" data-act="add">' + icon('plus') + '新增</button>') +
+        '<div class="thumbs">' + slideThumbs + addSlideBtn + '</div>';
+    }
+
+    return tabs + '<div class="m5-tabsec__body">' + body + '</div>';
+  }
+
   function itemsSection() {
     var s = state;
+    if (s.structure === 'm5') return m5ItemsSection();
     var isM4 = s.structure === 'm4';
     var range = colRange(s);
     var colItems = s.items.slice(range.start, range.end);
@@ -520,13 +612,31 @@
   function textSection() {
     var s = state;
     var body = '';
+    if (s.structure === 'm5') {
+      var sl = s.items[Math.min(ui.sel, s.items.length - 1)] || s.items[0] || {};
+      if (ui.m5tab === 'list') {
+        /* 列1 tab：编辑选中列表项（列表只要标题） */
+        var list = sl.list1 || [];
+        var it = list[Math.min(ui.sub, list.length - 1)] || list[0] || {};
+        body += '<div class="frow"><span class="flabel" style="color:#1e6fff">列 1 · 轮播 ' + (ui.sel + 1) +
+          ' · 第 ' + (ui.sub + 1) + ' 项</span></div>' +
+          row(label('标题')) + inp('items.' + ui.sel + '.list1.' + ui.sub + '.title', it.title, '列表项标题');
+        return body;
+      }
+      /* 轮播列表 tab：编辑选中轮播页的文案 */
+      body += '<div class="frow"><span class="flabel" style="color:#1e6fff">轮播 ' + (ui.sel + 1) + ' 的文案</span></div>' +
+        row(label('标题')) + inp('items.' + ui.sel + '.title', sl.title, '轮播页标题') +
+        row(label('副标题')) + inp('items.' + ui.sel + '.subtitle', sl.subtitle, '副标题（眉题）') +
+        row(label('简介')) + area('items.' + ui.sel + '.intro', sl.intro, '轮播页简介');
+      return body;
+    }
     if (s.structure !== 'm4') {
-      var it = s.items[ui.sel] || s.items[0];
+      var it2 = s.items[ui.sel] || s.items[0];
       body += '<div class="frow"><span class="flabel" style="color:#1e6fff">第 ' + (ui.sel + 1) + ' 项内容</span></div>' +
         row(label('列表标题') + '') +
-        inp('items.' + ui.sel + '.title', it.title, '列表项标题') +
+        inp('items.' + ui.sel + '.title', it2.title, '列表项标题') +
         '<div style="height:8px"></div>' +
-        inp('items.' + ui.sel + '.desc', it.desc, '列表项描述');
+        inp('items.' + ui.sel + '.desc', it2.desc, '列表项描述');
     }
     body += row(label('标题', { eye: 'show.title' })) +
       inp('text.title', s.text.title, '请输入标题') +
@@ -604,6 +714,13 @@
       body = row(label(m.label)) + select('layout.mode', s.layout.mode, m.options);
     }
 
+    if (s.structure === 'm5') {
+      /* 轮播列表：整幅背景图 + 文字居左 / 居右 / 居中浮卡 */
+      body += row(label('文字位置')) + seg('layout.position', s.layout.position, [
+        { v: 'left', l: '文字居左' }, { v: 'right', l: '文字居右' }, { v: 'bg', l: '居中浮卡' }
+      ], 'fseg--wide');
+    }
+
     if (s.structure === 'm1') {
       body += row(label('排布方向')) + seg('layout.dir', s.layout.dir, [
         { v: 'v', l: '竖向排列' }, { v: 'h', l: '横向排列' }
@@ -661,8 +778,10 @@
     } else {
       body += row(label('宽度')) + range('layout.width', s.layout.width, 30, 100, 1, '%');
     }
+    if (s.structure === 'm4' || s.structure === 'm5') {
+      body += dimCtl({ label: s.structure === 'm5' ? '列表间距' : '列中间距', field: 'layout.gap', modeBind: 'layout.gapMode', type: 'gap', min: 0, max: 80 });
+    }
     if (s.structure === 'm4') {
-      body += dimCtl({ label: '列中间距', field: 'layout.gap', modeBind: 'layout.gapMode', type: 'gap', min: 0, max: 80 });
       body += row(label('文案背景')) + sw('layout.textBg.on', s.layout.textBg.on);
       if (s.layout.textBg.on) {
         body += row(label('背景色')) + color('layout.textBg.color', s.layout.textBg.color, true) +
@@ -721,7 +840,18 @@
           row(label('图片对齐')) + seg(bind + '.align', g.align, [
             { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
           ], 'fseg--wide')) +
-        dimCtl({ label: '内边距', field: bind + '.pad', modeBind: bind + '.padMode', type: 'box', min: 0, max: 40 }));
+        dimCtl({ label: '内边距', field: bind + '.pad', modeBind: bind + '.padMode', type: 'box', min: 0, max: 40 }) +
+        /* 开启蒙层：图片上叠黑色半透明遮罩，开启后再给透明度滑杆 + 数值 */
+        (function () {
+          var m = g.mask || {};
+          var on = !!m.on;
+          return row(label('开启蒙层') + sw(bind + '.mask.on', on)) +
+            (on
+              ? row(label('蒙层透明度')) + '<div class="frow">' +
+                  range(bind + '.mask.opacity', m.opacity != null ? m.opacity : 0.3, 0, 1, 0.05, '') +
+                '</div>'
+              : '');
+        })());
     return body;
   }
 
@@ -760,6 +890,15 @@
 
   function carouselPanel() {
     var c = state.carousel;
+    if (state.structure === 'm5') {
+      /* 轮播列表本身就是轮播：不提供「是否轮播」，改为「自动播放」 */
+      return row(label('循环播放') + sw('carousel.loop', c.loop)) +
+        row(label('显示切换箭头') + sw('carousel.arrows', c.arrows)) +
+        row(label('显示轮播分页') + sw('carousel.dots', c.dots)) +
+        row(label('自动播放') + sw('carousel.auto', c.auto)) +
+        row(label('轮播间隔(毫秒)')) +
+        '<div class="frow">' + range('carousel.interval', c.interval, 1000, 10000, 500, 'ms') + '</div>';
+    }
     return row(label('是否轮播') + sw('carousel.on', c.on)) +
       row(label('循环播放') + sw('carousel.loop', c.loop)) +
       row(label('显示切换箭头') + sw('carousel.arrows', c.arrows)) +
@@ -890,9 +1029,13 @@
             : sec('items', '列表项', itemsSection())) +
           m1Common;
       } else {
+        var itemsTitle = state.structure === 'm4' ? '图文列表'
+          : state.structure === 'm5' ? '轮播列表' : '列表项';
         body =
           (state.structure === 'm3' ? colTabHTML() : '') +
-          sec('items', state.structure === 'm4' ? '图文列表' : '列表项', itemsSection()) +
+          (state.structure === 'm5'
+            ? '<div class="m5-tabsec">' + m5ItemsSection() + '</div>'
+            : sec('items', itemsTitle, itemsSection())) +
           sec('video', '视频', videoSection()) +
           sec('text', '文本设置', textSection()) +
           sec('button', '按钮设置', buttonSection()) +
@@ -959,17 +1102,31 @@
         renderAll();
         return;
       }
-      if (act === 'sel') { ui.sel = Number(el.dataset.idx); renderPanel(); return; }
-      if (act === 'del') {
-        e.stopPropagation();
-        var i = Number(el.dataset.idx);
-        if (state.items.length <= 1) return toast('至少保留一张图片');
-        state.items.splice(i, 1);
-        ui.sel = Math.max(0, Math.min(ui.sel, state.items.length - 1));
-        renderAll();
-        return;
-      }
+      if (act === 'sel') { ui.sel = Number(el.dataset.idx); ui.sub = 0; renderPanel(); return; }
+      if (act === 'sub') { ui.sub = Number(el.dataset.idx); renderPanel(); return; }
       if (act === 'add') {
+        if (state.structure === 'm5') {
+          /* 新增一个轮播页（自带 列1 列表） */
+          var imgs5 = D.m4.gallery.map(function (g) { return g.img; });
+          var nn = state.items.length;
+          var mk = [];
+          var T5 = ['Free Delivery', 'Solid Oak', '5-Year Warranty', 'Modular Design', 'Swap Covers', 'Low-VOC Finish'];
+          var I5 = ['truck', 'cube', 'shield', 'layers', 'refresh', 'leaf'];
+          for (var j5 = 0; j5 < 6; j5++) {
+            mk.push({ img: imgs5[j5 % imgs5.length], icon: I5[j5 % I5.length], title: T5[j5 % T5.length] });
+          }
+          state.items.push({
+            img: imgs5[nn % imgs5.length],
+            title: '新的轮播标题',
+            subtitle: 'EYEBROW',
+            intro: '这一页轮播的简介文案。',
+            list1: mk
+          });
+          ui.sel = state.items.length - 1;
+          ui.sub = 0;
+          renderAll();
+          return;
+        }
         var imgs = D.m4.gallery.map(function (g) { return g.img; });
         var n = state.items.length;
         var item = {
@@ -995,6 +1152,48 @@
         renderAll();
         return;
       }
+      if (act === 'add-sub') {
+        /* 结构5：给当前轮播页的 列1 新增列表项 */
+        var sl = m5Slide();
+        if (!sl) return;
+        var list = sl.list1 || (sl.list1 = []);
+        var imgs2 = D.m4.gallery.map(function (g) { return g.img; });
+        var T5b = ['Free Delivery', 'Solid Oak', '5-Year Warranty', 'Modular Design', 'Swap Covers', 'Low-VOC Finish'];
+        var I5b = ['truck', 'cube', 'shield', 'layers', 'refresh', 'leaf'];
+        var n2 = list.length;
+        list.push({ img: imgs2[n2 % imgs2.length], icon: I5b[n2 % I5b.length], title: T5b[n2 % T5b.length] });
+        ui.sub = list.length - 1;
+        renderAll();
+        return;
+      }
+      if (act === 'del-sub') {
+        e.stopPropagation();
+        var sl2 = m5Slide();
+        if (!sl2) return;
+        var list2 = sl2.list1 || [];
+        if (list2.length <= 1) return toast('至少保留一项列表内容');
+        list2.splice(Number(el.dataset.idx), 1);
+        ui.sub = Math.max(0, Math.min(ui.sub, list2.length - 1));
+        renderAll();
+        return;
+      }
+      if (act === 'del') {
+        e.stopPropagation();
+        var i = Number(el.dataset.idx);
+        if (state.structure === 'm5') {
+          if (state.items.length <= 1) return toast('至少保留一张轮播图');
+          state.items.splice(i, 1);
+          ui.sel = Math.max(0, Math.min(ui.sel, state.items.length - 1));
+          ui.sub = 0;
+          renderAll();
+          return;
+        }
+        if (state.items.length <= 1) return toast('至少保留一张图片');
+        state.items.splice(i, 1);
+        ui.sel = Math.max(0, Math.min(ui.sel, state.items.length - 1));
+        renderAll();
+        return;
+      }
       if (act === 'dim-mode') {
         setPath(el.dataset.bind, el.dataset.value);
         renderAll();
@@ -1015,10 +1214,16 @@
         renderPanel();
         return;
       }
+      if (act === 'm5-tab') {
+        ui.m5tab = el.dataset.value;
+        renderPanel();
+        return;
+      }
       if (act === 'col') {
         ui.col = Number(el.dataset.value);
         var r = colRange(state);
         ui.sel = Math.max(r.start, Math.min(ui.sel, Math.max(r.start, r.end - 1)));
+        ui.sub = 0;
         renderPanel();
         return;
       }
@@ -1075,6 +1280,27 @@
   /* 画布点击选中卡片 */
   function bindCanvas() {
     canvasEl.addEventListener('click', function (e) {
+      /* 结构5：轮播箭头 / 分页点 / 轮播页 / 页内列表项 */
+      var ctl = e.target.closest('[data-m5]');
+      if (ctl && ctl.closest('.m5')) {
+        var nn = Math.max(1, state.items.length);
+        if (ctl.dataset.m5 === 'prev') state._page = (state._page - 1 + nn) % nn;
+        else if (ctl.dataset.m5 === 'next') state._page = (state._page + 1) % nn;
+        else state._page = Number(ctl.dataset.m5Goto || 0);
+        renderCanvas();
+        return;
+      }
+      var slide = e.target.closest('.m5__slide');
+      if (slide && slide.dataset.idx != null) {
+        ui.sel = Number(slide.dataset.idx);
+        var item = e.target.closest('.m5__item');
+        if (item && item.dataset.sub != null) ui.sub = Number(item.dataset.sub);
+        else ui.sub = 0;
+        ui.open.items = true;
+        ui.tab = 'design';
+        renderPanel();
+        return;
+      }
       var card = e.target.closest('.ed-card');
       if (!card || card.dataset.idx == null) return;
       ui.sel = Number(card.dataset.idx);
@@ -1135,6 +1361,16 @@
   function syncCarouselTimer() {
     if (timer) { clearInterval(timer); timer = null; }
     var c = state.carousel;
+    if (state.structure === 'm5') {
+      /* 轮播列表：按轮播页数自动翻页 */
+      var n = state.items.length;
+      if (!c.auto || n <= 1) return;
+      timer = setInterval(function () {
+        state._page = (state._page + 1) % n;
+        renderCanvas();
+      }, Math.max(800, c.interval));
+      return;
+    }
     if (!c.on || state.structure !== 'm4' || state.layout.mode !== 'grid') return;
     var pages = Math.max(1, Math.ceil(state.items.length / state.layout.columns));
     if (pages <= 1) return;
@@ -1174,7 +1410,9 @@
       state = init(id);
       ui.sel = 0;
       ui.col = 1;
+      ui.sub = 0;
       ui.m1tab = 'hero';
+      ui.m5tab = 'slides';
       ui.more = 'layout';
       pendingScrollReset = true;
       renderAll();
@@ -1188,6 +1426,7 @@
     document.getElementById('resetBtn').addEventListener('click', function () {
       state = init(state.structure);
       ui.sel = 0;
+      ui.sub = 0;
       pendingScrollReset = true;
       renderAll();
       toast('已重置当前模块');

@@ -1,0 +1,279 @@
+/* =========================================================
+   mod5.css — 结构5：轮播列表（轮播图组件内嵌列表）
+   每个轮播页 = 一张整幅背景图 + 标题文案 + 一组列表（列1）
+   列表只保留 图标 + 标题；变体：列表样式 icon/num/check/row
+   × 文字位置 居左 / 居右 / 居中浮卡
+   ========================================================= */
+
+.m5 {
+  position: relative;
+  --m5-r: 18px;
+}
+.m5-flip { transform: rotate(180deg); }
+
+/* ---------- 轮播轨道 ---------- */
+.m5__viewport {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--m5-r);
+}
+.m5__track {
+  display: flex;
+  transition: transform .6s cubic-bezier(.22, .61, .36, 1);
+}
+.m5__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+/* ---------- 整幅背景图（覆盖整个组件） ---------- */
+.m5__frame {
+  position: relative;
+  height: clamp(440px, 44vw, 600px);
+}
+.m5__media {
+  position: absolute;
+  inset: 0;
+  background: #14161a;
+}
+.m5__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 简单可读性蒙层：文字居左 / 居右 / 居中 */
+.m5__frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(100deg, rgba(8, 10, 12, .78) 0%, rgba(8, 10, 12, .46) 42%, rgba(8, 10, 12, .1) 72%);
+}
+.m5--right .m5__frame::after {
+  background: linear-gradient(260deg, rgba(8, 10, 12, .78) 0%, rgba(8, 10, 12, .46) 42%, rgba(8, 10, 12, .1) 72%);
+}
+.m5--bg .m5__frame::after {
+  background: radial-gradient(130% 130% at 50% 50%, rgba(8, 10, 12, .62) 0%, rgba(8, 10, 12, .42) 60%, rgba(8, 10, 12, .3) 100%);
+}
+
+/* ---------- 内容浮层 ---------- */
+.m5__body {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+  width: min(620px, 54%);
+  padding: clamp(24px, 3vw, 48px);
+  color: #fff;
+}
+.m5--left .m5__body { left: 0; }
+.m5--right .m5__body { right: 0; }
+.m5--bg .m5__body {
+  left: 50%;
+  right: auto;
+  top: 50%;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+  width: min(680px, 80%);
+  padding: clamp(24px, 3vw, 42px);
+  background: rgba(10, 12, 14, .6);
+  border-radius: 16px;
+  text-align: center;
+  align-items: center;
+}
+
+.m5__eyebrow {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: #d9b87e;
+}
+.m5__title {
+  font-size: clamp(22px, 2.4vw, 34px);
+  font-weight: 680;
+  letter-spacing: -.02em;
+  line-height: 1.16;
+  color: #fff;
+  max-width: 18ch;
+}
+.m5__lede {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, .78);
+  max-width: 44ch;
+}
+.m5__cta { margin-top: 6px; align-self: flex-start; }
+.m5--bg .m5__cta { align-self: center; }
+/* 背景图上用白底按钮，保证可见 */
+.m5 .btn.m5__cta {
+  background: #fff;
+  color: #14161a;
+}
+.m5 .btn.m5__cta:hover { background: #eceff3; }
+
+/* ---------- 列1 列表：图标格（默认） ---------- */
+.m5__list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 2px;
+}
+.m5__item { display: flex; align-items: center; justify-content: flex-start; gap: 8px; }
+.m5__text h4 {
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #fff;
+}
+
+/* 图标列表：图标方块 + 标题（参考图样式） */
+.m5--icon .m5__item {
+  flex-direction: column;
+  justify-content: center;
+  gap: 9px;
+  padding: 16px 8px;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .03);
+}
+.m5--icon .m5__icon {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+.m5--icon .m5__icon .ic { width: 26px; height: 26px; }
+.m5--icon .m5__text h4 { text-align: center; }
+
+/* 编号列表 */
+.m5--num .m5__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.m5--num .m5__item { align-items: baseline; gap: 10px; }
+.m5--num .m5__num {
+  font-size: 20px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #d9b87e;
+  min-width: 30px;
+}
+
+/* 勾选列表 */
+.m5--check .m5__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.m5--check .m5__item {
+  gap: 8px;
+  padding: 11px 12px;
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .04);
+}
+.m5--check .m5__item .ic { width: 15px; height: 15px; color: #d9b87e; }
+.m5--check .m5__item span { font-size: 12.5px; font-weight: 600; color: #fff; }
+
+/* 图文行 */
+.m5--row .m5__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.m5--row .m5__item { gap: 10px; }
+.m5--row .m5__thumb {
+  width: 52px;
+  height: 40px;
+  flex: 0 0 52px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, .1);
+}
+.m5--row .m5__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* 背景浮卡里列表加宽 */
+.m5--bg .m5__list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* ---------- 轮播箭头 / 分页点 ---------- */
+.m5__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .94);
+  color: #14161a;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .28);
+  cursor: pointer;
+  transition: transform .2s ease, background .2s ease;
+}
+.m5__arrow:hover { transform: translateY(-50%) scale(1.06); }
+.m5__arrow .ic { width: 16px; height: 16px; }
+.m5__arrow--prev { left: 16px; }
+.m5__arrow--next { right: 16px; }
+
+.m5__dots {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 7px;
+}
+.m5__dots i {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .5);
+  cursor: pointer;
+  transition: width .25s ease, background .25s ease;
+}
+.m5__dots i.is-on { width: 22px; background: #fff; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 900px) {
+  .m5__frame { height: clamp(540px, 84vw, 640px); }
+  .m5__frame::after,
+  .m5--right .m5__frame::after,
+  .m5--bg .m5__frame::after {
+    background: linear-gradient(to top, rgba(8, 10, 12, .88) 0%, rgba(8, 10, 12, .55) 40%, rgba(8, 10, 12, .12) 72%);
+  }
+  .m5__body,
+  .m5--right .m5__body {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    transform: none;
+    width: auto;
+    padding: 22px 18px 30px;
+  }
+  .m5--bg .m5__body {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    top: auto;
+    width: auto;
+    padding: 20px 18px;
+    text-align: left;
+    align-items: flex-start;
+  }
+  .m5--bg .m5__cta { align-self: flex-start; }
+  .m5__title { max-width: 100%; }
+  .m5__lede { max-width: 100%; }
+}
+@media (max-width: 640px) {
+  .m5__list,
+  .m5--icon .m5__list,
+  .m5--bg .m5__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .m5--num .m5__list,
+  .m5--check .m5__list,
+  .m5--row .m5__list { grid-template-columns: 1fr; }
+  .m5__arrow { width: 36px; height: 36px; }
+  .m5__arrow--prev { left: 10px; }
+  .m5__arrow--next { right: 10px; }
+}

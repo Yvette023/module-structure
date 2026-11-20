@@ -128,14 +128,23 @@
     return style(st);
   }
 
+  /* 图片蒙层：开启后在图片上叠一层黑色半透明遮罩（透明度 0–1） */
+  function imgMaskHTML(s) {
+    var m = (s.img && s.img.mask) || {};
+    if (!m.on) return '';
+    var a = Math.max(0, Math.min(1, Number(m.opacity) || 0));
+    return '<span class="ed-imgmask" style="background:rgba(8,10,12,' + (Math.round(a * 100) / 100) + ')"></span>';
+  }
+
   /* ---------- 文案块（标题/副标题/简介/按钮） ---------- */
-  function btnHTML(s, extra) {
+  function btnHTML(s, extra, opts) {
     var b = s.text.button;
     if (!s.show.button || !b.on) return '';
+    opts = opts || {};
     var theme = b.theme || 'ghost';
     var lightBg = !isDark(s.container.bgOn ? s.container.bg : '#ffffff');
-    // 浅色容器上的描边/白色按钮会看不见，自动换成深色
-    if (lightBg && (theme === 'ghost' || theme === 'light')) theme = 'dark';
+    // 浅色容器上的描边/白色按钮会看不见，自动换成深色（浮在图片上时跳过）
+    if (!opts.onImage && lightBg && (theme === 'ghost' || theme === 'light')) theme = 'dark';
     var cls = 'ed-btn ed-btn--' + theme;
     var ic = b.icon === 'left' ? icon('arrow') : '';
     var icR = b.icon === 'right' ? icon('arrow') : '';
@@ -177,6 +186,7 @@
           ' style="' + imgStyle(s) + '" loading="lazy" decoding="async">' +
         '<span class="ed-scrim"></span>' +
         (s.video.on && s.video.mask ? '<span class="ed-mask"></span>' : '') +
+        imgMaskHTML(s) +
         (s.video.on && s.video.icon ? '<span class="ed-play"><i>' + icon('play') + '</i></span>' : '') +
         (hideText ? '' : textBlock(s, i)) +
       '</figure>' +
@@ -231,6 +241,7 @@
           'background:' + (s.img.bgOn ? s.img.bg : '#1b1f25') + '">' +
         '<img src="' + esc(it.img) + '" alt="' + esc(s.seo.alt ? s.seo.altText : '') + '"' +
           ' style="' + imgStyle(s) + ';width:100%;height:100%;object-fit:cover" loading="lazy" decoding="async">' +
+        imgMaskHTML(s) +
         (i === 0 ? '<span class="ed-scrim"></span>' + textBlock(s, i) : '') +
       '</li>';
     }).join('');
@@ -382,7 +393,7 @@
       var heroSrc = hero.url || hero.img || (items[0] && items[0].img) || '';
       /* 主图框固定 3:4（由 .m1__media 控制），图片 object-fit 填满，设置项不影响框大小 */
       heroHTML = '<img src="' + esc(heroSrc) + '" alt="' + esc(s.seo.alt && s.seo.altText ? s.seo.altText : '主视觉') + '"' +
-        ' style="object-fit:cover;width:100%;height:100%">';
+        ' style="object-fit:cover;width:100%;height:100%">' + imgMaskHTML(s);
     }
 
     return '<div class="ed-mod" style="' + containerStyle(s) + '">' +
@@ -431,7 +442,7 @@
             (s.show.intro && t.intro ? '<p class="m2__lede">' + esc(t.intro) + '</p>' : '') +
             list + btnHTML(s, 'm2__cta') +
           '</div>' +
-          '<figure class="m2__media"><img src="' + esc(s.items[0].img) + '" alt="' + esc(s.seo.alt ? s.seo.altText : '') + '"></figure>' +
+          '<figure class="m2__media"><img src="' + esc(s.items[0].img) + '" alt="' + esc(s.seo.alt ? s.seo.altText : '') + '">' + imgMaskHTML(s) + '</figure>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -449,15 +460,15 @@
       return '<li class="m3__app">' + icon(it.icon || 'sparkle') + '<span>' + esc(it.title) + '</span></li>';
     }).join('') + '</ul>';
     var cards = '<ul class="m3__cards">' + col2.slice(0, 2).map(function (it) {
-      return '<li class="m3__card"><figure><img src="' + esc(it.img) + '" alt=""></figure>' +
+      return '<li class="m3__card"><figure><img src="' + esc(it.img) + '" alt="">' + imgMaskHTML(s) + '</figure>' +
         '<h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></li>';
     }).join('') + '</ul>';
     var rows = '<ul class="m3__rows">' + col2.slice(0, 3).map(function (it) {
-      return '<li class="m3__row"><figure><img src="' + esc(it.img) + '" alt=""></figure>' +
+      return '<li class="m3__row"><figure><img src="' + esc(it.img) + '" alt="">' + imgMaskHTML(s) + '</figure>' +
         '<div><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div></li>';
     }).join('') + '</ul>';
     var tiles = '<ul class="m3__tiles">' + col2.slice(0, 4).map(function (it) {
-      return '<li class="m3__tile"><img src="' + esc(it.img) + '" alt=""><span>' + esc(it.title) + '</span></li>';
+      return '<li class="m3__tile"><img src="' + esc(it.img) + '" alt="">' + imgMaskHTML(s) + '<span>' + esc(it.title) + '</span></li>';
     }).join('') + '</ul>';
 
     var intro = '<div class="m3__intro">' +
@@ -471,7 +482,7 @@
     var inner;
     if (mode === 'b') {
       inner = '<div class="m3__grid">' + main +
-        '<figure class="m3__media"><img src="' + esc(media.img) + '" alt=""></figure>' +
+        '<figure class="m3__media"><img src="' + esc(media.img) + '" alt="">' + imgMaskHTML(s) + '</figure>' +
         '<div class="m3__aside"><ul class="m3__compact">' + col1.slice(0, 4).map(function (it) {
           return '<li>' + icon(it.icon || 'sparkle') + '<div><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div></li>';
         }).join('') + '</ul></div></div>';
@@ -494,9 +505,76 @@
     return '<div class="ed-mod" style="' + containerStyle(s) + '"><div class="m3 m3--' + mode + '">' + inner + '</div></div>';
   }
 
+  /* ---------- 结构5：轮播列表 ----------
+     每个轮播页 = 一张整幅背景图 + 标题文案 + 一组列表（列1）
+     列表样式：icon / num / check / row；文字位置：left / right / bg */
+  function renderM5(s) {
+    var mode = s.layout.mode;      // icon | num | check | row
+    var pos = s.layout.position;   // left | right | bg
+    var slides = s.items;
+    var n = Math.max(1, slides.length);
+    var page = Math.max(0, Math.min(s._page || 0, n - 1));
+
+    function m5Item(mode, it, i) {
+      var title = '<div class="m5__text"><h4>' + esc(it.title) + '</h4></div>';
+      if (mode === 'num') {
+        return '<li class="m5__item" data-sub="' + i + '"><span class="m5__num">0' + (i + 1) + '</span>' + title + '</li>';
+      }
+      if (mode === 'check') {
+        return '<li class="m5__item" data-sub="' + i + '">' + icon('check') + '<span>' + esc(it.title) + '</span></li>';
+      }
+      if (mode === 'row') {
+        return '<li class="m5__item" data-sub="' + i + '"><span class="m5__thumb"><img src="' + esc(it.img || '') +
+          '" alt=""></span>' + title + '</li>';
+      }
+      return '<li class="m5__item" data-sub="' + i + '"><span class="m5__icon">' + icon(it.icon || 'sparkle') +
+        '</span>' + title + '</li>';
+    }
+
+    var inner = slides.map(function (sl, i) {
+      var list = (sl.list1 || []).slice(0, 8);
+      var body = '<div class="m5__body">' +
+        (s.show.subtitle && sl.subtitle ? '<p class="m5__eyebrow">' + esc(sl.subtitle) + '</p>' : '') +
+        (s.show.title && sl.title ? '<h3 class="m5__title">' + esc(sl.title) + '</h3>' : '') +
+        (s.show.intro && sl.intro ? '<p class="m5__lede">' + esc(sl.intro) + '</p>' : '') +
+        '<ul class="m5__list" style="gap:' + dimVal(s, s.layout.gap || 12) + '">' +
+          list.map(function (it, j) { return m5Item(mode, it, j); }).join('') +
+        '</ul>' +
+        btnHTML(s, 'm5__cta', { onImage: true }) +
+      '</div>';
+      return '<li class="m5__slide" data-idx="' + i + '">' +
+        '<div class="m5__frame">' +
+          '<figure class="m5__media">' +
+            '<img src="' + esc(sl.img) + '" alt="' + esc(s.seo.alt && s.seo.altText ? s.seo.altText : '') + '"' +
+              (s.seo.titleAttr ? ' title="' + esc(s.seo.titleText) + '"' : '') +
+              ' style="' + imgStyle(s) + ';height:100%" loading="lazy" decoding="async">' +
+            imgMaskHTML(s) +
+          '</figure>' +
+          body +
+        '</div>' +
+      '</li>';
+    }).join('');
+
+    var track = '<div class="m5__viewport"><div class="m5__track"' +
+      ' style="transform:translateX(-' + (page * 100) + '%)">' + inner + '</div></div>';
+    var arrows = s.carousel.arrows
+      ? '<i class="m5__arrow m5__arrow--prev" data-m5="prev">' + icon('arrow', 'ed-flip') + '</i>' +
+        '<i class="m5__arrow m5__arrow--next" data-m5="next">' + icon('arrow') + '</i>'
+      : '';
+    var dots = s.carousel.dots
+      ? '<div class="m5__dots">' + slides.map(function (_, p) {
+          return '<i class="' + (p === page ? 'is-on' : '') + '" data-m5="goto" data-m5-goto="' + p + '"></i>';
+        }).join('') + '</div>'
+      : '';
+
+    return '<div class="ed-mod" style="' + containerStyle(s) + '">' +
+      '<div class="m5 m5--' + mode + ' m5--' + pos + '">' + track + arrows + dots + '</div>' +
+    '</div>';
+  }
+
   /* ---------- 对外 ---------- */
-  var LABELS = { m4: '复合列表', m1: '双排列表', m2: '单排列表', m3: '多排列表' };
-  var ICONS = { m4: 'grid', m1: 'layers', m2: 'image', m3: 'list' };
+  var LABELS = { m4: '复合列表', m1: '双排列表', m2: '单排列表', m3: '多排列表', m5: '轮播列表' };
+  var ICONS = { m4: 'grid', m1: 'layers', m2: 'image', m3: 'list', m5: 'carousel' };
 
   window.EdCanvas = {
     LABELS: LABELS,
@@ -505,6 +583,7 @@
       if (s.structure === 'm1') inner = renderM1(s);
       else if (s.structure === 'm2') inner = renderM2(s);
       else if (s.structure === 'm3') inner = renderM3(s);
+      else if (s.structure === 'm5') inner = renderM5(s);
       else inner = renderM4(s);
       return '<div class="ed-select" style="width:' + s.layout.width + '%">' +
         '<span class="ed-tag">' + icon(ICONS[s.structure] || 'grid') + LABELS[s.structure] + '</span>' +

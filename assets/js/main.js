@@ -4,8 +4,8 @@
 (function () {
   'use strict';
 
-  var DEFS = { m1: window.M1, m2: window.M2, m3: window.M3, m4: window.M4 };
-  var IDS = ['m1', 'm2', 'm3', 'm4'];
+  var DEFS = { m1: window.M1, m2: window.M2, m3: window.M3, m4: window.M4, m5: window.M5 };
+  var IDS = ['m1', 'm2', 'm3', 'm4', 'm5'];
   var state = {};
 
   function coerce(v) {

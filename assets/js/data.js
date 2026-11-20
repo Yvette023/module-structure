@@ -113,6 +113,70 @@
       media: U(IMG.detailA, 800, 1100)
     },
 
+    /* ---------- 结构5：轮播列表（轮播图组件内嵌列表） ----------
+       每个轮播页 = 一张整幅背景图 + 标题文案 + 一组列表（列1）
+       列表只保留 图标 + 标题（参考图：重点在图标） */
+    m5: {
+      slides: [
+        {
+          img: U(IMG.roomA, 1600, 1000),
+          eyebrow: 'SOFA COLLECTION',
+          title: 'Designed for the way you actually live',
+          lede: 'Modular seating that grows with your home — deep seats, solid oak and covers you can swap in minutes.',
+          list1: [
+            { icon: 'truck',    title: 'Free Delivery' },
+            { icon: 'cube',     title: 'Solid Oak' },
+            { icon: 'shield',   title: '5-Year Warranty' },
+            { icon: 'layers',   title: 'Modular Design' },
+            { icon: 'refresh',  title: 'Swap Covers' },
+            { icon: 'leaf',     title: 'Low-VOC Finish' }
+          ]
+        },
+        {
+          img: U(IMG.bedA, 1600, 1000),
+          eyebrow: 'BEDROOM',
+          title: 'Quiet mornings start here',
+          lede: 'Storage beds and slim bedside modules engineered for calm, dust-free rooms that stay tidy for years.',
+          list1: [
+            { icon: 'bed',      title: 'Storage Beds' },
+            { icon: 'leaf',     title: 'Low-VOC' },
+            { icon: 'shield',   title: '10-Year Warranty' },
+            { icon: 'pen',      title: 'In-House Design' },
+            { icon: 'sun',      title: 'Daylight Tones' },
+            { icon: 'truck',    title: 'Neutral Delivery' }
+          ]
+        },
+        {
+          img: U(IMG.kitchen, 1600, 1000),
+          eyebrow: 'DINING',
+          title: 'Tables that bring everyone together',
+          lede: 'Extending tops that seat four to twelve, built to host the long dinners worth remembering.',
+          list1: [
+            { icon: 'dining',   title: 'Extending Tops' },
+            { icon: 'cube',     title: 'Kiln-Dried Oak' },
+            { icon: 'grid',     title: 'Circular Materials' },
+            { icon: 'handshake',title: 'Craftsman Made' },
+            { icon: 'refresh',  title: '30-Day Trial' },
+            { icon: 'sparkle',  title: 'Easy Care' }
+          ]
+        },
+        {
+          img: U(IMG.officeA, 1600, 1000),
+          eyebrow: 'HOME OFFICE',
+          title: 'Workspaces that disappear after hours',
+          lede: 'Cable-managed desks and slim shelving that keep the workday tidy — and the evenings free.',
+          list1: [
+            { icon: 'desk',     title: 'Cable-Managed' },
+            { icon: 'pen',      title: 'In-House Design' },
+            { icon: 'shield',   title: '5-Year Warranty' },
+            { icon: 'leaf',     title: 'Low-VOC Finish' },
+            { icon: 'truck',    title: 'White-Glove' },
+            { icon: 'refresh',  title: '30-Day Trial' }
+          ]
+        }
+      ]
+    },
+
     /* ---------- 结构4：复合图片列表 ---------- */
     m4: {
       gallery: [
@@ -127,4 +191,14 @@
       ]
     }
   };
+
+  /* 结构5：给列表项补一张小图（「图文行」样式用） */
+  (function () {
+    var pool = ['livingC', 'livingD', 'bedC', 'detailB', 'roomB', 'roomC', 'roomD', 'officeB'];
+    window.DATA.m5.slides.forEach(function (sl, si) {
+      sl.list1.forEach(function (it, i) {
+        it.img = U(IMG[pool[(si * 2 + i) % pool.length]], 640, 440);
+      });
+    });
+  })();
 })();

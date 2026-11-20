@@ -524,15 +524,26 @@
     }
 
     var bodyCls = 'm5__body is-align-' + hAlign + ' is-valign-' + vAlign + ' is-text-' + textAlign;
-    var bodyStyle = '--m5-w:' + widthPct + '%;';
+    var gapVal = dimVal(s, s.layout.gap != null ? s.layout.gap : 14);
+    var bodyStyle = '--m5-w:' + widthPct + '%;--m5-gap:' + gapVal + ';gap:' + gapVal + ';';
+
+    var grads = (window.DATA && window.DATA.m5Gradients) || [
+      'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000"><defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23e8edf5"/><stop offset="50%" stop-color="%23eff3f8"/><stop offset="100%" stop-color="%23f6f3eb"/></linearGradient></defs><rect width="1600" height="1000" fill="url(%23g1)"/></svg>',
+      'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000"><defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23f7f2ed"/><stop offset="50%" stop-color="%23f2eae1"/><stop offset="100%" stop-color="%23ebe5dc"/></linearGradient></defs><rect width="1600" height="1000" fill="url(%23g2)"/></svg>',
+      'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000"><defs><linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23edf4ef"/><stop offset="50%" stop-color="%23e6ede8"/><stop offset="100%" stop-color="%23dde8df"/></linearGradient></defs><rect width="1600" height="1000" fill="url(%23g3)"/></svg>'
+    ];
 
     var inner = slides.map(function (sl, i) {
       var list = (sl.list1 || []).slice(0, 8);
+      var imgSrc = sl.img;
+      if (!imgSrc || imgSrc.indexOf('unsplash.com') !== -1) {
+        imgSrc = grads[i % grads.length];
+      }
       var body = '<div class="' + bodyCls + '" style="' + bodyStyle + '">' +
         (s.show.subtitle && sl.subtitle ? '<p class="m5__eyebrow">' + esc(sl.subtitle) + '</p>' : '') +
         (s.show.title && sl.title ? '<h3 class="m5__title">' + esc(sl.title) + '</h3>' : '') +
         (s.show.intro && sl.intro ? '<p class="m5__lede">' + esc(sl.intro) + '</p>' : '') +
-        '<ul class="m5__list" style="gap:' + dimVal(s, s.layout.gap || 12) + '">' +
+        '<ul class="m5__list" style="gap:' + gapVal + '">' +
           list.map(function (it, j) { return m5Item(it, j); }).join('') +
         '</ul>' +
         btnHTML(s, 'm5__cta', { onImage: true }) +
@@ -540,7 +551,7 @@
       return '<li class="m5__slide" data-idx="' + i + '">' +
         '<div class="m5__frame">' +
           '<figure class="m5__media">' +
-            '<img src="' + esc(sl.img) + '" alt="' + esc(s.seo.alt && s.seo.altText ? s.seo.altText : '') + '"' +
+            '<img src="' + esc(imgSrc) + '" alt="' + esc(s.seo.alt && s.seo.altText ? s.seo.altText : '') + '"' +
               (s.seo.titleAttr ? ' title="' + esc(s.seo.titleText) + '"' : '') +
               ' style="' + imgStyle(s) + ';height:100%" loading="lazy" decoding="async">' +
             imgMaskHTML(s) +

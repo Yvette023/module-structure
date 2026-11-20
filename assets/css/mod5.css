@@ -58,7 +58,7 @@
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--m5-gap, 14px);
   width: var(--m5-w, 54%);
   max-width: 100%;
   padding: clamp(28px, 3.5vw, 56px);
@@ -133,16 +133,16 @@
   line-height: 1.18;
   color: #111418;
   max-width: 22ch;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
+  text-shadow: none;
 }
 .m5__lede {
   font-size: 14px;
   line-height: 1.6;
   color: #4b5563;
   max-width: 48ch;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+  text-shadow: none;
 }
-.m5__cta { margin-top: 6px; align-self: flex-start; }
+.m5__cta { margin-top: 0; align-self: flex-start; }
 
 .m5 .btn.m5__cta {
   background: #111418;
@@ -157,8 +157,8 @@
 .m5__list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 4px;
+  gap: var(--m5-gap, 12px);
+  margin-top: 0;
 }
 .m5__item {
   display: flex;
@@ -168,11 +168,9 @@
   gap: 8px;
   padding: 14px 8px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, .88);
+  background: #ffffff;
   border: 1px solid rgba(0, 0, 0, .08);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, .05);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .04);
   box-sizing: border-box;
 }
 .m5__icon {
@@ -191,25 +189,26 @@
   text-align: center;
 }
 
-/* 图标列表：图标方块 + 标题（参考图样式） */
+/* 图标列表：图标方块 + 标题（纯净白底，无毛玻璃） */
 .m5--icon .m5__item {
   flex-direction: column;
   justify-content: center;
-  gap: 9px;
-  padding: 16px 8px;
-  border: 1px solid rgba(255, 255, 255, .22);
+  gap: 8px;
+  padding: 14px 8px;
+  border: 1px solid rgba(0, 0, 0, .08);
   border-radius: 10px;
-  background: rgba(255, 255, 255, .03);
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .04);
 }
 .m5--icon .m5__icon {
   width: 30px;
   height: 30px;
   display: grid;
   place-items: center;
-  color: #fff;
+  color: #111418;
 }
-.m5--icon .m5__icon .ic { width: 26px; height: 26px; }
-.m5--icon .m5__text h4 { text-align: center; }
+.m5--icon .m5__icon .ic { width: 22px; height: 22px; }
+.m5--icon .m5__text h4 { text-align: center; color: #111418; }
 
 /* 编号列表 */
 .m5--num .m5__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }

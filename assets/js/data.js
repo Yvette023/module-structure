@@ -37,7 +37,14 @@
     detailD: 'photo-1526057565006-20beab8dd2ed'
   };
 
+  var M5_GRADIENTS = [
+    'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000"><defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23e8edf5"/><stop offset="50%" stop-color="%23eff3f8"/><stop offset="100%" stop-color="%23f6f3eb"/></linearGradient></defs><rect width="1600" height="1000" fill="url(%23g1)"/></svg>',
+    'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000"><defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23f7f2ed"/><stop offset="50%" stop-color="%23f2eae1"/><stop offset="100%" stop-color="%23ebe5dc"/></linearGradient></defs><rect width="1600" height="1000" fill="url(%23g2)"/></svg>',
+    'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000"><defs><linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23edf4ef"/><stop offset="50%" stop-color="%23e6ede8"/><stop offset="100%" stop-color="%23dde8df"/></linearGradient></defs><rect width="1600" height="1000" fill="url(%23g3)"/></svg>'
+  ];
+
   window.DATA = {
+    m5Gradients: M5_GRADIENTS,
     U: U,
     IMG: IMG,
 
@@ -119,7 +126,7 @@
     m5: {
       slides: [
         {
-          img: U(IMG.roomA, 1600, 1000),
+          img: M5_GRADIENTS[0],
           eyebrow: 'SOFA COLLECTION',
           title: 'Designed for the way you actually live',
           lede: 'Modular seating that grows with your home — deep seats, solid oak and covers you can swap in minutes.',
@@ -133,7 +140,7 @@
           ]
         },
         {
-          img: U(IMG.bedA, 1600, 1000),
+          img: M5_GRADIENTS[1],
           eyebrow: 'BEDROOM',
           title: 'Quiet mornings start here',
           lede: 'Storage beds and slim bedside modules engineered for calm, dust-free rooms that stay tidy for years.',
@@ -147,7 +154,7 @@
           ]
         },
         {
-          img: U(IMG.kitchen, 1600, 1000),
+          img: M5_GRADIENTS[2],
           eyebrow: 'DINING',
           title: 'Tables that bring everyone together',
           lede: 'Extending tops that seat four to twelve, built to host the long dinners worth remembering.',

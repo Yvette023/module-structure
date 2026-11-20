@@ -325,13 +325,13 @@
       ];
     }
     var groups = split(items);
-    var vert = (s.layout.imgText === 'tb' || s.layout.imgText === 'bt');
+    var vert = (window.ED && window.ED.isVert ? window.ED.isVert(s) : (s.layout.imgText === 'tb' || s.layout.imgText === 'bt'));
     /* 竖向：图文对齐 = 图标 + 文字一起左中右（textAlign 跟随 imgAlignX）；横向：文案不动 */
     var textAlign = vert ? (s.layout.imgAlignX || 'center') : (s.layout.textAlign || 'left');
     var taCls = 'm1__ta-' + textAlign;
     var it = s.layout.imgText || 'tb';
     /* 横向布局（lr/rl/inner/outer）：列表项内 图标:文字 宽度比例 */
-    var horiz = it === 'lr' || it === 'rl' || it === 'inner' || it === 'outer';
+    var horiz = (window.ED && window.ED.isHoriz ? window.ED.isHoriz(s) : (it === 'lr' || it === 'rl' || it === 'inner' || it === 'outer'));
     var iconFlex = horiz ? 'flex:' + (s.layout.iconRatio || 1) + ' 1 0%;' : '';
     var textFlex = horiz ? 'flex:' + (s.layout.textRatio || 3) + ' 1 0%;' : '';
     function list(arr, listStyle) {

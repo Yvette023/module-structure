@@ -983,6 +983,24 @@ body.ed {
 .fseg button[data-value="start"], .fseg button[data-value="center"], .fseg button[data-value="end"],
 .fseg button[data-value="left"], .fseg button[data-value="right"] { min-width: 40px; }
 .fseg--wide { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; width: 100%; }
+.fseg-pair {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.fseg-pair .fseg {
+  flex: 1 1 50%;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  min-width: 0;
+}
+.fseg-pair .fseg button {
+  min-width: 0;
+  padding: 0 4px;
+}
 
 /* 开关 */
 .fsw {

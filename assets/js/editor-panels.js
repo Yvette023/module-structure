@@ -174,13 +174,23 @@
     var body;
 
     if (s.structure === 'm5') {
-      /* 轮播列表：整幅海报轮播，内容容器支持水平容器对齐、上下对齐、文案对齐、宽度与列表间距 */
-      body = row(label('容器对齐')) + seg('layout.align', s.layout.align || 'start', [
-        { v: 'start', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'end', icon: 'alignRight' }
-      ], 'fseg--wide');
-      body += row(label('上下对齐')) + seg('layout.valign', s.layout.valign || 'center', [
-        { v: 'start', l: '居上' }, { v: 'center', l: '居中' }, { v: 'end', l: '居下' }
-      ], 'fseg--wide');
+      /* 轮播列表：整幅海报轮播，容器对齐（水平3项+垂直3项合并）、文案对齐、宽度与列表间距 */
+      var m5HAlign = s.layout.align || 'start';
+      var m5VAlign = s.layout.valign || 'center';
+      body = row(label('容器对齐') +
+        '<div class="fseg-pair">' +
+          seg('layout.align', m5HAlign, [
+            { v: 'start', icon: 'alignBoxLeft' },
+            { v: 'center', icon: 'alignBoxCenter' },
+            { v: 'end', icon: 'alignBoxRight' }
+          ]) +
+          seg('layout.valign', m5VAlign, [
+            { v: 'start', icon: 'alignBoxTop' },
+            { v: 'center', icon: 'alignBoxMiddle' },
+            { v: 'end', icon: 'alignBoxBottom' }
+          ]) +
+        '</div>'
+      );
       body += row(label('文案对齐')) + seg('layout.textAlign', s.layout.textAlign || 'left', [
         { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
       ], 'fseg--wide');
@@ -217,18 +227,34 @@
       body += row(label('图文位置') + sw('layout.reverse', s.layout.reverse));
     }
     if (s.structure === 'm1') {
-      /* 双排列表：竖向 = 「图文对齐」(图标+文字 一起左中右)；横向 = 「图片对齐」(图标 上中下，文案不动) */
+      /* 双排列表：竖向 = 「容器对齐」(图文左中右 + 上下对齐合并)；横向 = 「图片对齐」+「文案对齐」+「上下对齐」 */
       var vert = isVert(s);
       if (vert) {
-        body += row(label('图文对齐')) + seg('layout.imgAlignX', s.layout.imgAlignX, [
-          { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
-        ], 'fseg--wide');
+        var m1HAlign = s.layout.imgAlignX || 'center';
+        var m1VAlign = s.layout.valign || 'center';
+        body += row(label('容器对齐') +
+          '<div class="fseg-pair">' +
+            seg('layout.imgAlignX', m1HAlign, [
+              { v: 'left', icon: 'alignBoxLeft' },
+              { v: 'center', icon: 'alignBoxCenter' },
+              { v: 'right', icon: 'alignBoxRight' }
+            ]) +
+            seg('layout.valign', m1VAlign, [
+              { v: 'top', icon: 'alignBoxTop' },
+              { v: 'center', icon: 'alignBoxMiddle' },
+              { v: 'bottom', icon: 'alignBoxBottom' }
+            ]) +
+          '</div>'
+        );
       } else {
         body += row(label('图片对齐')) + seg('layout.imgAlignY', s.layout.imgAlignY, [
           { v: 'top', l: '上' }, { v: 'center', l: '中' }, { v: 'bottom', l: '下' }
         ], 'fseg--wide');
         body += row(label('文案对齐')) + seg('layout.textAlign', s.layout.textAlign, [
           { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
+        ], 'fseg--wide');
+        body += row(label('上下对齐')) + seg('layout.valign', s.layout.valign, [
+          { v: 'top', icon: 'alignBoxTop' }, { v: 'center', icon: 'alignBoxMiddle' }, { v: 'bottom', icon: 'alignBoxBottom' }
         ], 'fseg--wide');
       }
     } else {
@@ -243,9 +269,6 @@
     }
     if (s.structure === 'm1') {
       /* 双排列表：无宽度；列中间距 + 图文比例 = 主内容 vs 列表项 */
-      body += row(label('上下对齐')) + seg('layout.valign', s.layout.valign, [
-        { v: 'top', l: '上' }, { v: 'center', l: '中' }, { v: 'bottom', l: '下' }
-      ], 'fseg--wide');
       body += dimCtl({ label: '列中间距', field: 'layout.gap', modeBind: 'layout.gapMode', type: 'gap', min: 0, max: 80 });
       body += '<div class="frow" style="margin-top:14px"><span class="flabel" style="font-weight:600;color:#1f2328">图文比例</span></div>';
       body += row(label('主内容') + range('layout.mainRatio', s.layout.mainRatio, 1, 12, 1, ''));

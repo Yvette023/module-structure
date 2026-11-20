@@ -431,7 +431,7 @@ body.ed {
   width: 100%;
   height: 100%;
   min-height: 240px;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 3 / 4;
   overflow: hidden;
   border-radius: inherit;
   background:
@@ -517,6 +517,93 @@ body.ed {
 .ed-mod .m1__ta-right p { margin-left: auto; margin-right: 0; }
 .ed-mod .m1__ta-center { text-align: center; }
 
+/* ---------- 结构1 主图框固定 3:4（图片/对比图/地图一致，设置项不影响宽高） ---------- */
+.ed-mod .m1__media {
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  /* 图片为基准：不随行高拉伸，保持 3:4 */
+  align-self: flex-start;
+}
+.ed-mod .m1__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 左右列表列：高度 = 图片高度（图片为基准），列表内容按「上下对齐」垂直对齐 */
+.ed-mod .m1--a .m1__col {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  overflow: hidden;
+}
+.ed-mod .m1--a .m1__list {
+  height: 100%;
+  justify-content: center;
+  overflow: hidden;
+}
+/* 压缩画布内列表项，使默认 3 项/侧能放入图片高度，上下对齐才有生效空间 */
+.ed-mod .m1--a .m1__item { min-height: 0; }
+.ed-mod .m1--a .m1__icon { width: 40px; height: 40px; margin-bottom: 8px; }
+.ed-mod .m1--a .m1__icon .ic { width: 19px; height: 19px; }
+.ed-mod .m1--a .m1__text h3 { font-size: 15px; line-height: 1.3; }
+.ed-mod .m1--a .m1__text p { font-size: 12px; line-height: 1.45; margin-top: 4px; }
+
+/* ---------- 结构1 对比图（before/after 滑块） ---------- */
+.ed-mod .m1__compare {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--sand-deep);
+}
+.ed-mod .m1__compare-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ed-mod .m1__compare-img--top {
+  clip-path: inset(0 0 0 50%);
+}
+.ed-mod .m1__compare-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  background: #fff;
+  box-shadow: 0 0 6px rgba(0, 0, 0, .35);
+  pointer-events: none;
+}
+.ed-mod .m1__compare-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4b5260;
+  cursor: ew-resize;
+  user-select: none;
+}
+.ed-mod .m1__compare-handle .ic {
+  width: 16px;
+  height: 16px;
+}
+
 /* ---------- 双排列表 图文布局（图标相对文字的位置；主图始终居中，左右列表在两侧） ---------- */
 /* tb（上图下文）：默认双列均布，图标在上、文字居中（无需额外规则） */
 /* bt（下图上文）：图标移到文字下方 */
@@ -534,8 +621,11 @@ body.ed {
   aspect-ratio: 1 / 1;
   min-width: 30px;
   max-width: 60px;
-  align-self: center;
 }
+/* 横向布局的上下对齐（必须在上面之后，才能覆盖默认居中） */
+.ed-mod .m1--imgy-top .m1__icon { align-self: flex-start; }
+.ed-mod .m1--imgy-center .m1__icon { align-self: center; }
+.ed-mod .m1--imgy-bottom .m1__icon { align-self: flex-end; }
 /* lr（左图右文）：图标在文字左边 */
 .ed-mod .m1--it-lr .m1__item {
   display: flex; flex-direction: row; align-items: flex-start; gap: 14px; text-align: left;

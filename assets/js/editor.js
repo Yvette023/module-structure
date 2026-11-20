@@ -78,7 +78,7 @@
         textAlign: 'left',
         reverse: false,
         width: 100,
-        gap: 8, gapMode: 'uni', gapX: 8, gapY: 8,
+        gap: 40, gapMode: 'uni', gapX: 40, gapY: 40,
         textBg: {
           on: false, color: '#000000b3',
           radius: 8, radiusMode: 'uni', radiusTl: 8, radiusTr: 8, radiusBr: 8, radiusBl: 8,
@@ -100,7 +100,7 @@
         shadow: { on: false, x: 0, y: 20, blur: 50, spread: -24 }
       },
       img: {
-        ratio: '4:3', effect: 'none', align: 'center',
+        ratio: '3:4', effect: 'none', align: 'center',
         radius: 0, radiusMode: 'uni', radiusTl: 0, radiusTr: 0, radiusBr: 0, radiusBl: 0,
         pad: 0, padMode: 'uni', padT: 0, padR: 0, padB: 0, padL: 0,
         bgOn: false, bg: '#22262e', borderOn: false, border: '#2a2f38'
@@ -109,7 +109,7 @@
       carousel: { on: false, loop: true, arrows: false, dots: true, interval: 5000 },
       seo: { alt: true, altText: 'Successful Cases', titleAttr: true, titleText: 'Successful Cases' },
       motion: { type: 'none', duration: 600, delay: 0 },
-      /* 主图（结构1 中间图）：可换图片 / 换地图 */
+      /* 主图（结构1 中间图）：图片 / 地图 / 对比图 */
       hero: {
         type: 'image',
         img: D.m1.media,
@@ -117,7 +117,12 @@
         address: 'https://j.map.baidu.com/fb/Xsx',
         zoom: 14,
         w: 100,
-        h: 600
+        h: 600,
+        compare: {
+          active: 1,
+          img1: { src: D.m1.media, url: '', ratio: '3:4', effect: 'none' },
+          img2: { src: D.m4.gallery[1].img, url: '', ratio: '3:4', effect: 'none' }
+        }
       },
       preset: '',
       _page: 0
@@ -388,10 +393,27 @@
     var type = h.type || 'image';
     var body = row(label('显示类型')) + select('hero.type', type, [
       { v: 'image', l: '图片' },
+      { v: 'compare', l: '对比图' },
       { v: 'map', l: '地图' }
     ]);
 
-    if (type === 'map') {
+    if (type === 'compare') {
+      var cmp = h.compare || {};
+      var act = cmp.active || 1;
+      var cur = cmp['img' + act] || {};
+      var src = cur.url || cur.src || '';
+      body += '<div class="ed-coltab">' +
+        '<button type="button" data-act="cmp-tab" data-value="1"' + (act === 1 ? ' class="is-on"' : '') + '>图 1</button>' +
+        '<button type="button" data-act="cmp-tab" data-value="2"' + (act === 2 ? ' class="is-on"' : '') + '>图 2</button>' +
+      '</div>';
+      body += '<button type="button" class="hero-thumb" data-act="hero-modal" title="替换图片">' +
+          '<img src="' + esc(src) + '" alt="">' +
+          '<span class="hero-thumb__hint">替换图片</span>' +
+        '</button>';
+      body += imgPanel({ main: true, bind: 'hero.compare.img' + act });
+      body += heroStyleSection();
+      body += heroLinkSection();
+    } else if (type === 'map') {
       body += '<div class="hero-map-block">' +
           '<div class="hero-preview hero-preview--map">' +
             '<span class="hero-preview__pin"></span>' +
@@ -424,13 +446,22 @@
     return body;
   }
 
-  /* 主图弹层：图库 + 外链 */
-  function renderHeroModal() {
+  /* 主图弹层：图库 + 外链（支持对比图，操作当前激活的图） */
+  function heroImgTarget() {
     var h = state.hero || {};
+    if (h.type === 'compare') {
+      var act = (h.compare && h.compare.active) || 1;
+      return { srcPath: 'hero.compare.img' + act + '.src', urlPath: 'hero.compare.img' + act + '.url', obj: h.compare['img' + act] };
+    }
+    return { srcPath: 'hero.img', urlPath: 'hero.url', obj: h };
+  }
+  function renderHeroModal() {
+    var t = heroImgTarget();
+    var h = t.obj || {};
     var gallery = document.getElementById('heroGallery');
     if (gallery) {
       gallery.innerHTML = D.m4.gallery.map(function (g) {
-        var on = !h.url && h.img === g.img;
+        var on = !h.url && h.src === g.img;
         return '<button type="button" class="hero-pick__item' + (on ? ' is-on' : '') +
           '" data-act="hero-pick" data-src="' + esc(g.img) + '" title="使用这张图片">' +
           '<img src="' + esc(g.img) + '" alt=""></button>';
@@ -669,27 +700,28 @@
 
   function imgPanel(opts) {
     opts = opts || {};
-    var g = state.img;
-    var body = row(label('图片比例')) + select('img.ratio', g.ratio, [
+    var bind = opts.bind || 'img';
+    var g = getPath(bind) || state.img;
+    var body = row(label('图片比例')) + select(bind + '.ratio', g.ratio, [
       { v: 'none', l: '无（跟随原图）' },
       { v: '1:1', l: '1 : 1' }, { v: '4:3', l: '4 : 3' },
       { v: '16:9', l: '16 : 9' }, { v: '3:4', l: '3 : 4' }
     ]) +
-      row(label('图片效果')) + select('img.effect', g.effect, [
+      row(label('图片效果')) + select(bind + '.effect', g.effect, [
         { v: 'none', l: '原图' }, { v: 'gray', l: '黑白' },
         { v: 'blur', l: '柔化' }, { v: 'zoom', l: '放大裁切' }
       ]) +
       (opts.main ? '' :
-        row(label('图片背景') + sw('img.bgOn', g.bgOn)) +
-        (g.bgOn ? row(label('颜色') + color('img.bg', g.bg)) : '') +
-        row(label('图片描边') + sw('img.borderOn', g.borderOn)) +
-        (g.borderOn ? row(label('颜色') + color('img.border', g.border)) : '') +
-        dimCtl({ label: '圆角', field: 'img.radius', modeBind: 'img.radiusMode', type: 'corner', min: 0, max: 48 }) +
+        row(label('图片背景') + sw(bind + '.bgOn', g.bgOn)) +
+        (g.bgOn ? row(label('颜色') + color(bind + '.bg', g.bg)) : '') +
+        row(label('图片描边') + sw(bind + '.borderOn', g.borderOn)) +
+        (g.borderOn ? row(label('颜色') + color(bind + '.border', g.border)) : '') +
+        dimCtl({ label: '圆角', field: bind + '.radius', modeBind: bind + '.radiusMode', type: 'corner', min: 0, max: 48 }) +
         (opts.noAlign ? '' :
-          row(label('图片对齐')) + seg('img.align', g.align, [
+          row(label('图片对齐')) + seg(bind + '.align', g.align, [
             { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
           ], 'fseg--wide')) +
-        dimCtl({ label: '内边距', field: 'img.pad', modeBind: 'img.padMode', type: 'box', min: 0, max: 40 }));
+        dimCtl({ label: '内边距', field: bind + '.pad', modeBind: bind + '.padMode', type: 'box', min: 0, max: 40 }));
     return body;
   }
 
@@ -973,6 +1005,11 @@
         document.getElementById('heroModal').classList.add('is-on');
         return;
       }
+      if (act === 'cmp-tab') {
+        setPath('hero.compare.active', Number(el.dataset.value));
+        renderAll();
+        return;
+      }
       if (act === 'm1-tab') {
         ui.m1tab = el.dataset.value;
         renderPanel();
@@ -1045,6 +1082,52 @@
       ui.tab = 'design';
       renderPanel();
     });
+
+    /* 对比图 before/after 滑块拖动 */
+    var dragCmp = null;
+    function setCmpPos(cmp, ratio) {
+      ratio = Math.max(0, Math.min(1, ratio));
+      var pct = (ratio * 100).toFixed(2) + '%';
+      var top = cmp.querySelector('.m1__compare-img--top');
+      var line = cmp.querySelector('.m1__compare-line');
+      var handle = cmp.querySelector('.m1__compare-handle');
+      if (top) top.style.clipPath = 'inset(0 0 0 ' + pct + ')';
+      if (line) line.style.left = pct;
+      if (handle) handle.style.left = pct;
+    }
+    canvasEl.addEventListener('mousedown', function (e) {
+      var handle = e.target.closest('.m1__compare-handle');
+      if (!handle) return;
+      var cmp = handle.closest('.m1__compare');
+      e.preventDefault();
+      dragCmp = cmp;
+      var rect = cmp.getBoundingClientRect();
+      var ratio = (e.clientX - rect.left) / rect.width;
+      setCmpPos(cmp, ratio);
+    });
+    canvasEl.addEventListener('touchstart', function (e) {
+      var handle = e.target.closest('.m1__compare-handle');
+      if (!handle) return;
+      var cmp = handle.closest('.m1__compare');
+      dragCmp = cmp;
+      var t = e.touches[0];
+      var rect = cmp.getBoundingClientRect();
+      var ratio = (t.clientX - rect.left) / rect.width;
+      setCmpPos(cmp, ratio);
+    }, { passive: true });
+    document.addEventListener('mousemove', function (e) {
+      if (!dragCmp) return;
+      var rect = dragCmp.getBoundingClientRect();
+      setCmpPos(dragCmp, (e.clientX - rect.left) / rect.width);
+    });
+    document.addEventListener('touchmove', function (e) {
+      if (!dragCmp) return;
+      var t = e.touches[0];
+      var rect = dragCmp.getBoundingClientRect();
+      setCmpPos(dragCmp, (t.clientX - rect.left) / rect.width);
+    }, { passive: true });
+    document.addEventListener('mouseup', function () { dragCmp = null; });
+    document.addEventListener('touchend', function () { dragCmp = null; });
   }
 
   /* ================= 轮播自动播放 ================= */
@@ -1136,15 +1219,17 @@
         return;
       }
       if (act === 'hero-pick') {
-        setPath('hero.img', el.dataset.src);
-        setPath('hero.url', '');
+        var tgt = heroImgTarget();
+        setPath(tgt.srcPath, el.dataset.src);
+        setPath(tgt.urlPath, '');
         heroModal.classList.remove('is-on');
         renderAll();
         return;
       }
       if (act === 'hero-url') {
+        var tgt2 = heroImgTarget();
         var v = document.getElementById('heroUrlInput').value.trim();
-        setPath('hero.url', v);
+        setPath(tgt2.urlPath, v);
         heroModal.classList.remove('is-on');
         renderAll();
         return;

@@ -350,13 +350,14 @@
       rowGap = dimVal(s, s.layout.gap || 0);
       columnGap = dimVal(s, s.layout.gap || 0);
     }
-    var alignMap = { top: 'start', center: 'center', bottom: 'end' };
+    /* 三列同高（stretch），图片列保持 3:4 为基准，列表内容按 valign 对齐 */
     var gridStyle = 'grid-template-columns:minmax(0,' + listRatio + 'fr) minmax(0,' + mainRatio + 'fr) minmax(0,' + listRatio + 'fr);' +
-      'column-gap:' + columnGap + ';align-items:' + (alignMap[s.layout.valign] || 'center');
-    /* 行间距：覆盖 .m1--a 的 space-between，让 item 间固定间距 */
-    var listStyle = 'gap:' + rowGap + ';justify-content:flex-start';
+      'column-gap:' + columnGap + ';align-items:stretch';
+    /* 行间距：列表项 gap；垂直对齐 = 列表内容基于图片（图片为基准） */
+    var valignMap2 = { top: 'flex-start', center: 'center', bottom: 'flex-end' };
+    var listStyle = 'gap:' + rowGap + ';justify-content:' + (valignMap2[s.layout.valign] || 'center');
 
-    /* 主图：图片 / 地图 */
+    /* 主图：图片 / 对比图 / 地图（比例统一 3:4） */
     var hero = s.hero || {};
     var heroHTML;
     if (hero.type === 'map') {
@@ -365,9 +366,23 @@
         '<span class="m1__map-pin"></span>' +
         '<span class="m1__map-zoom">Z' + (hero.zoom || 14) + '</span>' +
       '</div>';
+    } else if (hero.type === 'compare') {
+      var cmp = hero.compare || {};
+      var i1 = cmp.img1 || {}, i2 = cmp.img2 || {};
+      var src1 = i1.url || i1.src || '';
+      var src2 = i2.url || i2.src || '';
+      /* before/after 对比滑块：底层图1 + 上层图2（clip 裁剪）+ 中间拖动条 */
+      heroHTML = '<div class="m1__compare" data-cmp>' +
+        '<img class="m1__compare-img m1__compare-img--base" src="' + esc(src1) + '" alt="图1">' +
+        '<img class="m1__compare-img m1__compare-img--top" src="' + esc(src2) + '" alt="图2">' +
+        '<span class="m1__compare-line"></span>' +
+        '<span class="m1__compare-handle">' + icon('arrow') + '</span>' +
+      '</div>';
     } else {
       var heroSrc = hero.url || hero.img || (items[0] && items[0].img) || '';
-      heroHTML = '<img src="' + esc(heroSrc) + '" alt="' + esc(s.seo.alt && s.seo.altText ? s.seo.altText : '主视觉') + '">';
+      /* 主图框固定 3:4（由 .m1__media 控制），图片 object-fit 填满，设置项不影响框大小 */
+      heroHTML = '<img src="' + esc(heroSrc) + '" alt="' + esc(s.seo.alt && s.seo.altText ? s.seo.altText : '主视觉') + '"' +
+        ' style="object-fit:cover;width:100%;height:100%">';
     }
 
     return '<div class="ed-mod" style="' + containerStyle(s) + '">' +

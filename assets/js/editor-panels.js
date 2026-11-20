@@ -235,16 +235,13 @@
       body += row(label('图文位置') + sw('layout.reverse', s.layout.reverse));
     }
     if (s.structure === 'm1') {
-      /* 双排列表：竖向 = 「图文对齐」(图标+文字 一起左中右)；横向 = 「图片对齐」(图标 上中下) + 「文案对齐」(左中右) */
+      /* 双排列表：竖向 = 「图文对齐」(左中右)；横向（左图右文/右图左文/图片靠内/图片靠外） = 「文案对齐」(左中右) */
       var vert = isVert(s);
       if (vert) {
         body += row(label('图文对齐')) + seg('layout.imgAlignX', s.layout.imgAlignX, [
           { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
         ], 'fseg--wide');
       } else {
-        body += row(label('图片对齐')) + seg('layout.imgAlignY', s.layout.imgAlignY, [
-          { v: 'top', l: '上' }, { v: 'center', l: '中' }, { v: 'bottom', l: '下' }
-        ], 'fseg--wide');
         body += row(label('文案对齐')) + seg('layout.textAlign', s.layout.textAlign, [
           { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
         ], 'fseg--wide');

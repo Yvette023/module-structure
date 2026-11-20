@@ -102,17 +102,17 @@
     alignRight:
       '<path d="M3.6 6h16.8M9.6 12h10.8M6 18h14.4"/>',
     alignBoxLeft:
-      '<path d="M4 4.5v15M8 9.5h11M8 14.5h7"/>',
+      '<path d="M4.5 4.5v15M8.5 10.5h8M8.5 14.5h8"/>',
     alignBoxCenter:
-      '<path d="M12 4.5v15M6.5 9.5h11M7.5 14.5h9"/>',
+      '<path d="M12 4.5v15M7.5 10.5h9M7.5 14.5h9"/>',
     alignBoxRight:
-      '<path d="M20 4.5v15M5 9.5h11M9 14.5h7"/>',
+      '<path d="M19.5 4.5v15M7.5 10.5h8M7.5 14.5h8"/>',
     alignBoxTop:
-      '<path d="M4.5 4h15M9.5 8v11M14.5 8v7"/>',
+      '<path d="M4.5 4.5h15M9.5 8.5v7M14.5 8.5v4"/>',
     alignBoxMiddle:
-      '<path d="M4.5 12h15M9.5 6.5v11M14.5 7.5v9"/>',
+      '<path d="M4.5 12h15M9.5 7.5v9M14.5 7.5v9"/>',
     alignBoxBottom:
-      '<path d="M4.5 20h15M9.5 5v11M14.5 9v7"/>',
+      '<path d="M4.5 19.5h15M9.5 11.5v4M14.5 8.5v7"/>',
     chevron:
       '<path d="m6.4 9.6 5.6 5.4 5.6-5.4"/>',
     play:

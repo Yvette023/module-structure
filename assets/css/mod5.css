@@ -30,11 +30,15 @@
 .m5__frame {
   position: relative;
   height: clamp(440px, 44vw, 600px);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
 }
 .m5__media {
-  position: absolute;
-  inset: 0;
-  background: #14161a;
+  grid-area: 1 / 1;
+  position: relative;
+  background: #f6f8fa;
+  overflow: hidden;
 }
 .m5__media img {
   width: 100%;
@@ -43,95 +47,148 @@
   display: block;
 }
 
-/* 简单可读性蒙层：文字居左 / 居右 / 居中 */
+/* 默认不启用渐变蒙层，保持画面通透纯净 */
 .m5__frame::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: linear-gradient(100deg, rgba(8, 10, 12, .78) 0%, rgba(8, 10, 12, .46) 42%, rgba(8, 10, 12, .1) 72%);
-}
-.m5--right .m5__frame::after {
-  background: linear-gradient(260deg, rgba(8, 10, 12, .78) 0%, rgba(8, 10, 12, .46) 42%, rgba(8, 10, 12, .1) 72%);
-}
-.m5--bg .m5__frame::after {
-  background: radial-gradient(130% 130% at 50% 50%, rgba(8, 10, 12, .62) 0%, rgba(8, 10, 12, .42) 60%, rgba(8, 10, 12, .3) 100%);
+  display: none;
 }
 
-/* ---------- 内容浮层 ---------- */
+/* ---------- 内容浮层容器（支持自由容器对齐与文案对齐） ---------- */
 .m5__body {
-  position: absolute;
-  top: 0;
-  bottom: 0;
+  grid-area: 1 / 1;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   gap: 14px;
-  width: min(620px, 54%);
-  padding: clamp(24px, 3vw, 48px);
-  color: #fff;
+  width: var(--m5-w, 54%);
+  max-width: 100%;
+  padding: clamp(28px, 3.5vw, 56px);
+  box-sizing: border-box;
+  color: #111418;
 }
-.m5--left .m5__body { left: 0; }
-.m5--right .m5__body { right: 0; }
-.m5--bg .m5__body {
-  left: 50%;
-  right: auto;
-  top: 50%;
-  bottom: auto;
-  transform: translate(-50%, -50%);
-  width: min(680px, 80%);
-  padding: clamp(24px, 3vw, 42px);
-  background: rgba(10, 12, 14, .6);
-  border-radius: 16px;
+
+/* 容器水平对齐 */
+.m5__body.is-align-start,
+.m5--left .m5__body { justify-self: start; }
+.m5__body.is-align-center,
+.m5--center .m5__body { justify-self: center; }
+.m5__body.is-align-end,
+.m5--right .m5__body { justify-self: end; }
+
+/* 容器垂直对齐 */
+.m5__body.is-valign-start { align-self: start; justify-content: flex-start; }
+.m5__body.is-valign-center { align-self: center; justify-content: center; }
+.m5__body.is-valign-end { align-self: end; justify-content: flex-end; }
+
+/* 文案对齐 */
+.m5__body.is-text-center {
   text-align: center;
-  align-items: center;
+}
+.m5__body.is-text-center .m5__eyebrow,
+.m5__body.is-text-center .m5__title,
+.m5__body.is-text-center .m5__lede {
+  margin-left: auto;
+  margin-right: auto;
+}
+.m5__body.is-text-center .m5__cta {
+  align-self: center;
+}
+
+.m5__body.is-text-right {
+  text-align: right;
+}
+.m5__body.is-text-right .m5__eyebrow,
+.m5__body.is-text-right .m5__title,
+.m5__body.is-text-right .m5__lede {
+  margin-left: auto;
+  margin-right: 0;
+}
+.m5__body.is-text-right .m5__cta {
+  align-self: flex-end;
+}
+
+.m5__body.is-text-left {
+  text-align: left;
+}
+.m5__body.is-text-left .m5__eyebrow,
+.m5__body.is-text-left .m5__title,
+.m5__body.is-text-left .m5__lede {
+  margin-left: 0;
+  margin-right: auto;
+}
+.m5__body.is-text-left .m5__cta {
+  align-self: flex-start;
 }
 
 .m5__eyebrow {
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: .2em;
   text-transform: uppercase;
-  color: #d9b87e;
+  color: #a0783a;
 }
 .m5__title {
-  font-size: clamp(22px, 2.4vw, 34px);
-  font-weight: 680;
+  font-size: clamp(22px, 2.4vw, 36px);
+  font-weight: 700;
   letter-spacing: -.02em;
-  line-height: 1.16;
-  color: #fff;
-  max-width: 18ch;
+  line-height: 1.18;
+  color: #111418;
+  max-width: 22ch;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
 }
 .m5__lede {
-  font-size: 13.5px;
+  font-size: 14px;
   line-height: 1.6;
-  color: rgba(255, 255, 255, .78);
-  max-width: 44ch;
+  color: #4b5563;
+  max-width: 48ch;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 .m5__cta { margin-top: 6px; align-self: flex-start; }
-.m5--bg .m5__cta { align-self: center; }
-/* 背景图上用白底按钮，保证可见 */
+
 .m5 .btn.m5__cta {
-  background: #fff;
-  color: #14161a;
+  background: #111418;
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px 22px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
 }
-.m5 .btn.m5__cta:hover { background: #eceff3; }
+.m5 .btn.m5__cta:hover { background: #2b313a; }
 
 /* ---------- 列1 列表：图标格（默认） ---------- */
 .m5__list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
-  margin-top: 2px;
+  margin-top: 4px;
 }
-.m5__item { display: flex; align-items: center; justify-content: flex-start; gap: 8px; }
+.m5__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 8px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .88);
+  border: 1px solid rgba(0, 0, 0, .08);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-sizing: border-box;
+}
+.m5__icon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  color: #111418;
+}
+.m5__icon .ic { width: 22px; height: 22px; }
 .m5__text h4 {
   font-size: 12.5px;
   font-weight: 600;
   line-height: 1.3;
-  color: #fff;
+  color: #111418;
+  text-align: center;
 }
 
 /* 图标列表：图标方块 + 标题（参考图样式） */

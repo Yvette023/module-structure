@@ -506,39 +506,34 @@
   }
 
   /* ---------- 结构5：轮播列表 ----------
-     每个轮播页 = 一张整幅背景图 + 标题文案 + 一组列表（列1）
-     列表样式：icon / num / check / row；文字位置：left / right / bg */
+     整幅背景海报 + 内容容器（支持容器对齐、文案对齐、宽度与列表间距） */
   function renderM5(s) {
-    var mode = s.layout.mode;      // icon | num | check | row
-    var pos = s.layout.position;   // left | right | bg
     var slides = s.items;
     var n = Math.max(1, slides.length);
     var page = Math.max(0, Math.min(s._page || 0, n - 1));
 
-    function m5Item(mode, it, i) {
+    var hAlign = s.layout.align || 'start';
+    var vAlign = s.layout.valign || 'center';
+    var textAlign = s.layout.textAlign || 'left';
+    var widthPct = s.layout.contentWidth || s.layout.width || 54;
+
+    function m5Item(it, i) {
       var title = '<div class="m5__text"><h4>' + esc(it.title) + '</h4></div>';
-      if (mode === 'num') {
-        return '<li class="m5__item" data-sub="' + i + '"><span class="m5__num">0' + (i + 1) + '</span>' + title + '</li>';
-      }
-      if (mode === 'check') {
-        return '<li class="m5__item" data-sub="' + i + '">' + icon('check') + '<span>' + esc(it.title) + '</span></li>';
-      }
-      if (mode === 'row') {
-        return '<li class="m5__item" data-sub="' + i + '"><span class="m5__thumb"><img src="' + esc(it.img || '') +
-          '" alt=""></span>' + title + '</li>';
-      }
       return '<li class="m5__item" data-sub="' + i + '"><span class="m5__icon">' + icon(it.icon || 'sparkle') +
         '</span>' + title + '</li>';
     }
 
+    var bodyCls = 'm5__body is-align-' + hAlign + ' is-valign-' + vAlign + ' is-text-' + textAlign;
+    var bodyStyle = '--m5-w:' + widthPct + '%;';
+
     var inner = slides.map(function (sl, i) {
       var list = (sl.list1 || []).slice(0, 8);
-      var body = '<div class="m5__body">' +
+      var body = '<div class="' + bodyCls + '" style="' + bodyStyle + '">' +
         (s.show.subtitle && sl.subtitle ? '<p class="m5__eyebrow">' + esc(sl.subtitle) + '</p>' : '') +
         (s.show.title && sl.title ? '<h3 class="m5__title">' + esc(sl.title) + '</h3>' : '') +
         (s.show.intro && sl.intro ? '<p class="m5__lede">' + esc(sl.intro) + '</p>' : '') +
         '<ul class="m5__list" style="gap:' + dimVal(s, s.layout.gap || 12) + '">' +
-          list.map(function (it, j) { return m5Item(mode, it, j); }).join('') +
+          list.map(function (it, j) { return m5Item(it, j); }).join('') +
         '</ul>' +
         btnHTML(s, 'm5__cta', { onImage: true }) +
       '</div>';
@@ -568,7 +563,7 @@
       : '';
 
     return '<div class="ed-mod" style="' + containerStyle(s) + '">' +
-      '<div class="m5 m5--' + mode + ' m5--' + pos + '">' + track + arrows + dots + '</div>' +
+      '<div class="m5 m5--icon">' + track + arrows + dots + '</div>' +
     '</div>';
   }
 

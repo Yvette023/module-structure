@@ -134,10 +134,15 @@
       base.carousel.arrows = true;
       base.carousel.dots = true;
       base.carousel.auto = false;
-      base.layout.position = 'left';
+      base.layout.mode = 'icon';
+      base.layout.align = 'start';
+      base.layout.valign = 'center';
+      base.layout.textAlign = 'left';
+      base.layout.contentWidth = 54;
       base.layout.gap = 12;
       base.container.pad = 0; /* 整幅背景图铺满组件，不做内边距 */
       base.container.padMode = 'uni';
+      base.container.bg = '#f6f8fa';
     }
     return base;
   }

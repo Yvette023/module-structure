@@ -172,6 +172,23 @@
     var s = state;
     var m = MODES[s.structure];
     var body;
+
+    if (s.structure === 'm5') {
+      /* 轮播列表：整幅海报轮播，内容容器支持水平容器对齐、上下对齐、文案对齐、宽度与列表间距 */
+      body = row(label('容器对齐')) + seg('layout.align', s.layout.align || 'start', [
+        { v: 'start', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'end', icon: 'alignRight' }
+      ], 'fseg--wide');
+      body += row(label('上下对齐')) + seg('layout.valign', s.layout.valign || 'center', [
+        { v: 'start', l: '居上' }, { v: 'center', l: '居中' }, { v: 'end', l: '居下' }
+      ], 'fseg--wide');
+      body += row(label('文案对齐')) + seg('layout.textAlign', s.layout.textAlign || 'left', [
+        { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
+      ], 'fseg--wide');
+      body += row(label('宽度')) + range('layout.contentWidth', s.layout.contentWidth || s.layout.width || 54, 30, 100, 1, '%');
+      body += dimCtl({ label: '列表间距', field: 'layout.gap', modeBind: 'layout.gapMode', type: 'gap', min: 0, max: 48 });
+      return body;
+    }
+
     if (s.structure === 'm1') {
       /* 双排列表：去掉 A/B/C/D 变体，固定「双列均布」，改为「图文布局」 */
       body = row(label('图文布局')) + select('layout.imgText', s.layout.imgText, [
@@ -184,13 +201,6 @@
       ]);
     } else {
       body = row(label(m.label)) + select('layout.mode', s.layout.mode, m.options);
-    }
-
-    if (s.structure === 'm5') {
-      /* 轮播列表：整幅背景图 + 文字居左 / 居右 / 居中浮卡 */
-      body += row(label('文字位置')) + seg('layout.position', s.layout.position, [
-        { v: 'left', l: '文字居左' }, { v: 'right', l: '文字居右' }, { v: 'bg', l: '居中浮卡' }
-      ], 'fseg--wide');
     }
 
     if (s.structure === 'm1') {

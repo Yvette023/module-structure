@@ -153,12 +153,24 @@
 }
 .m5 .btn.m5__cta:hover { background: #2b313a; }
 
-/* ---------- 列1 列表：图标格（默认） ---------- */
+/* ---------- 内部列表：包裹容器、网格与图文对齐 ---------- */
+.m5__list-wrap {
+  width: var(--m5-list-w, 100%);
+  max-width: 100%;
+  display: flex;
+}
+.m5__list-wrap.is-list-align-start { align-self: flex-start; justify-content: flex-start; }
+.m5__list-wrap.is-list-align-center { align-self: center; justify-content: center; }
+.m5__list-wrap.is-list-align-end { align-self: flex-end; justify-content: flex-end; }
+
 .m5__list {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--m5-gap, 12px);
-  margin-top: 0;
+  grid-template-columns: repeat(var(--m5-cols, 3), minmax(0, 1fr));
+  gap: var(--m5-list-gap, 12px);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 .m5__item {
   display: flex;
@@ -166,13 +178,45 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px 8px;
+  padding: 14px 10px;
   border-radius: 12px;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, .08);
   box-shadow: 0 2px 8px rgba(0, 0, 0, .04);
   box-sizing: border-box;
 }
+
+/* 图文对齐（图标 + 文字一起） */
+.m5__list.is-item-left .m5__item,
+.m5--icon .m5__list.is-item-left .m5__item {
+  align-items: flex-start;
+  text-align: left;
+}
+.m5__list.is-item-left .m5__text h4,
+.m5--icon .m5__list.is-item-left .m5__text h4 {
+  text-align: left;
+}
+
+.m5__list.is-item-center .m5__item,
+.m5--icon .m5__list.is-item-center .m5__item {
+  align-items: center;
+  text-align: center;
+}
+.m5__list.is-item-center .m5__text h4,
+.m5--icon .m5__list.is-item-center .m5__text h4 {
+  text-align: center;
+}
+
+.m5__list.is-item-right .m5__item,
+.m5--icon .m5__list.is-item-right .m5__item {
+  align-items: flex-end;
+  text-align: right;
+}
+.m5__list.is-item-right .m5__text h4,
+.m5--icon .m5__list.is-item-right .m5__text h4 {
+  text-align: right;
+}
+
 .m5__icon {
   width: 32px;
   height: 32px;
@@ -181,12 +225,13 @@
   color: #111418;
 }
 .m5__icon .ic { width: 22px; height: 22px; }
+.m5__text { width: 100%; }
 .m5__text h4 {
   font-size: 12.5px;
   font-weight: 600;
   line-height: 1.3;
   color: #111418;
-  text-align: center;
+  margin: 0;
 }
 
 /* 图标列表：图标方块 + 标题（纯净白底，无毛玻璃） */
@@ -194,7 +239,7 @@
   flex-direction: column;
   justify-content: center;
   gap: 8px;
-  padding: 14px 8px;
+  padding: 14px 10px;
   border: 1px solid rgba(0, 0, 0, .08);
   border-radius: 10px;
   background: #ffffff;

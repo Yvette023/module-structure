@@ -516,6 +516,13 @@
     var vAlign = s.layout.valign || 'center';
     var textAlign = s.layout.textAlign || 'left';
     var widthPct = s.layout.contentWidth || s.layout.width || 54;
+    var gapVal = dimVal(s, s.layout.gap != null ? s.layout.gap : 14);
+
+    var listCols = Number(s.layout.listColumns) || 3;
+    var listWidth = s.layout.listWidth != null ? s.layout.listWidth : 100;
+    var listAlign = s.layout.listAlign || 'start';
+    var listItemAlign = s.layout.listItemAlign || 'left';
+    var listGap = dimVal(s, s.layout.listGap != null ? s.layout.listGap : 12);
 
     function m5Item(it, i) {
       var title = '<div class="m5__text"><h4>' + esc(it.title) + '</h4></div>';
@@ -524,7 +531,6 @@
     }
 
     var bodyCls = 'm5__body is-align-' + hAlign + ' is-valign-' + vAlign + ' is-text-' + textAlign;
-    var gapVal = dimVal(s, s.layout.gap != null ? s.layout.gap : 14);
     var bodyStyle = '--m5-w:' + widthPct + '%;--m5-gap:' + gapVal + ';gap:' + gapVal + ';';
 
     var grads = (window.DATA && window.DATA.m5Gradients) || [
@@ -539,13 +545,17 @@
       if (!imgSrc || imgSrc.indexOf('unsplash.com') !== -1) {
         imgSrc = grads[i % grads.length];
       }
+      var listWrap = '<div class="m5__list-wrap is-list-align-' + listAlign + '" style="--m5-list-w:' + listWidth + '%;">' +
+        '<ul class="m5__list is-item-' + listItemAlign + '" style="--m5-cols:' + listCols + ';gap:' + listGap + '">' +
+          list.map(function (it, j) { return m5Item(it, j); }).join('') +
+        '</ul>' +
+      '</div>';
+
       var body = '<div class="' + bodyCls + '" style="' + bodyStyle + '">' +
         (s.show.subtitle && sl.subtitle ? '<p class="m5__eyebrow">' + esc(sl.subtitle) + '</p>' : '') +
         (s.show.title && sl.title ? '<h3 class="m5__title">' + esc(sl.title) + '</h3>' : '') +
         (s.show.intro && sl.intro ? '<p class="m5__lede">' + esc(sl.intro) + '</p>' : '') +
-        '<ul class="m5__list" style="gap:' + gapVal + '">' +
-          list.map(function (it, j) { return m5Item(it, j); }).join('') +
-        '</ul>' +
+        listWrap +
         btnHTML(s, 'm5__cta', { onImage: true }) +
       '</div>';
       return '<li class="m5__slide" data-idx="' + i + '">' +

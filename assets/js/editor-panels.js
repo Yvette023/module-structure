@@ -90,10 +90,10 @@
     if (s.structure === 'm5') {
       var sl = s.items[Math.min(ui.sel, s.items.length - 1)] || s.items[0] || {};
       if (ui.m5tab === 'list') {
-        /* 列1 tab：编辑选中列表项（列表只要标题） */
+        /* 内部列表 tab：编辑选中列表项（列表只要标题） */
         var list = sl.list1 || [];
         var it = list[Math.min(ui.sub, list.length - 1)] || list[0] || {};
-        body += '<div class="frow"><span class="flabel" style="color:#1e6fff">列 1 · 轮播 ' + (ui.sel + 1) +
+        body += '<div class="frow"><span class="flabel" style="color:#1e6fff">内部列表 · 轮播 ' + (ui.sel + 1) +
           ' · 第 ' + (ui.sub + 1) + ' 项</span></div>' +
           row(label('标题')) + inp('items.' + ui.sel + '.list1.' + ui.sub + '.title', it.title, '列表项标题');
         return body;
@@ -167,24 +167,53 @@
   }
 
 
-  function alignDualField(title, hBind, hVal, hOpts, vBind, vVal, vOpts) {
+  function alignDualField(title, hBind, hVal, hOpts, vBind, vVal, vOpts, vDisabled) {
     return row(label(title)) +
       '<div class="frow" style="margin-top:6px">' +
         '<div class="fseg-pair">' +
           seg(hBind, hVal, hOpts) +
-          seg(vBind, vVal, vOpts) +
+          seg(vBind, vVal, vOpts, vDisabled ? 'is-disabled' : '') +
         '</div>' +
       '</div>';
   }
 
   function layoutPanel() {
-    var state = ED.state;
+    var state = ED.state, ui = ED.ui;
     var s = state;
     var m = MODES[s.structure];
     var body;
 
     if (s.structure === 'm5') {
-      /* 轮播列表：整幅海报轮播，容器对齐（字段与两个tab组上下排列）、文案对齐、宽度与列表间距 */
+      if (ui.m5tab === 'list') {
+        /* 轮播列表 · 内部列表：列表布局（3列下拉）、容器对齐（仅左中右生效，上中下禁用）、图文对齐、宽度（仅列表组）、列表间距（卡片网格gap） */
+        body = row(label('列表布局')) + select('layout.listColumns', s.layout.listColumns || 3, [
+          { v: 1, l: '1列' },
+          { v: 2, l: '2列' },
+          { v: 3, l: '3列' },
+          { v: 4, l: '4列' }
+        ]);
+        body += alignDualField('容器对齐',
+          'layout.listAlign', s.layout.listAlign || 'start', [
+            { v: 'start', icon: 'alignBoxLeft' },
+            { v: 'center', icon: 'alignBoxCenter' },
+            { v: 'end', icon: 'alignBoxRight' }
+          ],
+          'layout.valign', s.layout.valign || 'center', [
+            { v: 'start', icon: 'alignBoxTop' },
+            { v: 'center', icon: 'alignBoxMiddle' },
+            { v: 'end', icon: 'alignBoxBottom' }
+          ],
+          true /* 上中下对齐禁用 */
+        );
+        body += row(label('图文对齐')) + seg('layout.listItemAlign', s.layout.listItemAlign || 'left', [
+          { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
+        ], 'fseg--wide');
+        body += row(label('宽度')) + range('layout.listWidth', s.layout.listWidth != null ? s.layout.listWidth : 100, 30, 100, 1, '%');
+        body += dimCtl({ label: '列表间距', field: 'layout.listGap', modeBind: 'layout.listGapMode', type: 'gap', min: 0, max: 48 });
+        return body;
+      }
+
+      /* 轮播列表 · 轮播列表（主层）：容器对齐（9宫格）、文案对齐、宽度（大标题简介按钮整体）、间距（外层垂直间隙） */
       var m5HAlign = s.layout.align || 'start';
       var m5VAlign = s.layout.valign || 'center';
       body = alignDualField('容器对齐',
@@ -203,7 +232,7 @@
         { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
       ], 'fseg--wide');
       body += row(label('宽度')) + range('layout.contentWidth', s.layout.contentWidth || s.layout.width || 54, 30, 100, 1, '%');
-      body += dimCtl({ label: '列表间距', field: 'layout.gap', modeBind: 'layout.gapMode', type: 'gap', min: 0, max: 48 });
+      body += dimCtl({ label: '间距', field: 'layout.gap', modeBind: 'layout.gapMode', type: 'gap', min: 0, max: 48 });
       return body;
     }
 

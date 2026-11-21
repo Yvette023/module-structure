@@ -139,7 +139,12 @@
       base.layout.valign = 'center';
       base.layout.textAlign = 'left';
       base.layout.contentWidth = 54;
-      base.layout.gap = 12;
+      base.layout.gap = 14; /* 轮播列表外层垂直间距（大标题/简介/列表整体/按钮） */
+      base.layout.listColumns = 3; /* 内部列表网格布局列数（默认 3 列） */
+      base.layout.listWidth = 100; /* 内部列表整体宽度（默认 100%） */
+      base.layout.listAlign = 'start'; /* 内部列表整体对齐（左/中/右，默认 start） */
+      base.layout.listItemAlign = 'left'; /* 内部列表图文对齐（图标+文字一起对齐，默认 left） */
+      base.layout.listGap = 12; /* 内部列表项之间网格间距（默认 12px） */
       base.container.pad = 0; /* 整幅背景图铺满组件，不做内边距 */
       base.container.padMode = 'uni';
       base.container.bg = '#f6f8fa';

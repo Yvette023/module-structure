@@ -1849,6 +1849,63 @@ select::-ms-expand {
   border-color: #1677ff;
 }
 
+/* ---- 轮播单页独立排版开关与 i 提示 ---- */
+.fprop-custom-switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid #eef2f6;
+}
+.fprop-info-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: #98a2b3;
+  cursor: help;
+  position: relative;
+  border-radius: 50%;
+  transition: color .15s ease;
+  vertical-align: middle;
+}
+.fprop-info-badge svg {
+  width: 14px;
+  height: 14px;
+}
+.fprop-info-badge:hover {
+  color: #1677ff;
+}
+.fprop-info-badge[data-tip] {
+  position: relative;
+}
+.fprop-info-badge[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  padding: 6px 10px;
+  background: #1f242f;
+  color: #ffffff;
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: nowrap;
+  border-radius: 6px;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .15s ease, visibility .15s ease;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
+}
+.fprop-info-badge[data-tip]:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* ---- 窄屏：面板改抽屉 ---- */
 @media (max-width: 1080px) {
   .ed-panel { width: 280px; }

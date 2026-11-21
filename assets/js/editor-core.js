@@ -99,7 +99,10 @@
   function setPath(p, v) {
     var keys = p.split('.');
     var last = keys.pop();
-    var obj = keys.reduce(function (o, k) { return o[k]; }, state);
+    var obj = keys.reduce(function (o, k) {
+      if (!o[k] || typeof o[k] !== 'object') o[k] = {};
+      return o[k];
+    }, state);
     obj[last] = v;
   }
 
@@ -229,11 +232,30 @@
       if (act === 'toggle') {
         var p = el.dataset.bind;
         if (!p) return;
-        setPath(p, !getPath(p));
+        var nextVal = !getPath(p);
+        setPath(p, nextVal);
+        /* 轮播列表开启独立排版时：深拷贝全局 layout 作为初始值，避免突变 */
+        if (p.indexOf('customLayout') !== -1 && nextVal) {
+          var slideIdx = Math.max(0, Math.min(ui.sel || 0, state.items.length - 1));
+          var sl = state.items[slideIdx];
+          if (sl && (!sl.layout || typeof sl.layout !== 'object')) {
+            sl.layout = JSON.parse(JSON.stringify(state.layout));
+          }
+        }
         renderAll();
         return;
       }
-      if (act === 'sel') { ui.sel = Number(el.dataset.idx); ui.sub = 0; renderPanel(); return; }
+      if (act === 'sel') {
+        ui.sel = Number(el.dataset.idx);
+        ui.sub = 0;
+        if (state.structure === 'm5') {
+          state._page = ui.sel;
+          renderAll();
+          return;
+        }
+        renderPanel();
+        return;
+      }
       if (act === 'sub') { ui.sub = Number(el.dataset.idx); renderPanel(); return; }
       if (act === 'add') {
         if (state.structure === 'm5') {
@@ -428,7 +450,8 @@
         if (ctl.dataset.m5 === 'prev') state._page = (state._page - 1 + nn) % nn;
         else if (ctl.dataset.m5 === 'next') state._page = (state._page + 1) % nn;
         else state._page = Number(ctl.dataset.m5Goto || 0);
-        renderCanvas();
+        ui.sel = state._page;
+        renderAll();
         return;
       }
       var slide = e.target.closest('.m5__slide');

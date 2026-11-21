@@ -58,10 +58,11 @@
     } else {
       /* 轮播列表：轮播页海报背景图 */
       var slideThumbs = slides.map(function (it, i) {
+        var isCustom = !!it.customLayout;
         return '<div class="thumb' + (ui.sel === i ? ' is-on' : '') + '" data-act="sel" data-idx="' + i + '">' +
           '<span class="thumb__del" data-act="del" data-idx="' + i + '">' + icon('trash') + '</span>' +
           '<span class="thumb__box"><img src="' + esc(it.img) + '" alt=""></span>' +
-          '<span class="thumb__no">图片' + (i + 1) + '</span>' +
+          '<span class="thumb__no">' + (isCustom ? '独立·' : '') + '图片' + (i + 1) + '</span>' +
         '</div>';
       }).join('');
       var addSlideBtn = '<div class="thumb thumb--add" data-act="add">' +

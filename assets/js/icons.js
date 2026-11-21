@@ -4,6 +4,8 @@
    ========================================================= */
 (function () {
   var P = {
+    info:
+      '<circle cx="12" cy="12" r="9"/><line x1="12" y1="16" x2="12" y2="11"/><circle cx="12" cy="7.5" r="0.5" fill="currentColor"/>',
     truck:
       '<path d="M2.6 7.2h10.6v9.2H2.6z"/><path d="M13.2 10.4h3.6l3.4 3.4v2.6h-7"/>' +
       '<circle cx="6.4" cy="17.8" r="1.7"/><circle cx="16.6" cy="17.8" r="1.7"/>',

@@ -517,55 +517,6 @@
     var n = Math.max(1, slides.length);
     var page = Math.max(0, Math.min(s._page || 0, n - 1));
 
-    var hAlign = s.layout.align || 'start';
-    var vAlign = s.layout.valign || 'center';
-    var textAlign = s.layout.textAlign || 'left';
-    var widthPct = s.layout.contentWidth || s.layout.width || 54;
-    var gapVal = dimVal(s, s.layout.gap != null ? s.layout.gap : 14);
-
-    var listCols = Number(s.layout.listColumns) || 3;
-    var listWidth = s.layout.listWidth != null ? s.layout.listWidth : 100;
-    var listAlign = s.layout.listAlign || 'start';
-    var listItemAlign = s.layout.listItemAlign || 'left';
-    var listGap = dimVal(s, s.layout.listGap != null ? s.layout.listGap : 12);
-
-    /* 轮播列表主文案背景 */
-    var tb = s.layout.textBg || {};
-    var tbStyle = '';
-    if (tb.bgOn) tbStyle += 'background-color:' + esc(tb.bg || '#ffffffcc') + ';';
-    if (tb.borderOn) {
-      tbStyle += 'border:' + dimVal(s, tb.borderWidth != null ? tb.borderWidth : 1) + ' ' +
-        (tb.borderStyle || 'solid') + ' ' + esc(tb.border || '#111418') + ';';
-    }
-    if (tb.radius != null || tb.radiusTl != null) tbStyle += 'border-radius:' + radiusCSS(s, tb, 'radius') + ';';
-    if (tb.pad != null || tb.padT != null) tbStyle += 'padding:' + padCSS(s, tb, 'pad') + ';';
-
-    var followContent = tb.followContent !== false;
-
-    /* 内部列表项文案背景 */
-    var ltb = s.layout.listTextBg || {};
-    var ltbStyle = '';
-    if (ltb.bgOn) ltbStyle += 'background-color:' + esc(ltb.bg || '#ffffff') + ';';
-    else ltbStyle += 'background-color:transparent;';
-    if (ltb.borderOn) {
-      ltbStyle += 'border:' + dimVal(s, ltb.borderWidth != null ? ltb.borderWidth : 1) + ' ' +
-        (ltb.borderStyle || 'solid') + ' ' + esc(ltb.border || 'rgba(0,0,0,0.08)') + ';';
-    } else {
-      ltbStyle += 'border:none;';
-    }
-    if (ltb.radius != null || ltb.radiusTl != null) ltbStyle += 'border-radius:' + radiusCSS(s, ltb, 'radius') + ';';
-    if (ltb.pad != null || ltb.padT != null) ltbStyle += 'padding:' + padCSS(s, ltb, 'pad') + ';';
-
-    function m5Item(it, i) {
-      var title = '<div class="m5__text"><h4>' + esc(it.title) + '</h4></div>';
-      return '<li class="m5__item" data-sub="' + i + '" style="' + ltbStyle + '"><span class="m5__icon">' + icon(it.icon || 'sparkle') +
-        '</span>' + title + '</li>';
-    }
-
-    var bodyCls = 'm5__body is-align-' + hAlign + ' is-valign-' + vAlign + ' is-text-' + textAlign +
-      (followContent ? ' is-follow-content' : ' is-free-content');
-    var bodyStyle = '--m5-w:' + widthPct + '%;--m5-gap:' + gapVal + ';gap:' + gapVal + ';' + tbStyle;
-
     var grads = (window.DATA && window.DATA.m5Gradients) || [
       'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000"><defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23e8edf5"/><stop offset="50%" stop-color="%23eff3f8"/><stop offset="100%" stop-color="%23f6f3eb"/></linearGradient></defs><rect width="1600" height="1000" fill="url(%23g1)"/></svg>',
       'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000"><defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23f7f2ed"/><stop offset="50%" stop-color="%23f2eae1"/><stop offset="100%" stop-color="%23ebe5dc"/></linearGradient></defs><rect width="1600" height="1000" fill="url(%23g2)"/></svg>',
@@ -573,6 +524,58 @@
     ];
 
     var inner = slides.map(function (sl, i) {
+      /* 支持单页独立排版：若该页开启 customLayout 则使用其私有 layout，否则继承全局 layout */
+      var l = (sl.customLayout && sl.layout) ? sl.layout : s.layout;
+
+      var hAlign = l.align || 'start';
+      var vAlign = l.valign || 'center';
+      var textAlign = l.textAlign || 'left';
+      var widthPct = l.contentWidth || l.width || 54;
+      var gapVal = dimVal(s, l.gap != null ? l.gap : 14);
+
+      var listCols = Number(l.listColumns) || 3;
+      var listWidth = l.listWidth != null ? l.listWidth : 100;
+      var listAlign = l.listAlign || 'start';
+      var listItemAlign = l.listItemAlign || 'left';
+      var listGap = dimVal(s, l.listGap != null ? l.listGap : 12);
+
+      /* 轮播列表主文案背景 */
+      var tb = l.textBg || {};
+      var tbStyle = '';
+      if (tb.bgOn) tbStyle += 'background-color:' + esc(tb.bg || '#ffffffcc') + ';';
+      if (tb.borderOn) {
+        tbStyle += 'border:' + dimVal(s, tb.borderWidth != null ? tb.borderWidth : 1) + ' ' +
+          (tb.borderStyle || 'solid') + ' ' + esc(tb.border || '#111418') + ';';
+      }
+      if (tb.radius != null || tb.radiusTl != null) tbStyle += 'border-radius:' + radiusCSS(s, tb, 'radius') + ';';
+      if (tb.pad != null || tb.padT != null) tbStyle += 'padding:' + padCSS(s, tb, 'pad') + ';';
+
+      var followContent = tb.followContent !== false;
+
+      /* 内部列表项文案背景 */
+      var ltb = l.listTextBg || {};
+      var ltbStyle = '';
+      if (ltb.bgOn) ltbStyle += 'background-color:' + esc(ltb.bg || '#ffffff') + ';';
+      else ltbStyle += 'background-color:transparent;';
+      if (ltb.borderOn) {
+        ltbStyle += 'border:' + dimVal(s, ltb.borderWidth != null ? ltb.borderWidth : 1) + ' ' +
+          (ltb.borderStyle || 'solid') + ' ' + esc(ltb.border || 'rgba(0,0,0,0.08)') + ';';
+      } else {
+        ltbStyle += 'border:none;';
+      }
+      if (ltb.radius != null || ltb.radiusTl != null) ltbStyle += 'border-radius:' + radiusCSS(s, ltb, 'radius') + ';';
+      if (ltb.pad != null || ltb.padT != null) ltbStyle += 'padding:' + padCSS(s, ltb, 'pad') + ';';
+
+      function m5Item(it, j) {
+        var title = '<div class="m5__text"><h4>' + esc(it.title) + '</h4></div>';
+        return '<li class="m5__item" data-sub="' + j + '" style="' + ltbStyle + '"><span class="m5__icon">' + icon(it.icon || 'sparkle') +
+          '</span>' + title + '</li>';
+      }
+
+      var bodyCls = 'm5__body is-align-' + hAlign + ' is-valign-' + vAlign + ' is-text-' + textAlign +
+        (followContent ? ' is-follow-content' : ' is-free-content');
+      var bodyStyle = '--m5-w:' + widthPct + '%;--m5-gap:' + gapVal + ';gap:' + gapVal + ';' + tbStyle;
+
       var list = (sl.list1 || []).slice(0, 8);
       var imgSrc = sl.img;
       if (!imgSrc || imgSrc.indexOf('unsplash.com') !== -1) {

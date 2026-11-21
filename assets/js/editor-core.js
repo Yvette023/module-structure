@@ -41,6 +41,9 @@
   var VALUES = ED.VALUES;
 
   var state = ED.state = load() || init('m4');
+  if (state && state.img && (state.img.border === '#111418' || state.img.border === '#2a2f38' || state.img.border === '#000000')) {
+    state.img.border = '#d0d5dd';
+  }
   var ui = ED.ui = { tab: 'design', open: { hero: true, items: true, video: false, text: false, button: false, link: false, more: true }, more: 'layout', sel: 0, col: 1, m1tab: 'hero', sub: 0, m5tab: 'slides' };
 
   var canvasEl, stageEl, panelEl, toastEl;
@@ -67,7 +70,11 @@
       var s = JSON.parse(raw);
       if (!s || !s.structure || !s.items || !s.items.length) return null;
       var base = defaults(s.structure);
-      return deepMerge(base, s);
+      var merged = deepMerge(base, s);
+      if (merged && merged.img && (merged.img.border === '#111418' || merged.img.border === '#2a2f38' || merged.img.border === '#000000')) {
+        merged.img.border = '#d0d5dd';
+      }
+      return merged;
     } catch (e) { return null; }
   }
 

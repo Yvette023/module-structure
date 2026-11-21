@@ -123,7 +123,7 @@
     var st = {
       'border-radius': radiusCSS(s, g, 'radius'),
       background: g.bgOn ? g.bg : 'transparent',
-      border: g.borderOn ? (g.borderWidth || 1) + 'px ' + (g.borderStyle || 'solid') + ' ' + (g.border || '#111418') : '0',
+      border: g.borderOn ? (g.borderWidth || 1) + 'px ' + (g.borderStyle || 'solid') + ' ' + (g.border || '#d0d5dd') : '0',
       padding: padCSS(s, g, 'pad')
     };
     if (g.margin != null || g.marginMode === 'ind') {
@@ -140,7 +140,7 @@
     if (g.borderOn) {
       st['border-width'] = (g.borderWidth != null ? g.borderWidth : 1) + 'px';
       st['border-style'] = g.borderStyle || 'solid';
-      st['border-color'] = g.border || '#111418';
+      st['border-color'] = g.border || '#d0d5dd';
     } else {
       st['border'] = 'none';
     }

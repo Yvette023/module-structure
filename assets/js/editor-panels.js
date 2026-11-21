@@ -211,7 +211,7 @@
     var bgOn = !!bgObj.bgOn;
     var borderOn = !!bgObj.borderOn;
     var bgHex = String(bgObj.bg || '#ffffff').replace('#', '').toUpperCase();
-    var borderHex = String(bgObj.border || '#111418').replace('#', '').toUpperCase();
+    var borderHex = String(bgObj.border || '#d0d5dd').replace('#', '').toUpperCase();
     var borderStyle = bgObj.borderStyle || 'solid';
     var borderWidth = bgObj.borderWidth != null ? bgObj.borderWidth : 1;
     var followContent = bgObj.followContent !== false;
@@ -270,11 +270,11 @@
         '<div class="fprop-color-pill" title="点击选择描边色">' +
           '<span class="fcolor-chip' + (!borderOn ? ' fcolor-chip--checker' : '') + '" style="' + (borderOn ? 'background-color:#' + borderHex : '') + '"></span>' +
           '<span class="fcolor-text' + (!borderOn ? ' fcolor-text--empty' : '') + '">' + (borderOn ? borderHex : '未设置') + '</span>' +
-          '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : '111418') + '">' +
+          '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : 'D0D5DD') + '">' +
         '</div>' +
         '<label class="fprop-btn-palette" title="打开调色板">' +
           icon('palette') +
-          '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : '111418') + '">' +
+          '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : 'D0D5DD') + '">' +
         '</label>' +
       '</div>' +
     '</div>';

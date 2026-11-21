@@ -34,6 +34,25 @@
     '</div>';
   }
 
+  function m2TabHTML() {
+    var ui = ED.ui;
+    var tab = ui.m2tab || 'hero';
+    return '<div class="ed-coltab">' +
+      '<button type="button" data-act="m2-tab" data-value="hero"' + (tab === 'hero' ? ' class="is-on"' : '') + '>主内容</button>' +
+      '<button type="button" data-act="m2-tab" data-value="list"' + (tab === 'list' ? ' class="is-on"' : '') + '>内部列表</button>' +
+    '</div>';
+  }
+
+  function m3TabHTML() {
+    var ui = ED.ui;
+    var tab = ui.m3tab || 'main';
+    return '<div class="ed-coltab">' +
+      '<button type="button" data-act="m3-tab" data-value="main"' + (tab === 'main' ? ' class="is-on"' : '') + '>主内容</button>' +
+      '<button type="button" data-act="m3-tab" data-value="list1"' + (tab === 'list1' ? ' class="is-on"' : '') + '>内部列表1</button>' +
+      '<button type="button" data-act="m3-tab" data-value="list2"' + (tab === 'list2' ? ' class="is-on"' : '') + '>内部列表2</button>' +
+    '</div>';
+  }
+
 
   function heroSection() {
     var state = ED.state;
@@ -140,11 +159,7 @@
 
 
   function colTabHTML() {
-    var ui = ED.ui;
-    return '<div class="ed-coltab">' +
-      '<button type="button" data-act="col" data-value="1"' + (ui.col === 1 ? ' class="is-on"' : '') + '>列 1</button>' +
-      '<button type="button" data-act="col" data-value="2"' + (ui.col === 2 ? ' class="is-on"' : '') + '>列 2</button>' +
-    '</div>';
+    return m3TabHTML();
   }
 
 
@@ -152,12 +167,16 @@
     var ui = ED.ui;
     if (s.structure !== 'm3') return { start: 0, end: s.items.length };
     var split = s.layout.split || 8;
-    if (ui.col === 1) return { start: 0, end: Math.min(split, s.items.length) };
-    return { start: Math.min(split, s.items.length), end: s.items.length };
+    if (ui.m3tab === 'list2' || ui.col === 2) {
+      return { start: Math.min(split, s.items.length), end: s.items.length };
+    }
+    return { start: 0, end: Math.min(split, s.items.length) };
   }
 
 
   ED.m1TabHTML = m1TabHTML;
+  ED.m2TabHTML = m2TabHTML;
+  ED.m3TabHTML = m3TabHTML;
   ED.heroSection = heroSection;
   ED.heroImgTarget = heroImgTarget;
   ED.renderHeroModal = renderHeroModal;

@@ -29,6 +29,8 @@
 
   var m5ItemsSection = function () { return ED.m5ItemsSection(); };
   var m1TabHTML = function () { return ED.m1TabHTML(); };
+  var m2TabHTML = function () { return ED.m2TabHTML(); };
+  var m3TabHTML = function () { return ED.m3TabHTML(); };
   var colTabHTML = function () { return ED.colTabHTML(); };
   var colRange = function (s) { return ED.colRange(s); };
   var heroStyleSection = function () { return ED.heroStyleSection(); };
@@ -54,16 +56,33 @@
     if (s.structure === 'm5') return m5ItemsSection();
     var isM4 = s.structure === 'm4';
     var isM1 = s.structure === 'm1';
+    var isM2 = s.structure === 'm2';
+    var isM3List1 = s.structure === 'm3' && (ui.m3tab === 'list1' || (!ui.m3tab && ui.col !== 2));
+    var isM3List2 = s.structure === 'm3' && (ui.m3tab === 'list2' || ui.col === 2);
     var range = colRange(s);
     var colItems = s.items.slice(range.start, range.end);
     var selInCol = Math.max(0, ui.sel - range.start);
     var thumbs = colItems.map(function (it, i) {
       var idx = range.start + i;
-      var boxContent = isM1
-        ? '<span class="thumb__box thumb__box--icon">' + icon(it.icon || 'sparkle') + '</span>'
-        : '<span class="thumb__box"><img src="' + esc(it.img) + '" alt=""></span>';
-      var noLabel = isM1 ? ('图标' + (i + 1)) : ('图片' + (i + 1));
-      return '<div class="thumb' + (ui.sel === idx ? ' is-on' : '') + '" data-act="sel" data-idx="' + idx + '">' +
+      var boxContent;
+      var noLabel;
+      if (isM1) {
+        boxContent = '<span class="thumb__box thumb__box--icon">' + icon(it.icon || 'sparkle') + '</span>';
+        noLabel = '图标' + (i + 1);
+      } else if (isM2) {
+        /* 单排列表内部列表：小勾勾图标，标题 Solid European Oak 等 */
+        boxContent = '<span class="thumb__box thumb__box--icon thumb__box--check">' + icon('checkCircle', 'is-accent') + '</span>';
+        noLabel = it.title ? (it.title.length > 6 ? it.title.slice(0, 5) + '…' : it.title) : ('项' + (i + 1));
+      } else if (isM3List1) {
+        /* 多排列表内部列表1：图标组 */
+        boxContent = '<span class="thumb__box thumb__box--icon">' + icon(it.icon || 'sparkle') + '</span>';
+        noLabel = '图标' + (i + 1);
+      } else {
+        /* 多排列表内部列表2 或复合列表：图片组 */
+        boxContent = '<span class="thumb__box"><img src="' + esc(it.img) + '" alt=""></span>';
+        noLabel = '图片' + (i + 1);
+      }
+      return '<div class="thumb' + (ui.sel === idx ? ' is-on' : '') + '" data-act="sel" data-idx="' + idx + '" title="' + esc(it.title || '') + '">' +
         '<span class="thumb__del" data-act="del" data-idx="' + idx + '">' + icon('trash') + '</span>' +
         boxContent +
         '<span class="thumb__no">' + noLabel + '</span>' +
@@ -75,7 +94,7 @@
     return row(
       '<span class="fcount">' + (selInCol + 1) + '/' + colItems.length + '</span>' +
       '<button class="flink" data-act="add">' + icon('plus') + '新增</button>') +
-      '<div class="thumbs' + (isM1 ? ' thumbs--m5' : '') + '">' + thumbs + add + '</div>'
+      '<div class="thumbs' + (isM1 || isM2 || isM3List1 ? ' thumbs--m5' : '') + '">' + thumbs + add + '</div>'
   }
 
 
@@ -111,7 +130,10 @@
         row(label('简介')) + area('items.' + ui.sel + '.intro', sl.intro, '轮播页简介');
       return body;
     }
-    if (s.structure !== 'm4') {
+    var isMainTab = (s.structure === 'm1' && (ui.m1tab === 'hero' || !ui.m1tab)) ||
+                    (s.structure === 'm2' && (ui.m2tab === 'hero' || !ui.m2tab)) ||
+                    (s.structure === 'm3' && (ui.m3tab === 'main' || !ui.m3tab));
+    if (s.structure !== 'm4' && !isMainTab) {
       var it2 = s.items[ui.sel] || s.items[0];
       body += '<div class="frow"><span class="flabel" style="color:#1e6fff">第 ' + (ui.sel + 1) + ' 项内容</span></div>' +
         row(label('列表标题') + '') +

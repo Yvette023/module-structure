@@ -439,6 +439,36 @@
       }).join('') + '</ul>';
     }
     var reversed = s.layout.reverse ? ' is-reversed' : '';
+
+    /* 主图：图片 / 对比图 / 地图（支持选择图片、对比图、地图，与双排列表一致） */
+    var hero = s.hero || {};
+    var heroHTML;
+    if (hero.type === 'map') {
+      heroHTML = '<div class="m1__map m2__media">' +
+        '<span class="m1__map-addr">' + esc(hero.address || '未填写地址') + '</span>' +
+        '<span class="m1__map-pin"></span>' +
+        '<span class="m1__map-zoom">Z' + (hero.zoom || 14) + '</span>' +
+      '</div>';
+    } else if (hero.type === 'compare') {
+      var cmp = hero.compare || {};
+      var i1 = cmp.img1 || {}, i2 = cmp.img2 || {};
+      var src1 = i1.url || i1.src || (s.items[0] && s.items[0].img) || '';
+      var src2 = i2.url || i2.src || (s.items[1] && s.items[1].img) || '';
+      heroHTML = '<div class="m1__compare m2__media" data-cmp>' +
+        '<img class="m1__compare-img m1__compare-img--base" src="' + esc(src1) + '" alt="图1">' +
+        '<img class="m1__compare-img m1__compare-img--top" src="' + esc(src2) + '" alt="图2">' +
+        '<span class="m1__compare-line"></span>' +
+        '<span class="m1__compare-handle">' + icon('arrow') + '</span>' +
+      '</div>';
+    } else {
+      var img = hero.image || {};
+      var src = hero.url || hero.img || img.url || img.src || (s.items[0] && s.items[0].img) || '';
+      heroHTML = '<figure class="m2__media">' +
+        '<img src="' + esc(src) + '" alt="' + esc(s.seo.alt ? s.seo.altText : '') + '">' +
+        imgMaskHTML(s) +
+      '</figure>';
+    }
+
     return '<div class="ed-mod" style="' + containerStyle(s) + '">' +
       '<div class="m2 m2--list-' + mode + ' is-r45' + reversed + '">' +
         '<div class="m2__grid">' +
@@ -448,7 +478,7 @@
             (s.show.intro && t.intro ? '<p class="m2__lede">' + esc(t.intro) + '</p>' : '') +
             list + btnHTML(s, 'm2__cta') +
           '</div>' +
-          '<figure class="m2__media"><img src="' + esc(s.items[0].img) + '" alt="' + esc(s.seo.alt ? s.seo.altText : '') + '">' + imgMaskHTML(s) + '</figure>' +
+          heroHTML +
         '</div>' +
       '</div>' +
     '</div>';

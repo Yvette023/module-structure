@@ -23,6 +23,8 @@
   var renderHeroModal = function () { return ED.renderHeroModal(); };
   var sec = function () { return ED.sec.apply(null, arguments); };
   var m1TabHTML = function () { return ED.m1TabHTML.apply(null, arguments); };
+  var m2TabHTML = function () { return ED.m2TabHTML.apply(null, arguments); };
+  var m3TabHTML = function () { return ED.m3TabHTML.apply(null, arguments); };
   var colTabHTML = function () { return ED.colTabHTML.apply(null, arguments); };
   var colRange = function (s) { return ED.colRange(s); };
   var m5ItemsSection = function () { return ED.m5ItemsSection.apply(null, arguments); };
@@ -161,11 +163,54 @@
             ? sec('hero', '主图', heroSection())
             : sec('items', '内部列表', itemsSection())) +
           m1Common;
+      } else if (state.structure === 'm2') {
+        /* 单排列表：主内容（主图+文本设置+按钮设置+链接+更多内容设置）与 内部列表（小勾勾6项） */
+        var m2Tab = ui.m2tab || 'hero';
+        var m2Content = m2Tab === 'hero'
+          ? sec('hero', '主图', heroSection()) +
+            sec('text', '文本设置', textSection()) +
+            sec('button', '按钮设置', buttonSection()) +
+            sec('link', '链接', linkSection()) +
+            sec('more', '更多内容设置', moreSection())
+          : sec('items', '内部列表', itemsSection()) +
+            sec('video', '视频', videoSection()) +
+            sec('text', '文本设置', textSection()) +
+            sec('button', '按钮设置', buttonSection()) +
+            sec('link', '链接', linkSection()) +
+            sec('more', '更多内容设置', moreSection());
+        body = m2TabHTML() + m2Content;
+      } else if (state.structure === 'm3') {
+        /* 多排列表：主内容（文本+按钮+链接+更多设置） / 内部列表1（图标组） / 内部列表2（图片组） */
+        var m3Tab = ui.m3tab || 'main';
+        var m3Content;
+        if (m3Tab === 'main') {
+          m3Content =
+            sec('text', '文本设置', textSection()) +
+            sec('button', '按钮设置', buttonSection()) +
+            sec('link', '链接', linkSection()) +
+            sec('more', '更多内容设置', moreSection());
+        } else if (m3Tab === 'list1') {
+          m3Content =
+            sec('items', '内部列表1', itemsSection()) +
+            sec('video', '视频', videoSection()) +
+            sec('text', '文本设置', textSection()) +
+            sec('button', '按钮设置', buttonSection()) +
+            sec('link', '链接', linkSection()) +
+            sec('more', '更多内容设置', moreSection());
+        } else {
+          m3Content =
+            sec('items', '内部列表2', itemsSection()) +
+            sec('video', '视频', videoSection()) +
+            sec('text', '文本设置', textSection()) +
+            sec('button', '按钮设置', buttonSection()) +
+            sec('link', '链接', linkSection()) +
+            sec('more', '更多内容设置', moreSection());
+        }
+        body = m3TabHTML() + m3Content;
       } else {
         var itemsTitle = state.structure === 'm4' ? '图文列表'
           : state.structure === 'm5' ? '轮播列表' : '列表项';
         body =
-          (state.structure === 'm3' ? colTabHTML() : '') +
           (state.structure === 'm5'
             ? '<div class="m5-tabsec">' + m5ItemsSection() + '</div>'
             : sec('items', itemsTitle, itemsSection())) +
@@ -367,6 +412,21 @@
         renderPanel();
         return;
       }
+      if (act === 'm2-tab') {
+        ui.m2tab = el.dataset.value;
+        renderPanel();
+        return;
+      }
+      if (act === 'm3-tab') {
+        ui.m3tab = el.dataset.value;
+        if (ui.m3tab === 'list2') ui.col = 2;
+        else if (ui.m3tab === 'list1') ui.col = 1;
+        var r = colRange(state);
+        ui.sel = Math.max(r.start, Math.min(ui.sel, Math.max(r.start, r.end - 1)));
+        ui.sub = 0;
+        renderPanel();
+        return;
+      }
       if (act === 'm5-tab') {
         ui.m5tab = el.dataset.value;
         renderPanel();
@@ -374,6 +434,8 @@
       }
       if (act === 'col') {
         ui.col = Number(el.dataset.value);
+        if (ui.col === 2) ui.m3tab = 'list2';
+        else ui.m3tab = 'list1';
         var r = colRange(state);
         ui.sel = Math.max(r.start, Math.min(ui.sel, Math.max(r.start, r.end - 1)));
         ui.sub = 0;
@@ -580,6 +642,8 @@
       ui.col = 1;
       ui.sub = 0;
       ui.m1tab = 'hero';
+      ui.m2tab = 'hero';
+      ui.m3tab = 'main';
       ui.m5tab = 'slides';
       ui.more = 'layout';
       pendingScrollReset = true;

@@ -1255,6 +1255,9 @@ select::-ms-expand {
   width: 20px;
   height: 20px;
 }
+.thumb__box--check .ic {
+  color: var(--ui-blue, #1e6fff);
+}
 .thumb--m5item .thumb__no {
   display: block;
   font-size: 11px;
@@ -1266,7 +1269,18 @@ select::-ms-expand {
   white-space: nowrap;
 }
 .thumb.is-on .thumb__box { border-color: var(--ui-blue); }
-.thumb__no { display: block; margin-top: 6px; font-size: 11px; color: var(--ui-text-3); line-height: 1; }
+.thumb__no {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--ui-text-3);
+  line-height: 1.2;
+  max-width: 68px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
 .thumb.is-on .thumb__no { color: var(--ui-blue); }
 .thumb__del {
   position: absolute;

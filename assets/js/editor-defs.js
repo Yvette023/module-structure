@@ -129,6 +129,34 @@
       preset: '',
       _page: 0
     };
+    if (structure === 'm2') {
+      base.hero = {
+        type: 'image',
+        img: (D.m2 && D.m2.media) || D.m1.media,
+        url: '',
+        address: 'https://j.map.baidu.com/fb/Xsx',
+        zoom: 14,
+        w: 100,
+        h: 600,
+        compare: {
+          active: 1,
+          img1: { src: (D.m2 && D.m2.media) || D.m1.media, url: '', ratio: '3:4', effect: 'none' },
+          img2: { src: (D.m2 && D.m2.mediaAlt) || D.m1.media, url: '', ratio: '3:4', effect: 'none' }
+        }
+      };
+      if (D.m2) {
+        base.text.title = D.m2.title || base.text.title;
+        base.text.subtitle = D.m2.eyebrow || base.text.subtitle;
+        base.text.intro = D.m2.lede || base.text.intro;
+        base.text.button = { on: true, text: D.m2.cta || 'Read the full story', icon: 'right', theme: 'solid', link: '#m2' };
+      }
+    }
+    if (structure === 'm3' && D.m3) {
+      base.text.title = D.m3.title || base.text.title;
+      base.text.subtitle = D.m3.eyebrow || base.text.subtitle;
+      base.text.intro = D.m3.para || base.text.intro;
+      base.text.button = { on: true, text: D.m3.cta || 'See all rooms', icon: 'right', theme: 'solid', link: '#m3' };
+    }
     if (structure === 'm5') {
       base.carousel.on = true;
       base.carousel.arrows = true;
@@ -207,16 +235,28 @@
       });
     }
     if (structure === 'm3') {
-      /* 列 1 = 8 项（左列表），列 2 = 4 项（右列表） */
+      /* 内部列表1 = 8 项（应用场景图标组），内部列表2 = 4 项（空间图文卡图片组） */
       var out = [];
-      for (var i = 0; i < 12; i++) {
-        var p = D.m3.applications[i % D.m3.applications.length];
+      var apps = (D.m3 && D.m3.applications) || [];
+      var spaces = (D.m3 && D.m3.spaces) || [];
+      for (var i = 0; i < 8; i++) {
+        var p = apps[i % apps.length] || {};
         out.push({
           img: imgs[i % imgs.length],
-          title: p.title,
+          title: p.title || ('应用场景' + (i + 1)),
           desc: p.desc || '',
           icon: p.icon || 'sparkle',
           value: VALUES[i % VALUES.length]
+        });
+      }
+      for (var j = 0; j < 4; j++) {
+        var sp = spaces[j % spaces.length] || {};
+        out.push({
+          img: sp.img || imgs[(j + 8) % imgs.length],
+          title: sp.title || ('空间' + (j + 1)),
+          desc: sp.desc || '',
+          icon: 'grid',
+          value: VALUES[(j + 8) % VALUES.length]
         });
       }
       return out;

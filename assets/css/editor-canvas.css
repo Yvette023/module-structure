@@ -224,12 +224,12 @@
 .ed-mod .m1--it-lr .m1__item {
   display: flex; flex-direction: row; align-items: flex-start; gap: 14px; text-align: left;
 }
-.ed-mod .m1--it-lr .m1__icon { margin: 0; flex: 0 0 auto; }
+.ed-mod .m1--it-lr .m1__icon { flex: 0 0 auto; }
 /* rl（右图左文）：图标在文字右边 */
 .ed-mod .m1--it-rl .m1__item {
   display: flex; flex-direction: row; align-items: flex-start; gap: 14px; text-align: right;
 }
-.ed-mod .m1--it-rl .m1__icon { margin: 0; order: 2; flex: 0 0 auto; }
+.ed-mod .m1--it-rl .m1__icon { order: 2; flex: 0 0 auto; }
 .ed-mod .m1--it-rl .m1__text { order: 1; }
 
 /* 图文对齐（必须在 bt/lr/rl 之后，才能覆盖默认居中） */
@@ -269,7 +269,7 @@
 .ed-mod .m1--it-inner .m1__item {
   display: flex; flex-direction: row; align-items: center; gap: 14px;
 }
-.ed-mod .m1--it-inner .m1__icon { margin: 0; flex: 0 0 auto; }
+.ed-mod .m1--it-inner .m1__icon { flex: 0 0 auto; }
 .ed-mod .m1--it-inner .m1__col--left .m1__item { flex-direction: row-reverse; }
 .ed-mod .m1--it-inner .m1__col--right .m1__item { flex-direction: row; }
 
@@ -277,7 +277,7 @@
 .ed-mod .m1--it-outer .m1__item {
   display: flex; flex-direction: row; align-items: center; gap: 14px;
 }
-.ed-mod .m1--it-outer .m1__icon { margin: 0; flex: 0 0 auto; }
+.ed-mod .m1--it-outer .m1__icon { flex: 0 0 auto; }
 .ed-mod .m1--it-outer .m1__col--left .m1__item { flex-direction: row; }
 .ed-mod .m1--it-outer .m1__col--right .m1__item { flex-direction: row-reverse; }
 /* 结构2/3 复用库内样式时，画布里限制图片高度 */

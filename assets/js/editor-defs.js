@@ -105,10 +105,10 @@
         radiusMode: 'uni', radiusTl: 0, radiusTr: 0, radiusBr: 0, radiusBl: 0,
         pad: structure === 'm1' ? 14 : 0,
         padMode: 'uni', padT: 0, padR: 0, padB: 0, padL: 0,
-        margin: 0, marginMode: 'uni', marginT: 0, marginR: 0, marginB: 0, marginL: 0,
+        margin: structure === 'm1' ? 10 : 0, marginMode: 'uni', marginT: 0, marginR: 0, marginB: 0, marginL: 0,
         bgOn: false, bg: '#ffffff',
         borderOn: structure === 'm1',
-        border: '#111418', borderWidth: 1, borderStyle: 'solid',
+        border: '#d0d5dd', borderWidth: 1, borderStyle: 'solid',
         /* 蒙层：开启后在图片上叠一层黑色半透明遮罩，透明度 0–1 */
         mask: { on: false, opacity: 0.3 }
       },

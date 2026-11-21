@@ -141,6 +141,8 @@
       st['border-width'] = (g.borderWidth != null ? g.borderWidth : 1) + 'px';
       st['border-style'] = g.borderStyle || 'solid';
       st['border-color'] = g.border || '#111418';
+    } else {
+      st['border'] = 'none';
     }
     if (g.radius != null || g.radiusMode === 'ind') {
       st['border-radius'] = radiusCSS(s, g, 'radius');
@@ -377,11 +379,26 @@
     var iconFlex = horiz ? 'flex:' + (s.layout.iconRatio || 1) + ' 1 0%;' : '';
     var textFlex = horiz ? 'flex:' + (s.layout.textRatio || 3) + ' 1 0%;' : '';
     var icStyle = iconBoxStyle(s);
+    var vertAlignStyle = '';
+    if (vert) {
+      if (s.layout.imgAlignX === 'left') {
+        vertAlignStyle = 'align-self:flex-start !important;margin-left:0 !important;margin-right:auto !important;';
+      } else if (s.layout.imgAlignX === 'right') {
+        vertAlignStyle = 'align-self:flex-end !important;margin-left:auto !important;margin-right:0 !important;';
+      } else {
+        vertAlignStyle = 'align-self:center !important;margin-left:auto !important;margin-right:auto !important;';
+      }
+    }
+    var itemAlignStyle = vert
+      ? ('display:flex;flex-direction:column;align-items:' + (s.layout.imgAlignX === 'left' ? 'flex-start' : s.layout.imgAlignX === 'right' ? 'flex-end' : 'center') + ';text-align:' + (s.layout.imgAlignX || 'center') + ';')
+      : '';
     function list(arr, listStyle) {
       return '<ul class="m1__list" style="' + listStyle + '">' + arr.map(function (it) {
-        var badgeStyle = iconFlex ? (icStyle ? iconFlex + ';' + icStyle : iconFlex) : icStyle;
+        var badgeStyle = iconFlex ? (iconFlex + ';') : '';
+        badgeStyle += icStyle ? (icStyle + ';') : '';
+        badgeStyle += vertAlignStyle;
         var badge = '<span class="m1__icon" style="' + badgeStyle + '">' + icon(it.icon || 'sparkle') + '</span>';
-        return '<li class="m1__item">' + badge +
+        return '<li class="m1__item" style="' + itemAlignStyle + '">' + badge +
           '<div class="m1__text ' + taCls + '" style="' + textFlex + '"><h3>' + esc(it.title) + '</h3><p>' + esc(it.desc) + '</p></div></li>';
       }).join('') + '</ul>';
     }

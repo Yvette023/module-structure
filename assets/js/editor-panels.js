@@ -224,7 +224,7 @@
     var rBl = bgObj.radiusBl != null ? toDisplay(bgObj.radiusBl) : rVal;
 
     var pMode = bgObj.padMode || 'uni';
-    var pVal = bgObj.pad != null ? toDisplay(bgObj.pad) : 14;
+    var pVal = bgObj.pad != null ? toDisplay(bgObj.pad) : 0;
     var pT = bgObj.padT != null ? toDisplay(bgObj.padT) : pVal;
     var pR = bgObj.padR != null ? toDisplay(bgObj.padR) : pVal;
     var pB = bgObj.padB != null ? toDisplay(bgObj.padB) : pVal;
@@ -569,7 +569,10 @@
         body += row(label('图标') + range('layout.iconRatio', s.layout.iconRatio, 1, 6, 1, ''));
         body += row(label('文字') + range('layout.textRatio', s.layout.textRatio, 1, 12, 1, ''));
       }
-      body += fpropBgStrokeSection('文案设置', 'layout.textBg', { hasFollowContent: false, maxPad: 48 });
+      /* 双排列表：主内容下不需要文案设置，内部列表才需要 */
+      if (ui.m1tab === 'list') {
+        body += fpropBgStrokeSection('文案设置', 'layout.textBg', { hasFollowContent: false, maxPad: 48 });
+      }
       return body;
     }
 
@@ -608,7 +611,22 @@
       { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
     ], 'fseg--wide');
     body += row(label('宽度')) + range('layout.width', s.layout.width, 30, 100, 1, '%');
-    body += fpropBgStrokeSection('文案设置', 'layout.textBg', { hasFollowContent: false, maxPad: 48 });
+
+    var textBgBind = 'layout.textBg';
+    if (s.structure === 'm2') {
+      /* 单排列表：主内容 -> layout.textBg，内部列表 -> layout.listTextBg */
+      textBgBind = (ui.m2tab === 'list') ? 'layout.listTextBg' : 'layout.textBg';
+    } else if (s.structure === 'm3') {
+      /* 多排列表：主内容 -> layout.textBg，内部列表1 -> layout.listTextBg，内部列表2 -> layout.list2TextBg */
+      if (ui.m3tab === 'list2' || ui.col === 2) {
+        textBgBind = 'layout.list2TextBg';
+      } else if (ui.m3tab === 'list1' || ui.col === 1) {
+        textBgBind = 'layout.listTextBg';
+      } else {
+        textBgBind = 'layout.textBg';
+      }
+    }
+    body += fpropBgStrokeSection('文案设置', textBgBind, { hasFollowContent: false, maxPad: 48 });
     return body;
   }
 

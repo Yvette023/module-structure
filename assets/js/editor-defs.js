@@ -83,7 +83,19 @@
           bgOn: false, bg: '#ffffffcc',
           borderOn: false, border: '#d0d5dd', borderStyle: 'solid', borderWidth: 1,
           radius: 8, radiusMode: 'uni', radiusTl: 8, radiusTr: 8, radiusBr: 8, radiusBl: 8,
-          pad: 14, padMode: 'uni', padT: 14, padR: 14, padB: 14, padL: 14
+          pad: 0, padMode: 'uni', padT: 0, padR: 0, padB: 0, padL: 0
+        },
+        listTextBg: {
+          bgOn: false, bg: '#ffffffcc',
+          borderOn: false, border: '#d0d5dd', borderStyle: 'solid', borderWidth: 1,
+          radius: 8, radiusMode: 'uni', radiusTl: 8, radiusTr: 8, radiusBr: 8, radiusBl: 8,
+          pad: 0, padMode: 'uni', padT: 0, padR: 0, padB: 0, padL: 0
+        },
+        list2TextBg: {
+          bgOn: false, bg: '#ffffffcc',
+          borderOn: false, border: '#d0d5dd', borderStyle: 'solid', borderWidth: 1,
+          radius: 8, radiusMode: 'uni', radiusTl: 8, radiusTr: 8, radiusBr: 8, radiusBl: 8,
+          pad: 0, padMode: 'uni', padT: 0, padR: 0, padB: 0, padL: 0
         }
       },
       card: {
@@ -183,15 +195,15 @@
         bgOn: false,
         bg: '#ffffffcc',
         borderOn: false,
-        border: '#111418',
+        border: '#d0d5dd',
         borderStyle: 'solid',
         borderWidth: 1,
-        radius: 12,
+        radius: 8,
         radiusMode: 'uni',
-        radiusTl: 12, radiusTr: 12, radiusBr: 12, radiusBl: 12,
-        pad: 24,
+        radiusTl: 8, radiusTr: 8, radiusBr: 8, radiusBl: 8,
+        pad: 0,
         padMode: 'uni',
-        padT: 24, padR: 24, padB: 24, padL: 24,
+        padT: 0, padR: 0, padB: 0, padL: 0,
         followContent: true
       };
       base.layout.listTextBg = {

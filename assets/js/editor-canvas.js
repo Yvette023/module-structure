@@ -489,24 +489,39 @@
     var t = s.text;
     var mode = s.layout.mode === 'grid' ? 'check' : s.layout.mode;
     var icStyle = iconBoxStyle(s);
+
+    /* 内部列表组件背景（Solid European Oak 6个组件） */
+    var ltb = s.layout.listTextBg || {};
+    var ltbOn = ltb.bgOn != null ? ltb.bgOn : ltb.on;
+    var ltbStyle = '';
+    if (ltbOn || ltb.borderOn) {
+      ltbStyle = style({
+        background: ltbOn ? (ltb.bg || ltb.color || '#ffffffcc') : 'transparent',
+        'border-radius': (ltbOn || ltb.borderOn) ? radiusCSS(s, ltb, 'radius') : '0',
+        padding: (ltbOn || ltb.borderOn) ? padCSS(s, ltb, 'pad') : undefined,
+        border: ltb.borderOn ? dimVal(s, ltb.borderWidth != null ? ltb.borderWidth : 1) + ' ' + (ltb.borderStyle || 'solid') + ' ' + (ltb.border || '#d0d5dd') : 'none',
+        'box-sizing': 'border-box'
+      });
+    }
+
     var list;
     if (mode === 'check') {
       list = '<ul class="m2__list m2__list--check">' + s.items.slice(0, 6).map(function (it) {
-        return '<li class="m2__item"><span class="m2__badge" style="' + icStyle + '">' + icon('checkCircle', 'is-accent') + '</span><span>' + esc(it.title) + '</span></li>';
+        return '<li class="m2__item"' + (ltbStyle ? ' style="' + ltbStyle + '"' : '') + '><span class="m2__badge" style="' + icStyle + '">' + icon('checkCircle', 'is-accent') + '</span><span>' + esc(it.title) + '</span></li>';
       }).join('') + '</ul>';
     } else if (mode === 'num') {
       list = '<ul class="m2__list m2__list--num">' + s.items.slice(0, 4).map(function (it, i) {
-        return '<li class="m2__item"><span class="m2__num">0' + (i + 1) + '</span>' +
+        return '<li class="m2__item"' + (ltbStyle ? ' style="' + ltbStyle + '"' : '') + '><span class="m2__num">0' + (i + 1) + '</span>' +
           '<div class="m2__text"><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div></li>';
       }).join('') + '</ul>';
     } else if (mode === 'stat') {
       list = '<ul class="m2__list m2__list--stat">' + s.items.slice(0, 3).map(function (it) {
-        return '<li class="m2__item"><span class="m2__stat">' + esc(it.value || '18 yrs') + '</span>' +
+        return '<li class="m2__item"' + (ltbStyle ? ' style="' + ltbStyle + '"' : '') + '><span class="m2__stat">' + esc(it.value || '18 yrs') + '</span>' +
           '<div class="m2__text"><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div></li>';
       }).join('') + '</ul>';
     } else {
       list = '<ul class="m2__list m2__list--icon">' + s.items.slice(0, 4).map(function (it) {
-        return '<li class="m2__item"><span class="m2__badge" style="' + icStyle + '">' + icon(it.icon || 'sparkle') + '</span>' +
+        return '<li class="m2__item"' + (ltbStyle ? ' style="' + ltbStyle + '"' : '') + '><span class="m2__badge" style="' + icStyle + '">' + icon(it.icon || 'sparkle') + '</span>' +
           '<div class="m2__text"><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div></li>';
       }).join('') + '</ul>';
     }
@@ -541,6 +556,7 @@
       '</figure>';
     }
 
+    /* 主内容文案设置：背景覆盖到标题简介到按钮的位置 */
     var tb = s.layout.textBg || {};
     var tbOn = tb.bgOn != null ? tb.bgOn : tb.on;
     var tbStyle = '';
@@ -554,20 +570,21 @@
       });
     }
 
-    var bodyText = '';
-    if (s.show.subtitle && t.subtitle) bodyText += '<p class="m2__eyebrow">' + esc(t.subtitle) + '</p>';
-    if (s.show.title && t.title) bodyText += '<h3 class="m2__title">' + esc(t.title) + '</h3>';
-    if (s.show.intro && t.intro) bodyText += '<p class="m2__lede">' + esc(t.intro) + '</p>';
-    var headerHTML = bodyText
-      ? ('<div class="m2__body-header"' + (tbStyle ? ' style="' + tbStyle + '"' : '') + '>' + bodyText + '</div>')
+    var mainTextHtml = '';
+    if (s.show.subtitle && t.subtitle) mainTextHtml += '<p class="m2__eyebrow">' + esc(t.subtitle) + '</p>';
+    if (s.show.title && t.title) mainTextHtml += '<h3 class="m2__title">' + esc(t.title) + '</h3>';
+    if (s.show.intro && t.intro) mainTextHtml += '<p class="m2__lede">' + esc(t.intro) + '</p>';
+    mainTextHtml += btnHTML(s, 'm2__cta');
+    var mainBoxHTML = mainTextHtml
+      ? ('<div class="m2__main-box"' + (tbStyle ? ' style="' + tbStyle + '"' : '') + '>' + mainTextHtml + '</div>')
       : '';
 
     return '<div class="ed-mod" style="' + containerStyle(s) + '">' +
       '<div class="m2 m2--list-' + mode + ' is-r45' + reversed + '">' +
         '<div class="m2__grid">' +
           '<div class="m2__body">' +
-            headerHTML +
-            list + btnHTML(s, 'm2__cta') +
+            mainBoxHTML +
+            list +
           '</div>' +
           heroHTML +
         '</div>' +
@@ -584,21 +601,8 @@
     var col1 = s.items.slice(0, split);
     var col2 = s.items.slice(split);
     var icStyle = iconBoxStyle(s);
-    var apps = '<ul class="m3__apps">' + col1.slice(0, 8).map(function (it) {
-      return '<li class="m3__app"><span class="m3__icon" style="' + icStyle + '">' + icon(it.icon || 'sparkle') + '</span><span>' + esc(it.title) + '</span></li>';
-    }).join('') + '</ul>';
-    var cards = '<ul class="m3__cards">' + col2.slice(0, 2).map(function (it) {
-      return '<li class="m3__card"><figure><img src="' + esc(it.img) + '" alt="">' + imgMaskHTML(s) + '</figure>' +
-        '<h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></li>';
-    }).join('') + '</ul>';
-    var rows = '<ul class="m3__rows">' + col2.slice(0, 3).map(function (it) {
-      return '<li class="m3__row"><figure><img src="' + esc(it.img) + '" alt="">' + imgMaskHTML(s) + '</figure>' +
-        '<div><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div></li>';
-    }).join('') + '</ul>';
-    var tiles = '<ul class="m3__tiles">' + col2.slice(0, 4).map(function (it) {
-      return '<li class="m3__tile"><img src="' + esc(it.img) + '" alt="">' + imgMaskHTML(s) + '<span>' + esc(it.title) + '</span></li>';
-    }).join('') + '</ul>';
 
+    /* 主内容文案设置：背景覆盖到标题简介到按钮的位置 */
     var tb = s.layout.textBg || {};
     var tbOn = tb.bgOn != null ? tb.bgOn : tb.on;
     var tbStyle = '';
@@ -612,33 +616,78 @@
       });
     }
 
-    var intro = '<div class="m3__intro"' + (tbStyle ? ' style="' + tbStyle + '"' : '') + '>' +
-      (s.show.subtitle && t.subtitle ? '<p class="m3__eyebrow">' + esc(t.subtitle) + '</p>' : '') +
+    var mainIntroHtml = (s.show.subtitle && t.subtitle ? '<p class="m3__eyebrow">' + esc(t.subtitle) + '</p>' : '') +
       (s.show.title && t.title ? '<h3 class="m3__title">' + esc(t.title) + '</h3>' : '') +
       (s.show.intro && t.intro ? '<p class="m3__para">' + esc(t.intro) + '</p>' : '') +
-      '</div>';
+      btnHTML(s);
+    var introBox = mainIntroHtml
+      ? ('<div class="m3__intro"' + (tbStyle ? ' style="' + tbStyle + '"' : '') + '>' + mainIntroHtml + '</div>')
+      : '';
+
+    /* 内部列表1设置文案设置时：背景覆盖到组件的位置（Living Room 6个图标组件） */
+    var l1tb = s.layout.listTextBg || {};
+    var l1tbOn = l1tb.bgOn != null ? l1tb.bgOn : l1tb.on;
+    var l1tbStyle = '';
+    if (l1tbOn || l1tb.borderOn) {
+      l1tbStyle = style({
+        background: l1tbOn ? (l1tb.bg || l1tb.color || '#ffffffcc') : 'transparent',
+        'border-radius': (l1tbOn || l1tb.borderOn) ? radiusCSS(s, l1tb, 'radius') : '0',
+        padding: (l1tbOn || l1tb.borderOn) ? padCSS(s, l1tb, 'pad') : undefined,
+        border: l1tb.borderOn ? dimVal(s, l1tb.borderWidth != null ? l1tb.borderWidth : 1) + ' ' + (l1tb.borderStyle || 'solid') + ' ' + (l1tb.border || '#d0d5dd') : 'none',
+        'box-sizing': 'border-box'
+      });
+    }
+
+    /* 内部列表2设置文案设置时：背景覆盖到组件的位置（Living Room 2个图片组件） */
+    var l2tb = s.layout.list2TextBg || {};
+    var l2tbOn = l2tb.bgOn != null ? l2tb.bgOn : l2tb.on;
+    var l2tbStyle = '';
+    if (l2tbOn || l2tb.borderOn) {
+      l2tbStyle = style({
+        background: l2tbOn ? (l2tb.bg || l2tb.color || '#ffffffcc') : 'transparent',
+        'border-radius': (l2tbOn || l2tb.borderOn) ? radiusCSS(s, l2tb, 'radius') : '0',
+        padding: (l2tbOn || l2tb.borderOn) ? padCSS(s, l2tb, 'pad') : undefined,
+        border: l2tb.borderOn ? dimVal(s, l2tb.borderWidth != null ? l2tb.borderWidth : 1) + ' ' + (l2tb.borderStyle || 'solid') + ' ' + (l2tb.border || '#d0d5dd') : 'none',
+        'box-sizing': 'border-box'
+      });
+    }
+
+    var apps = '<ul class="m3__apps">' + col1.slice(0, 8).map(function (it) {
+      return '<li class="m3__app"' + (l1tbStyle ? ' style="' + l1tbStyle + '"' : '') + '><span class="m3__icon" style="' + icStyle + '">' + icon(it.icon || 'sparkle') + '</span><span>' + esc(it.title) + '</span></li>';
+    }).join('') + '</ul>';
+    var cards = '<ul class="m3__cards">' + col2.slice(0, 2).map(function (it) {
+      return '<li class="m3__card"' + (l2tbStyle ? ' style="' + l2tbStyle + '"' : '') + '><figure><img src="' + esc(it.img) + '" alt="">' + imgMaskHTML(s) + '</figure>' +
+        '<h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></li>';
+    }).join('') + '</ul>';
+    var rows = '<ul class="m3__rows">' + col2.slice(0, 3).map(function (it) {
+      return '<li class="m3__row"' + (l2tbStyle ? ' style="' + l2tbStyle + '"' : '') + '><figure><img src="' + esc(it.img) + '" alt="">' + imgMaskHTML(s) + '</figure>' +
+        '<div><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div></li>';
+    }).join('') + '</ul>';
+    var tiles = '<ul class="m3__tiles">' + col2.slice(0, 4).map(function (it) {
+      return '<li class="m3__tile"' + (l2tbStyle ? ' style="' + l2tbStyle + '"' : '') + '><img src="' + esc(it.img) + '" alt="">' + imgMaskHTML(s) + '<span>' + esc(it.title) + '</span></li>';
+    }).join('') + '</ul>';
 
     var media = (col1[0] || s.items[0]);
-    var main = '<div class="m3__main">' + intro + apps + btnHTML(s) + '</div>';
+    var main = '<div class="m3__main">' + introBox + apps + '</div>';
     var inner;
     if (mode === 'b') {
       inner = '<div class="m3__grid">' + main +
         '<figure class="m3__media"><img src="' + esc(media.img) + '" alt="">' + imgMaskHTML(s) + '</figure>' +
         '<div class="m3__aside"><ul class="m3__compact">' + col1.slice(0, 4).map(function (it) {
-          return '<li>' + icon(it.icon || 'sparkle') + '<div><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div></li>';
+          return '<li' + (l1tbStyle ? ' style="' + l1tbStyle + '"' : '') + '>' + icon(it.icon || 'sparkle') + '<div><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div></li>';
         }).join('') + '</ul></div></div>';
     } else if (mode === 'c') {
       inner = '<div class="m3__grid">' +
-        '<div class="m3__main">' + intro + '<ul class="m3__chips">' + col1.slice(0, 8).map(function (it) {
-          return '<li>' + icon(it.icon || 'sparkle') + esc(it.title) + '</li>';
-        }).join('') + '</ul>' + btnHTML(s) + '</div>' +
+        '<div class="m3__main">' + introBox + '<ul class="m3__chips">' + col1.slice(0, 8).map(function (it) {
+          return '<li' + (l1tbStyle ? ' style="' + l1tbStyle + '"' : '') + '>' + icon(it.icon || 'sparkle') + esc(it.title) + '</li>';
+        }).join('') + '</ul></div>' +
         '<div class="m3__aside">' + rows + '</div></div>';
     } else if (mode === 'd') {
       inner = '<div class="m3__grid">' +
-        '<div class="m3__main">' + intro + '<ol class="m3__steps">' + col1.slice(0, 4).map(function (it, i) {
-          return '<li><span class="m3__step-no">0' + (i + 1) + '</span><div><h4>' + esc(it.title) +
+        '<div class="m3__main">' + introBox + '<ol class="m3__steps">' + col1.slice(0, 4).map(function (it, i) {
+          return '<li' + (l1tbStyle ? ' style="' + l1tbStyle + '"' : '') + '><span class="m3__step-no">0' + (i + 1) + '</span><div><h4>' + esc(it.title) +
             '</h4><p>' + esc(it.desc) + '</p></div></li>';
-        }).join('') + '</ol>' + btnHTML(s) + '</div>' +
+        }).join('') + '</ol></div>' +
         '<div class="m3__aside">' + tiles + '</div></div>';
     } else {
       inner = '<div class="m3__grid">' + main + '<div class="m3__aside">' + cards + '</div></div>';

@@ -62,7 +62,7 @@
       show: { title: true, subtitle: false, intro: true, button: true },
       layout: {
         mode: MODES[structure || 'm4'].def,
-        columns: 2,
+        columns: structure === 'm4' ? 3 : 2,
         count: 6,
         dir: 'v',
         imgText: 'tb',
@@ -80,9 +80,10 @@
         width: 100,
         gap: 40, gapMode: 'uni', gapX: 40, gapY: 40,
         textBg: {
-          on: false, color: '#000000b3',
+          bgOn: false, bg: '#ffffffcc',
+          borderOn: false, border: '#d0d5dd', borderStyle: 'solid', borderWidth: 1,
           radius: 8, radiusMode: 'uni', radiusTl: 8, radiusTr: 8, radiusBr: 8, radiusBl: 8,
-          pad: 16, padMode: 'uni', padT: 16, padR: 16, padB: 16, padL: 16
+          pad: 14, padMode: 'uni', padT: 14, padR: 14, padB: 14, padL: 14
         }
       },
       card: {
@@ -96,7 +97,7 @@
         bgOn: true, bg: m4 ? '#0b0b0c' : '#ffffff',
         borderOn: false, border: '#1f2228', borderWidth: 1,
         radius: 0, radiusMode: 'uni', radiusTl: 0, radiusTr: 0, radiusBr: 0, radiusBl: 0,
-        pad: 40, padMode: 'uni', padT: 40, padR: 40, padB: 40, padL: 40,
+        pad: m4 ? 0 : 40, padMode: 'uni', padT: m4 ? 0 : 40, padR: m4 ? 0 : 40, padB: m4 ? 0 : 40, padL: m4 ? 0 : 40,
         shadow: { on: false, x: 0, y: 20, blur: 50, spread: -24 }
       },
       img: {

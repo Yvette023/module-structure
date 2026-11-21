@@ -569,6 +569,7 @@
         body += row(label('图标') + range('layout.iconRatio', s.layout.iconRatio, 1, 6, 1, ''));
         body += row(label('文字') + range('layout.textRatio', s.layout.textRatio, 1, 12, 1, ''));
       }
+      body += fpropBgStrokeSection('文案设置', 'layout.textBg', { hasFollowContent: false, maxPad: 48 });
       return body;
     }
 
@@ -576,7 +577,8 @@
       /* 复合列表：列表布局 ➔ 列数设置 ➔ 容器对齐 ➔ 文案对齐 ➔ 宽度 ➔ 列中间距 ➔ 文字背景 */
       body = row(label('列表布局')) + select('layout.mode', s.layout.mode, m.options);
       if (s.layout.mode === 'grid') {
-        body += row(label('列数设置')) + select('layout.columns', s.layout.columns || 2, [
+        body += row(label('列数设置')) + select('layout.columns', s.layout.columns || 3, [
+          { v: 1, l: '1列' },
           { v: 2, l: '2列' },
           { v: 3, l: '3列' },
           { v: 4, l: '4列' }
@@ -594,7 +596,7 @@
       return body;
     }
 
-    /* m2 / m3 等其他列表组件：列表布局 ➔ 图文布局(m2) ➔ 容器对齐 ➔ 文案对齐 ➔ 宽度 */
+    /* m2 / m3 等其他列表组件：列表布局 ➔ 图文布局(m2) ➔ 容器对齐 ➔ 文案对齐 ➔ 宽度 ➔ 文案设置 */
     body = row(label(m.label)) + select('layout.mode', s.layout.mode, m.options);
     if (s.structure === 'm2') {
       body += row(label('图文位置') + sw('layout.reverse', s.layout.reverse));
@@ -606,6 +608,7 @@
       { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
     ], 'fseg--wide');
     body += row(label('宽度')) + range('layout.width', s.layout.width, 30, 100, 1, '%');
+    body += fpropBgStrokeSection('文案设置', 'layout.textBg', { hasFollowContent: false, maxPad: 48 });
     return body;
   }
 

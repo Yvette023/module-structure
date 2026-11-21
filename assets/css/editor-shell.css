@@ -260,8 +260,10 @@ body.ed {
 /* ================= 结构4：图文卡片列表 ================= */
 .ed-list {
   display: grid;
-  grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
   gap: var(--gap, 8px);
+  width: 100%;
+  box-sizing: border-box;
 }
 .ed-track {
   display: flex;
@@ -300,14 +302,26 @@ body.ed {
   inset: 0;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
   align-items: flex-start;
-  gap: 7px;
-  padding: 22px 24px;
+  padding: 20px 22px;
   box-sizing: border-box;
   color: #fff;
+  pointer-events: none;
 }
-.ed-card__text.is-center { align-items: center; text-align: center; }
-.ed-card__text.is-right { align-items: flex-end; text-align: right; }
+.ed-card__text.is-center { align-items: center; }
+.ed-card__text.is-right { align-items: flex-end; }
+.ed-card__text-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  max-width: 100%;
+  pointer-events: auto;
+  box-sizing: border-box;
+}
+.ed-card__text.is-center .ed-card__text-box { align-items: center; text-align: center; }
+.ed-card__text.is-right .ed-card__text-box { align-items: flex-end; text-align: right; }
 .ed-card__text h3 {
   margin: 0;
   font-size: clamp(16px, 1.5vw, 21px);
@@ -747,19 +761,24 @@ body.ed {
 .ed-scroll::-webkit-scrollbar { width: 8px; }
 .ed-scroll::-webkit-scrollbar-thumb { background: #dcdfe4; border-radius: 8px; }
 
-/* ---- 多列表 列1/列2 切换 Tab ---- */
+/* ---- 多列表 列1/列2/列3 切换 Tab ---- */
 .ed-coltab {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: 4px;
   padding: 10px 14px 4px;
 }
 .ed-coltab button {
+  flex: 1 1 0;
+  min-width: 0;
   height: 30px;
+  padding: 0 4px;
   border-radius: var(--ui-radius);
   background: var(--ui-line-2);
   color: var(--ui-text-2);
-  font-size: 12.5px;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: background .16s, color .16s;
 }
 .ed-coltab button.is-on {

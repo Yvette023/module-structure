@@ -194,27 +194,30 @@
 
   function textBlock(s, opts) {
     var t = s.text;
-    var align = s.layout.textAlign;
+    var align = s.layout.textAlign || 'left';
     var has = (s.show.title && t.title) || (s.show.subtitle && t.subtitle) ||
-      (s.show.intro && t.intro) || (s.show.button && t.button.on);
+      (s.show.intro && t.intro) || (s.show.button && t.button && t.button.on);
     if (!has) return '';
     var tb = s.layout.textBg || {};
     var bgOn = tb.bgOn != null ? tb.bgOn : tb.on;
     var bgColor = tb.bg || tb.color || 'transparent';
-    var st = style({
-      'text-align': align,
-      'align-items': align === 'center' ? 'center' : align === 'right' ? 'flex-end' : 'flex-start',
-      background: bgOn ? bgColor : 'transparent',
-      'border-radius': (bgOn || tb.borderOn) ? radiusCSS(s, tb, 'radius') : '0',
-      padding: (bgOn || tb.borderOn) ? padCSS(s, tb, 'pad') : undefined,
-      border: tb.borderOn ? dimVal(s, tb.borderWidth != null ? tb.borderWidth : 1) + ' ' + (tb.borderStyle || 'solid') + ' ' + (tb.border || '#111418') : '0'
-    });
-    var out = '<div class="ed-card__text is-' + align + '" style="' + st + '">';
+    var boxStyle = '';
+    if (bgOn || tb.borderOn) {
+      boxStyle = style({
+        background: bgOn ? bgColor : 'transparent',
+        'border-radius': (bgOn || tb.borderOn) ? radiusCSS(s, tb, 'radius') : '0',
+        padding: (bgOn || tb.borderOn) ? padCSS(s, tb, 'pad') : undefined,
+        border: tb.borderOn ? dimVal(s, tb.borderWidth != null ? tb.borderWidth : 1) + ' ' + (tb.borderStyle || 'solid') + ' ' + (tb.border || '#d0d5dd') : '0',
+        'box-sizing': 'border-box'
+      });
+    }
+    var out = '<div class="ed-card__text is-' + align + '">' +
+      '<div class="ed-card__text-box"' + (boxStyle ? ' style="' + boxStyle + '"' : '') + '>';
     if (s.show.title && t.title) out += '<h3>' + esc(t.title) + '</h3>';
     if (s.show.subtitle && t.subtitle) out += '<p class="ed-sub">' + esc(t.subtitle) + '</p>';
     if (s.show.intro && t.intro) out += '<p class="ed-p">' + esc(t.intro) + '</p>';
     out += btnHTML(s);
-    out += '</div>';
+    out += '</div></div>';
     return out;
   }
 
@@ -392,6 +395,19 @@
     var itemAlignStyle = vert
       ? ('display:flex;flex-direction:column;align-items:' + (s.layout.imgAlignX === 'left' ? 'flex-start' : s.layout.imgAlignX === 'right' ? 'flex-end' : 'center') + ';text-align:' + (s.layout.imgAlignX || 'center') + ';')
       : '';
+    var tb = s.layout.textBg || {};
+    var tbOn = tb.bgOn != null ? tb.bgOn : tb.on;
+    var tbStyle = '';
+    if (tbOn || tb.borderOn) {
+      tbStyle = style({
+        background: tbOn ? (tb.bg || tb.color || '#ffffffcc') : 'transparent',
+        'border-radius': (tbOn || tb.borderOn) ? radiusCSS(s, tb, 'radius') : '0',
+        padding: (tbOn || tb.borderOn) ? padCSS(s, tb, 'pad') : undefined,
+        border: tb.borderOn ? dimVal(s, tb.borderWidth != null ? tb.borderWidth : 1) + ' ' + (tb.borderStyle || 'solid') + ' ' + (tb.border || '#d0d5dd') : 'none',
+        'box-sizing': 'border-box'
+      });
+    }
+    var fullTextStyle = (textFlex ? (textFlex + ';') : '') + (tbStyle ? (tbStyle + ';') : '');
     function list(arr, listStyle) {
       return '<ul class="m1__list" style="' + listStyle + '">' + arr.map(function (it) {
         var badgeStyle = iconFlex ? (iconFlex + ';') : '';
@@ -399,7 +415,7 @@
         badgeStyle += vertAlignStyle;
         var badge = '<span class="m1__icon" style="' + badgeStyle + '">' + icon(it.icon || 'sparkle') + '</span>';
         return '<li class="m1__item" style="' + itemAlignStyle + '">' + badge +
-          '<div class="m1__text ' + taCls + '" style="' + textFlex + '"><h3>' + esc(it.title) + '</h3><p>' + esc(it.desc) + '</p></div></li>';
+          '<div class="m1__text ' + taCls + '"' + (fullTextStyle ? ' style="' + fullTextStyle + '"' : '') + '><h3>' + esc(it.title) + '</h3><p>' + esc(it.desc) + '</p></div></li>';
       }).join('') + '</ul>';
     }
     /* 图片对齐 = 列表基于容器的对齐：竖向=水平左中右（图文对齐），横向=垂直上中下 */
@@ -525,13 +541,32 @@
       '</figure>';
     }
 
+    var tb = s.layout.textBg || {};
+    var tbOn = tb.bgOn != null ? tb.bgOn : tb.on;
+    var tbStyle = '';
+    if (tbOn || tb.borderOn) {
+      tbStyle = style({
+        background: tbOn ? (tb.bg || tb.color || '#ffffffcc') : 'transparent',
+        'border-radius': (tbOn || tb.borderOn) ? radiusCSS(s, tb, 'radius') : '0',
+        padding: (tbOn || tb.borderOn) ? padCSS(s, tb, 'pad') : undefined,
+        border: tb.borderOn ? dimVal(s, tb.borderWidth != null ? tb.borderWidth : 1) + ' ' + (tb.borderStyle || 'solid') + ' ' + (tb.border || '#d0d5dd') : 'none',
+        'box-sizing': 'border-box'
+      });
+    }
+
+    var bodyText = '';
+    if (s.show.subtitle && t.subtitle) bodyText += '<p class="m2__eyebrow">' + esc(t.subtitle) + '</p>';
+    if (s.show.title && t.title) bodyText += '<h3 class="m2__title">' + esc(t.title) + '</h3>';
+    if (s.show.intro && t.intro) bodyText += '<p class="m2__lede">' + esc(t.intro) + '</p>';
+    var headerHTML = bodyText
+      ? ('<div class="m2__body-header"' + (tbStyle ? ' style="' + tbStyle + '"' : '') + '>' + bodyText + '</div>')
+      : '';
+
     return '<div class="ed-mod" style="' + containerStyle(s) + '">' +
       '<div class="m2 m2--list-' + mode + ' is-r45' + reversed + '">' +
         '<div class="m2__grid">' +
           '<div class="m2__body">' +
-            (s.show.subtitle && t.subtitle ? '<p class="m2__eyebrow">' + esc(t.subtitle) + '</p>' : '') +
-            (s.show.title && t.title ? '<h3 class="m2__title">' + esc(t.title) + '</h3>' : '') +
-            (s.show.intro && t.intro ? '<p class="m2__lede">' + esc(t.intro) + '</p>' : '') +
+            headerHTML +
             list + btnHTML(s, 'm2__cta') +
           '</div>' +
           heroHTML +
@@ -564,7 +599,20 @@
       return '<li class="m3__tile"><img src="' + esc(it.img) + '" alt="">' + imgMaskHTML(s) + '<span>' + esc(it.title) + '</span></li>';
     }).join('') + '</ul>';
 
-    var intro = '<div class="m3__intro">' +
+    var tb = s.layout.textBg || {};
+    var tbOn = tb.bgOn != null ? tb.bgOn : tb.on;
+    var tbStyle = '';
+    if (tbOn || tb.borderOn) {
+      tbStyle = style({
+        background: tbOn ? (tb.bg || tb.color || '#ffffffcc') : 'transparent',
+        'border-radius': (tbOn || tb.borderOn) ? radiusCSS(s, tb, 'radius') : '0',
+        padding: (tbOn || tb.borderOn) ? padCSS(s, tb, 'pad') : undefined,
+        border: tb.borderOn ? dimVal(s, tb.borderWidth != null ? tb.borderWidth : 1) + ' ' + (tb.borderStyle || 'solid') + ' ' + (tb.border || '#d0d5dd') : 'none',
+        'box-sizing': 'border-box'
+      });
+    }
+
+    var intro = '<div class="m3__intro"' + (tbStyle ? ' style="' + tbStyle + '"' : '') + '>' +
       (s.show.subtitle && t.subtitle ? '<p class="m3__eyebrow">' + esc(t.subtitle) + '</p>' : '') +
       (s.show.title && t.title ? '<h3 class="m3__title">' + esc(t.title) + '</h3>' : '') +
       (s.show.intro && t.intro ? '<p class="m3__para">' + esc(t.intro) + '</p>' : '') +

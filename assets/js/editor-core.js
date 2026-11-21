@@ -74,6 +74,16 @@
       if (merged && merged.img && (merged.img.border === '#111418' || merged.img.border === '#2a2f38' || merged.img.border === '#000000')) {
         merged.img.border = '#d0d5dd';
       }
+      if (merged && merged.structure === 'm4') {
+        if (merged.layout && merged.layout.columns === 2) merged.layout.columns = 3;
+        if (merged.container && merged.container.pad === 40) {
+          merged.container.pad = 0;
+          merged.container.padT = 0;
+          merged.container.padR = 0;
+          merged.container.padB = 0;
+          merged.container.padL = 0;
+        }
+      }
       return merged;
     } catch (e) { return null; }
   }

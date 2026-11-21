@@ -177,7 +177,8 @@
       '</div>';
   }
 
-  function m5InnerListTextBgControl(prefix) {
+  function fpropBgStrokeSection(title, prefix, opts) {
+    opts = opts || {};
     var bgObj = getPath(prefix) || {};
     var bgOn = !!bgObj.bgOn;
     var borderOn = !!bgObj.borderOn;
@@ -185,11 +186,21 @@
     var borderHex = String(bgObj.border || '#111418').replace('#', '').toUpperCase();
     var borderStyle = bgObj.borderStyle || 'solid';
     var borderWidth = bgObj.borderWidth != null ? bgObj.borderWidth : 1;
+    var followContent = bgObj.followContent !== false;
 
-    var html = '<div class="frow" style="margin-top:16px"><span class="flabel" style="font-weight:600;color:#1f2328">文案背景</span></div>';
+    var html = '<div class="frow" style="margin-top:' + (opts.marginTop != null ? opts.marginTop : 16) + 'px"><span class="flabel" style="font-weight:600;color:#1f2328">' + title + '</span></div>';
 
-    // 1. 圆角
-    html += dimCtl({ label: '圆角', field: prefix + '.radius', modeBind: prefix + '.radiusMode', type: 'corner', min: 0, max: 48 });
+    // 1. 圆角（如果启用）
+    if (opts.hasCorner !== false) {
+      html += dimCtl({
+        label: opts.cornerLabel || '圆角',
+        field: prefix + '.radius',
+        modeBind: prefix + '.radiusMode',
+        type: 'corner',
+        min: 0,
+        max: opts.maxRadius || 48
+      });
+    }
 
     // 2. 背景（勾选框 + 色块药丸卡片 + 调色盘图标）
     html += '<div class="fprop-row">' +
@@ -208,7 +219,7 @@
       '</label>' +
     '</div>';
 
-    // 3. 描边（勾选框 + 色块药丸卡片 + 调色盘图标）
+    // 3. 描边第 1 行（勾选框 + 色块药丸卡片 + 调色盘图标）
     html += '<div class="fprop-row">' +
       '<div class="fprop-check" data-act="toggle" data-bind="' + prefix + '.borderOn">' +
         icon(borderOn ? 'checkCircleFilled' : 'circleEmpty') +
@@ -243,39 +254,33 @@
       '</button>' +
     '</div>';
 
-    // 4. 内边距
-    html += dimCtl({ label: '内边距', field: prefix + '.pad', modeBind: prefix + '.padMode', type: 'box', min: 0, max: 64 });
+    // 相邻描边合并（卡片特有）
+    if (opts.hasMerge) {
+      html += row(label('相邻的描边合并') + sw(prefix + '.merge', bgObj.merge));
+    }
 
-    return html;
-  }
+    // 4. 内边距（如果启用）
+    if (opts.hasPad !== false) {
+      html += dimCtl({
+        label: opts.padLabel || '内边距',
+        field: prefix + '.pad',
+        modeBind: prefix + '.padMode',
+        type: 'box',
+        min: 0,
+        max: opts.maxPad || 64
+      });
+    }
 
-  function textBgControl(prefix, hasFollowContent) {
-    var bgObj = getPath(prefix) || {};
-    var bgOn = !!bgObj.bgOn;
-    var borderOn = !!bgObj.borderOn;
-    var borderStyle = bgObj.borderStyle || 'solid';
-    var borderWidth = bgObj.borderWidth != null ? bgObj.borderWidth : 1;
-    var followContent = bgObj.followContent !== false;
+    // 阴影（卡片 / 容器特有）
+    if (opts.hasShadow) {
+      html += shadowCtl(prefix + '.shadow');
+    }
 
-    var html = '<div class="frow" style="margin-top:16px"><span class="flabel" style="font-weight:600;color:#1f2328">文案背景</span></div>';
-    html += dimCtl({ label: '圆角', field: prefix + '.radius', modeBind: prefix + '.radiusMode', type: 'corner', min: 0, max: 48 });
-    html += row(label('背景') + sw(prefix + '.bgOn', bgOn)) +
-      (bgOn ? row(label('颜色') + color(prefix + '.bg', bgObj.bg || '#ffffff')) : '');
-    html += row(label('描边') + sw(prefix + '.borderOn', borderOn)) +
-      (borderOn ? row(label('颜色') + color(prefix + '.border', bgObj.border || '#111418')) +
-        row(
-          label('样式') +
-          select(prefix + '.borderStyle', borderStyle, [
-            { v: 'solid', l: '实线' },
-            { v: 'dashed', l: '虚线' },
-            { v: 'dotted', l: '点线' }
-          ])
-        ) +
-        row(label('粗细') + num(prefix + '.borderWidth', borderWidth, 'px', 0, 12)) : '');
-    html += dimCtl({ label: '内边距', field: prefix + '.pad', modeBind: prefix + '.padMode', type: 'box', min: 0, max: 64 });
-    if (hasFollowContent) {
+    // 5. 文案跟随版心（仅轮播列表主层）
+    if (opts.hasFollowContent) {
       html += row(label('文案跟随版心') + sw(prefix + '.followContent', followContent));
     }
+
     return html;
   }
 
@@ -311,7 +316,7 @@
           { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
         ], 'fseg--wide');
         body += row(label('宽度')) + range('layout.listWidth', s.layout.listWidth != null ? s.layout.listWidth : 100, 30, 100, 1, '%');
-        body += m5InnerListTextBgControl('layout.listTextBg');
+        body += fpropBgStrokeSection('文案背景', 'layout.listTextBg', { hasFollowContent: false });
         body += dimCtl({ label: '列表间距', field: 'layout.listGap', modeBind: 'layout.listGapMode', type: 'gap', min: 0, max: 48 });
         return body;
       }
@@ -335,7 +340,7 @@
         { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
       ], 'fseg--wide');
       body += row(label('宽度')) + range('layout.contentWidth', s.layout.contentWidth || s.layout.width || 54, 30, 100, 1, '%');
-      body += textBgControl('layout.textBg', true);
+      body += fpropBgStrokeSection('文案背景', 'layout.textBg', { hasFollowContent: true });
       body += dimCtl({ label: '间距', field: 'layout.gap', modeBind: 'layout.gapMode', type: 'gap', min: 0, max: 48 });
       return body;
     }
@@ -409,42 +414,24 @@
     }
     if (s.structure === 'm4') {
       body += dimCtl({ label: '列中间距', field: 'layout.gap', modeBind: 'layout.gapMode', type: 'gap', min: 0, max: 80 });
-    }
-    if (s.structure === 'm4') {
-      body += row(label('文案背景')) + sw('layout.textBg.on', s.layout.textBg.on);
-      if (s.layout.textBg.on) {
-        body += row(label('背景色')) + color('layout.textBg.color', s.layout.textBg.color, true) +
-          dimCtl({ label: '圆角', field: 'layout.textBg.radius', modeBind: 'layout.textBg.radiusMode', type: 'corner', min: 0, max: 40 }) +
-          dimCtl({ label: '内边距', field: 'layout.textBg.pad', modeBind: 'layout.textBg.padMode', type: 'box', min: 0, max: 48 });
-      }
+      body += fpropBgStrokeSection('文案背景', 'layout.textBg', { hasFollowContent: false, maxPad: 48 });
     }
     return body;
   }
 
 
   function bgPanel() {
-    var state = ED.state;
-    var c = state.card;
-    var k = state.container;
-    var body = '<div class="frow"><span class="flabel" style="font-weight:600;color:#1f2328">卡片背景</span></div>' +
-      row(label('背景') + sw('card.bgOn', c.bgOn)) +
-      (c.bgOn ? row(label('颜色') + color('card.bg', c.bg)) : '') +
-      row(label('描边') + sw('card.borderOn', c.borderOn)) +
-      (c.borderOn ? row(label('颜色') + color('card.border', c.border)) +
-        row(label('粗细') + num('card.borderWidth', c.borderWidth, 'px', 0, 8)) : '') +
-      row(label('相邻的描边合并') + sw('card.merge', c.merge)) +
-      dimCtl({ label: '圆角', field: 'card.radius', modeBind: 'card.radiusMode', type: 'corner', min: 0, max: 48 }) +
-      dimCtl({ label: '内边距', field: 'card.pad', modeBind: 'card.padMode', type: 'box', min: 0, max: 48 }) +
-      shadowCtl('card.shadow') +
-      '<div class="frow" style="margin-top:22px"><span class="flabel" style="font-weight:600;color:#1f2328">容器背景</span></div>' +
-      row(label('背景') + sw('container.bgOn', k.bgOn)) +
-      (k.bgOn ? row(label('颜色') + color('container.bg', k.bg)) : '') +
-      row(label('描边') + sw('container.borderOn', k.borderOn)) +
-      (k.borderOn ? row(label('颜色') + color('container.border', k.border)) +
-        row(label('粗细') + num('container.borderWidth', k.borderWidth, 'px', 0, 8)) : '') +
-      dimCtl({ label: '圆角', field: 'container.radius', modeBind: 'container.radiusMode', type: 'corner', min: 0, max: 48 }) +
-      dimCtl({ label: '内边距', field: 'container.pad', modeBind: 'container.padMode', type: 'box', min: 0, max: 96 }) +
-      shadowCtl('container.shadow');
+    var body = fpropBgStrokeSection('卡片背景', 'card', {
+      hasMerge: true,
+      hasShadow: true,
+      maxPad: 48,
+      marginTop: 4
+    });
+    body += fpropBgStrokeSection('容器背景', 'container', {
+      hasShadow: true,
+      maxPad: 96,
+      marginTop: 22
+    });
     return body;
   }
 

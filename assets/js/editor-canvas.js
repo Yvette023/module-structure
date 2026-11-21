@@ -82,11 +82,12 @@
   /* ---------- 容器 / 卡片 / 图片 样式 ---------- */
   function containerStyle(s) {
     var c = s.container;
+    var bStyle = c.borderStyle || 'solid';
     return style({
       background: c.bgOn ? c.bg : 'transparent',
       'border-radius': radiusCSS(s, c, 'radius'),
       padding: padCSS(s, c, 'pad'),
-      border: c.borderOn ? dimVal(s, c.borderWidth) + ' solid ' + c.border : '0',
+      border: c.borderOn ? dimVal(s, c.borderWidth != null ? c.borderWidth : 1) + ' ' + bStyle + ' ' + c.border : '0',
       'box-shadow': shadowCss(c.shadow),
       'box-sizing': 'border-box',
       color: isDark(c.bgOn ? c.bg : '#ffffff') ? '#f4f2ee' : '#14161a'
@@ -95,11 +96,12 @@
 
   function cardStyle(s) {
     var c = s.card;
+    var bStyle = c.borderStyle || 'solid';
     return style({
       background: c.bgOn ? c.bg : 'transparent',
       'border-radius': radiusCSS(s, c, 'radius'),
       padding: padCSS(s, c, 'pad'),
-      border: c.borderOn ? dimVal(s, c.borderWidth) + ' solid ' + c.border : '0',
+      border: c.borderOn ? dimVal(s, c.borderWidth != null ? c.borderWidth : 1) + ' ' + bStyle + ' ' + c.border : '0',
       'box-shadow': shadowCss(c.shadow)
     });
   }
@@ -158,13 +160,16 @@
     var has = (s.show.title && t.title) || (s.show.subtitle && t.subtitle) ||
       (s.show.intro && t.intro) || (s.show.button && t.button.on);
     if (!has) return '';
-    var tb = s.layout.textBg;
+    var tb = s.layout.textBg || {};
+    var bgOn = tb.bgOn != null ? tb.bgOn : tb.on;
+    var bgColor = tb.bg || tb.color || 'transparent';
     var st = style({
       'text-align': align,
       'align-items': align === 'center' ? 'center' : align === 'right' ? 'flex-end' : 'flex-start',
-      background: tb.on ? tb.color : 'transparent',
-      'border-radius': tb.on ? radiusCSS(s, tb, 'radius') : '0',
-      padding: tb.on ? padCSS(s, tb, 'pad') : undefined
+      background: bgOn ? bgColor : 'transparent',
+      'border-radius': (bgOn || tb.borderOn) ? radiusCSS(s, tb, 'radius') : '0',
+      padding: (bgOn || tb.borderOn) ? padCSS(s, tb, 'pad') : undefined,
+      border: tb.borderOn ? dimVal(s, tb.borderWidth != null ? tb.borderWidth : 1) + ' ' + (tb.borderStyle || 'solid') + ' ' + (tb.border || '#111418') : '0'
     });
     var out = '<div class="ed-card__text is-' + align + '" style="' + st + '">';
     if (s.show.title && t.title) out += '<h3>' + esc(t.title) + '</h3>';

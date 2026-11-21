@@ -1328,9 +1328,9 @@ body.ed {
   display: block;
 }
 .fprop-check span {
-  font-size: 13px;
-  font-weight: 500;
-  color: #1f2328;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ui-text-2);
 }
 .fprop-color-pill {
   flex: 1 1 auto;
@@ -1362,14 +1362,14 @@ body.ed {
   background-size: 8px 8px;
 }
 .fprop-color-pill .fcolor-text {
-  font-size: 13px;
-  font-weight: 600;
-  color: #1f2328;
-  letter-spacing: .02em;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ui-text-2);
+  letter-spacing: normal;
+  font-family: inherit;
 }
 .fprop-color-pill .fcolor-text--empty {
-  color: #98a2b3;
+  color: var(--ui-text-3);
   font-weight: 400;
 }
 .fprop-color-pill input[type="color"] {
@@ -1463,10 +1463,10 @@ body.ed {
   min-width: 0;
   border: 0;
   background: none;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 400;
   text-align: center;
-  color: #1f2328;
+  color: var(--ui-text-2);
   outline: none;
 }
 .fprop-stroke-w .unit {

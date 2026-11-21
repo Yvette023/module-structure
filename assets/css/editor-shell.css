@@ -1858,6 +1858,12 @@ select::-ms-expand {
   margin-bottom: 14px;
   border-bottom: 1px solid #eef2f6;
 }
+.fprop-switch-title {
+  margin: 0;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  color: var(--ui-text, #101828) !important;
+}
 .fprop-info-badge {
   display: inline-flex;
   align-items: center;
@@ -1872,8 +1878,8 @@ select::-ms-expand {
   vertical-align: middle;
 }
 .fprop-info-badge svg {
-  width: 14px;
-  height: 14px;
+  width: 13.5px;
+  height: 13.5px;
 }
 .fprop-info-badge:hover {
   color: #1677ff;
@@ -1881,26 +1887,46 @@ select::-ms-expand {
 .fprop-info-badge[data-tip] {
   position: relative;
 }
+.fprop-info-badge[data-tip]::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 4px;
+  transform: translateY(2px);
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #1f242f transparent;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .15s ease, visibility .15s ease;
+  z-index: 1001;
+}
 .fprop-info-badge[data-tip]::after {
   content: attr(data-tip);
   position: absolute;
   top: 100%;
-  left: 50%;
-  transform: translateX(-50%) translateY(6px);
-  padding: 6px 10px;
+  left: -4px;
+  transform: translateY(7px);
+  width: 180px;
+  max-width: 190px;
+  padding: 7px 10px;
   background: #1f242f;
   color: #ffffff;
   font-size: 11px;
-  line-height: 1.4;
-  white-space: nowrap;
+  line-height: 1.5;
+  white-space: normal;
+  word-break: break-word;
+  text-align: left;
   border-radius: 6px;
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
   transition: opacity .15s ease, visibility .15s ease;
-  z-index: 100;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
+  z-index: 1000;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .22);
 }
+.fprop-info-badge[data-tip]:hover::before,
 .fprop-info-badge[data-tip]:hover::after {
   opacity: 1;
   visibility: visible;

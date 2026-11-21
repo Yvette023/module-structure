@@ -391,13 +391,12 @@
       var curLayout = (isCustom && currentSlide.layout) ? currentSlide.layout : s.layout;
       var lPrefix = isCustom ? ('items.' + slideIdx + '.layout') : 'layout';
 
-      var slideNo = slideIdx + 1;
-      var tipText = '开启后，下方排版仅对当前轮播图（图片 ' + slideNo + '）生效；关闭则跟随全局统一排版';
+      var tipText = '开启后，下方排版仅对当前轮播图生效；关闭则跟随全局统一排版';
 
       body = '<div class="frow fprop-custom-switch-row">' +
         '<div style="display:flex;align-items:center;gap:6px;">' +
-          '<span class="flabel" style="margin:0;font-weight:600;color:#101828;font-size:13px">当前图片独立排版</span>' +
-          '<span class="fprop-info-badge" data-tip="' + esc(tipText) + '" title="' + esc(tipText) + '">' +
+          '<span class="flabel fprop-switch-title" style="margin:0;font-size:12.5px;font-weight:600;color:var(--ui-text)">独立设置</span>' +
+          '<span class="fprop-info-badge" data-tip="' + esc(tipText) + '">' +
             icon('info') +
           '</span>' +
         '</div>' +

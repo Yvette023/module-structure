@@ -21,6 +21,7 @@
   var select = function () { return ED.select.apply(null, arguments); };
   var range = function () { return ED.range.apply(null, arguments); };
   var dimCtl = function () { return ED.dimCtl.apply(null, arguments); };
+  var toDisplay = function (v) { return ED.toDisplay ? ED.toDisplay(v) : v; };
   var shadowCtl = function () { return ED.shadowCtl.apply(null, arguments); };
   var sec = function () { return ED.sec.apply(null, arguments); };
   var isVert = function (s) { return ED.isVert(s); };
@@ -188,6 +189,150 @@
     var borderWidth = bgObj.borderWidth != null ? bgObj.borderWidth : 1;
     var followContent = bgObj.followContent !== false;
 
+    // 如果启用精简对齐模式（用户体验优化：统一左侧基准线对齐，精简层级，消除拥挤感）
+    if (opts.streamlined) {
+      var rMode = bgObj.radiusMode || 'uni';
+      var rVal = bgObj.radius != null ? toDisplay(bgObj.radius) : 10;
+      var rTl = bgObj.radiusTl != null ? toDisplay(bgObj.radiusTl) : rVal;
+      var rTr = bgObj.radiusTr != null ? toDisplay(bgObj.radiusTr) : rVal;
+      var rBr = bgObj.radiusBr != null ? toDisplay(bgObj.radiusBr) : rVal;
+      var rBl = bgObj.radiusBl != null ? toDisplay(bgObj.radiusBl) : rVal;
+
+      var pMode = bgObj.padMode || 'uni';
+      var pVal = bgObj.pad != null ? toDisplay(bgObj.pad) : 14;
+      var pT = bgObj.padT != null ? toDisplay(bgObj.padT) : pVal;
+      var pR = bgObj.padR != null ? toDisplay(bgObj.padR) : pVal;
+      var pB = bgObj.padB != null ? toDisplay(bgObj.padB) : pVal;
+      var pL = bgObj.padL != null ? toDisplay(bgObj.padL) : pVal;
+
+      var sHtml = '<div class="fprop-streamlined-group">' +
+        '<div class="frow" style="margin-top:' + (opts.marginTop != null ? opts.marginTop : 16) + 'px;margin-bottom:6px">' +
+          '<span class="flabel" style="font-weight:600;color:#101828;font-size:13px">' + title + '</span>' +
+        '</div>';
+
+      // 1. 圆角行（左侧 74px: 标签 + 切换小按钮；右侧: 输入框）
+      sHtml += '<div class="fprop-align-row">' +
+        '<div class="fprop-align-label">' +
+          '<span class="fprop-label-text">圆角</span>' +
+          '<button type="button" class="fprop-mode-toggle' + (rMode === 'ind' ? ' is-active' : '') + '" data-act="dim-mode" data-bind="' + prefix + '.radiusMode" data-value="' + (rMode === 'ind' ? 'uni' : 'ind') + '" title="' + (rMode === 'ind' ? '切换为统一圆角' : '切换为独立圆角') + '">' +
+            icon(rMode === 'ind' ? 'cornerInd' : 'cornerAll') +
+          '</button>' +
+        '</div>' +
+        '<div class="fprop-align-content">' +
+          (rMode === 'ind'
+            ? '<div class="fprop-4grid">' +
+                '<input type="number" data-bind="' + prefix + '.radiusTl" data-px="1" value="' + rTl + '" min="0" max="64" title="左上">' +
+                '<input type="number" data-bind="' + prefix + '.radiusTr" data-px="1" value="' + rTr + '" min="0" max="64" title="右上">' +
+                '<input type="number" data-bind="' + prefix + '.radiusBr" data-px="1" value="' + rBr + '" min="0" max="64" title="右下">' +
+                '<input type="number" data-bind="' + prefix + '.radiusBl" data-px="1" value="' + rBl + '" min="0" max="64" title="左下">' +
+              '</div>'
+            : '<div class="fprop-num-box">' +
+                '<input type="number" data-bind="' + prefix + '.radius" data-px="1" value="' + rVal + '" min="0" max="64">' +
+                '<span class="fprop-num-unit">px</span>' +
+              '</div>'
+          ) +
+        '</div>' +
+      '</div>';
+
+      // 2. 背景行（左侧 74px: 勾选框 + 背景；右侧: 色块药丸卡片 + 调色板）
+      sHtml += '<div class="fprop-align-row">' +
+        '<div class="fprop-align-label">' +
+          '<div class="fprop-check" data-act="toggle" data-bind="' + prefix + '.bgOn">' +
+            icon(bgOn ? 'checkCircleFilled' : 'circleEmpty') +
+            '<span>背景</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="fprop-align-content">' +
+          '<div class="fprop-color-pill" title="点击选择背景色">' +
+            '<span class="fcolor-chip' + (!bgOn ? ' fcolor-chip--checker' : '') + '" style="' + (bgOn ? 'background-color:#' + bgHex : '') + '"></span>' +
+            '<span class="fcolor-text' + (!bgOn ? ' fcolor-text--empty' : '') + '">' + (bgOn ? bgHex : '未设置') + '</span>' +
+            '<input type="color" data-bind="' + prefix + '.bg" data-kind="color" value="#' + (bgHex.length === 6 ? bgHex : 'FFFFFF') + '">' +
+          '</div>' +
+          '<label class="fprop-btn-palette" title="打开调色板">' +
+            icon('palette') +
+            '<input type="color" data-bind="' + prefix + '.bg" data-kind="color" value="#' + (bgHex.length === 6 ? bgHex : 'FFFFFF') + '">' +
+          '</label>' +
+        '</div>' +
+      '</div>';
+
+      // 3. 描边行（左侧 74px: 勾选框 + 描边；右侧: 色块药丸卡片 + 调色板）
+      sHtml += '<div class="fprop-align-row">' +
+        '<div class="fprop-align-label">' +
+          '<div class="fprop-check" data-act="toggle" data-bind="' + prefix + '.borderOn">' +
+            icon(borderOn ? 'checkCircleFilled' : 'circleEmpty') +
+            '<span>描边</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="fprop-align-content">' +
+          '<div class="fprop-color-pill" title="点击选择描边色">' +
+            '<span class="fcolor-chip' + (!borderOn ? ' fcolor-chip--checker' : '') + '" style="' + (borderOn ? 'background-color:#' + borderHex : '') + '"></span>' +
+            '<span class="fcolor-text' + (!borderOn ? ' fcolor-text--empty' : '') + '">' + (borderOn ? borderHex : '未设置') + '</span>' +
+            '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : '111418') + '">' +
+          '</div>' +
+          '<label class="fprop-btn-palette" title="打开调色板">' +
+            icon('palette') +
+            '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : '111418') + '">' +
+          '</label>' +
+        '</div>' +
+      '</div>';
+
+      // 4. 描边线型与线宽行（左侧 74px: 实线/虚线下拉；右侧: 线宽输入框 + 方框模式按钮）
+      sHtml += '<div class="fprop-align-row">' +
+        '<div class="fprop-align-label">' +
+          '<select class="fprop-select-type" data-bind="' + prefix + '.borderStyle">' +
+            '<option value="solid"' + (borderStyle === 'solid' ? ' selected' : '') + '>实线</option>' +
+            '<option value="dashed"' + (borderStyle === 'dashed' ? ' selected' : '') + '>虚线</option>' +
+            '<option value="dotted"' + (borderStyle === 'dotted' ? ' selected' : '') + '>点线</option>' +
+          '</select>' +
+        '</div>' +
+        '<div class="fprop-align-content">' +
+          '<div class="fprop-stroke-w">' +
+            icon('lineWidth') +
+            '<input type="number" data-bind="' + prefix + '.borderWidth" data-px="1" min="0" max="16" value="' + borderWidth + '">' +
+            '<span class="unit">px</span>' +
+          '</div>' +
+          '<button type="button" class="fprop-icon-btn is-active" title="统一描边">' +
+            icon('boxSquare') +
+          '</button>' +
+        '</div>' +
+      '</div>';
+
+      // 5. 内边距行（左侧 74px: 标签 + 切换小按钮；右侧: 输入框）
+      sHtml += '<div class="fprop-align-row">' +
+        '<div class="fprop-align-label">' +
+          '<span class="fprop-label-text">内边距</span>' +
+          '<button type="button" class="fprop-mode-toggle' + (pMode === 'ind' ? ' is-active' : '') + '" data-act="dim-mode" data-bind="' + prefix + '.padMode" data-value="' + (pMode === 'ind' ? 'uni' : 'ind') + '" title="' + (pMode === 'ind' ? '切换为统一内边距' : '切换为独立内边距') + '">' +
+            icon(pMode === 'ind' ? 'paddingInd' : 'paddingAll') +
+          '</button>' +
+        '</div>' +
+        '<div class="fprop-align-content">' +
+          (pMode === 'ind'
+            ? '<div class="fprop-4grid">' +
+                '<input type="number" data-bind="' + prefix + '.padT" data-px="1" value="' + pT + '" min="0" max="64" title="上">' +
+                '<input type="number" data-bind="' + prefix + '.padR" data-px="1" value="' + pR + '" min="0" max="64" title="右">' +
+                '<input type="number" data-bind="' + prefix + '.padB" data-px="1" value="' + pB + '" min="0" max="64" title="下">' +
+                '<input type="number" data-bind="' + prefix + '.padL" data-px="1" value="' + pL + '" min="0" max="64" title="左">' +
+              '</div>'
+            : '<div class="fprop-num-box">' +
+                '<input type="number" data-bind="' + prefix + '.pad" data-px="1" value="' + pVal + '" min="0" max="64">' +
+                '<span class="fprop-num-unit">px</span>' +
+              '</div>'
+          ) +
+        '</div>' +
+      '</div>';
+
+      // 6. 文案跟随版心（轮播主层）
+      if (opts.hasFollowContent) {
+        sHtml += '<div class="fprop-align-row fprop-align-row--between" style="margin-top:10px">' +
+          '<span class="flabel" style="margin:0;font-size:12px;color:var(--ui-text-2)">文案跟随版心</span>' +
+          sw(prefix + '.followContent', followContent) +
+        '</div>';
+      }
+
+      sHtml += '</div>';
+      return sHtml;
+    }
+
     var html = '<div class="frow" style="margin-top:' + (opts.marginTop != null ? opts.marginTop : 16) + 'px"><span class="flabel" style="font-weight:600;color:#1f2328">' + title + '</span></div>';
 
     // 1. 圆角（如果启用）
@@ -316,7 +461,7 @@
           { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
         ], 'fseg--wide');
         body += row(label('宽度')) + range('layout.listWidth', s.layout.listWidth != null ? s.layout.listWidth : 100, 30, 100, 1, '%');
-        body += fpropBgStrokeSection('文案背景', 'layout.listTextBg', { hasFollowContent: false });
+        body += fpropBgStrokeSection('文案背景', 'layout.listTextBg', { hasFollowContent: false, streamlined: true });
         body += dimCtl({ label: '列表间距', field: 'layout.listGap', modeBind: 'layout.listGapMode', type: 'gap', min: 0, max: 48 });
         return body;
       }
@@ -340,7 +485,7 @@
         { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
       ], 'fseg--wide');
       body += row(label('宽度')) + range('layout.contentWidth', s.layout.contentWidth || s.layout.width || 54, 30, 100, 1, '%');
-      body += fpropBgStrokeSection('文案背景', 'layout.textBg', { hasFollowContent: true });
+      body += fpropBgStrokeSection('文案背景', 'layout.textBg', { hasFollowContent: true, streamlined: true });
       body += dimCtl({ label: '间距', field: 'layout.gap', modeBind: 'layout.gapMode', type: 'gap', min: 0, max: 48 });
       return body;
     }

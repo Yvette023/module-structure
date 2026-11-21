@@ -1626,6 +1626,176 @@ select::-ms-expand {
   justify-content: center;
 }
 
+/* ---- 用户体验精简对齐版：文案背景（消除拥挤、纵向严格对齐） ---- */
+.fprop-streamlined-group {
+  margin-top: 14px;
+}
+.fprop-align-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  width: 100%;
+}
+.fprop-align-row--between {
+  justify-content: space-between;
+}
+.fprop-align-label {
+  flex: 0 0 74px;
+  width: 74px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  user-select: none;
+  flex-shrink: 0;
+}
+.fprop-align-label .flabel {
+  margin: 0;
+}
+.fprop-label-text {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ui-text-2);
+}
+.fprop-mode-toggle {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: #98a2b3;
+  cursor: pointer;
+  padding: 0;
+  transition: all .16s ease;
+  flex-shrink: 0;
+}
+.fprop-mode-toggle:hover {
+  background: #f2f4f7;
+  color: #344054;
+}
+.fprop-mode-toggle.is-active {
+  background: #ffffff;
+  border-color: #d0d5dd;
+  color: #1677ff;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, .08);
+}
+.fprop-mode-toggle .ic {
+  width: 15px;
+  height: 15px;
+}
+
+.fprop-align-content {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 统一单数值输入框 */
+.fprop-num-box {
+  width: 100%;
+  height: 34px;
+  background: #f2f4f7;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  box-sizing: border-box;
+  transition: background-color .16s;
+}
+.fprop-num-box:focus-within {
+  background-color: #eaedf1;
+}
+.fprop-num-box input {
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ui-text-2);
+  outline: none;
+  -moz-appearance: textfield;
+  padding: 0;
+}
+.fprop-num-box input::-webkit-outer-spin-button,
+.fprop-num-box input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.fprop-num-unit {
+  font-size: 11px;
+  color: #98a2b3;
+  margin-left: 4px;
+  user-select: none;
+}
+
+/* 独立 4 数值输入框 */
+.fprop-4grid {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+.fprop-4grid input {
+  flex: 1 1 25%;
+  width: 25%;
+  min-width: 0;
+  height: 34px;
+  background: #f2f4f7;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ui-text-2);
+  text-align: center;
+  outline: none;
+  -moz-appearance: textfield;
+  padding: 0 2px;
+  transition: background-color .16s;
+}
+.fprop-4grid input:focus {
+  background-color: #eaedf1;
+}
+.fprop-4grid input::-webkit-outer-spin-button,
+.fprop-4grid input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* 线型下拉框（左侧固定 74px 宽） */
+.fprop-select-type {
+  width: 74px;
+  height: 34px;
+  background: #ffffff;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  padding: 0 6px;
+  font-size: 12px;
+  color: var(--ui-text-2);
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23667085' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  padding-right: 18px;
+  transition: border-color .16s;
+  flex-shrink: 0;
+}
+.fprop-select-type:hover {
+  border-color: #98a2b3;
+}
+.fprop-select-type:focus {
+  border-color: #1677ff;
+}
+
 /* ---- 窄屏：面板改抽屉 ---- */
 @media (max-width: 1080px) {
   .ed-panel { width: 280px; }

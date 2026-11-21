@@ -143,7 +143,18 @@
     lineWidth:
       '<path d="M4 6.5h16M4 12h16M4 17.5h16"/>',
     boxSquare:
-      '<rect x="4" y="4" width="16" height="16" rx="2" stroke-width="1.6"/>'
+      '<rect x="4" y="4" width="16" height="16" rx="2" stroke-width="1.6"/>',
+    chevronDown:
+      '<path d="m6 9 6 6 6-6"/>',
+    cornerAll:
+      '<rect x="4.5" y="4.5" width="15" height="15" rx="3.5" stroke="currentColor" stroke-width="1.8"/>' +
+      '<path d="M4.5 9V7a2.5 2.5 0 0 1 2.5-2.5h2M15 4.5h2a2.5 2.5 0 0 1 2.5 2.5v2M19.5 15v2a2.5 2.5 0 0 1-2.5 2.5h-2M9 19.5H7a2.5 2.5 0 0 1-2.5-2.5v-2" stroke="#1677ff" stroke-width="2.2"/>',
+    cornerInd:
+      '<path d="M4.5 8.5V6a1.5 1.5 0 0 1 1.5-1.5h2.5M15.5 4.5H18a1.5 1.5 0 0 1 1.5 1.5v2.5M19.5 15.5V18a1.5 1.5 0 0 1-1.5 1.5h-2.5M8.5 19.5H6a1.5 1.5 0 0 1-1.5-1.5v-2.5" stroke="currentColor" stroke-width="1.8"/>',
+    paddingAll:
+      '<rect x="3.5" y="3.5" width="17" height="17" rx="3" stroke="currentColor" stroke-width="1.6"/><rect x="8.5" y="8.5" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.6"/>',
+    paddingInd:
+      '<rect x="3.5" y="3.5" width="17" height="17" rx="3" stroke="currentColor" stroke-width="1.6"/><rect x="8.5" y="8.5" width="7" height="7" rx="1.5" stroke="#1677ff" stroke-width="2" fill="#1677ff" fill-opacity="0.12"/>'
   };
 
   window.icon = function (name, cls) {

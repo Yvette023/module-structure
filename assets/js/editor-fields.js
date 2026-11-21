@@ -87,10 +87,13 @@
   function unitSelect() {
     var state = ED.state;
     var cur = state.unit || 'px';
-    return '<select class="funit" data-bind="unit" title="单位">' +
-      '<option value="px"' + (cur === 'px' ? ' selected' : '') + '>px</option>' +
-      '<option value="rem"' + (cur === 'rem' ? ' selected' : '') + '>rem</option>' +
-    '</select>';
+    return '<span class="dim-unit-tag">' +
+      '<select class="funit dim-unit-select" data-bind="unit" title="单位">' +
+        '<option value="px"' + (cur === 'px' ? ' selected' : '') + '>px</option>' +
+        '<option value="rem"' + (cur === 'rem' ? ' selected' : '') + '>rem</option>' +
+      '</select>' +
+      icon('chevronDown', 'dim-unit-arrow') +
+    '</span>';
   }
 
 
@@ -109,18 +112,22 @@
   function dimNum(bind, value, min, max) {
     var state = ED.state;
     var display = toDisplay(value);
-    return '<span class="dim-num"><span class="fnum"><input type="number" data-bind="' + bind + '" data-px="1" value="' + esc(display) + '"' +
+    return '<span class="dim-num"><input type="number" data-bind="' + bind + '" data-px="1" value="' + esc(display) + '"' +
       (min != null ? ' min="' + toDisplay(min) + '"' : '') +
       (max != null ? ' max="' + toDisplay(max) + '"' : '') +
-      ' step="' + (state.unit === 'rem' ? 0.25 : 1) + '"></span></span>';
+      ' step="' + (state.unit === 'rem' ? 0.25 : 1) + '"></span>';
   }
 
 
   function dimCtl(opts) {
     var mode = getPath(opts.modeBind) || 'uni';
-    var tabs = '<span class="dim-tabs">' +
-      '<button type="button" class="' + (mode === 'uni' ? 'is-on' : '') + '" data-act="dim-mode" data-bind="' + opts.modeBind + '" data-value="uni">统一</button>' +
-      '<button type="button" class="' + (mode === 'ind' ? 'is-on' : '') + '" data-act="dim-mode" data-bind="' + opts.modeBind + '" data-value="ind">独立</button>' +
+    var isCorner = opts.type === 'corner' || opts.label === '圆角';
+    var iconUni = isCorner ? 'cornerAll' : 'paddingAll';
+    var iconInd = isCorner ? 'cornerInd' : 'paddingInd';
+
+    var tabs = '<span class="dim-tabs-icon">' +
+      '<button type="button" class="' + (mode === 'uni' ? 'is-on' : '') + '" data-act="dim-mode" data-bind="' + opts.modeBind + '" data-value="uni" title="统一">' + icon(iconUni) + '</button>' +
+      '<button type="button" class="' + (mode === 'ind' ? 'is-on' : '') + '" data-act="dim-mode" data-bind="' + opts.modeBind + '" data-value="ind" title="独立">' + icon(iconInd) + '</button>' +
     '</span>';
 
     var vals;
@@ -130,19 +137,22 @@
             dimNum(opts.field + 'X', getPath(opts.field + 'X'), opts.min, opts.max) +
             dimNum(opts.field + 'Y', getPath(opts.field + 'Y'), opts.min, opts.max) +
           '</span>'
-        : dimNum(opts.field, getPath(opts.field), opts.min, opts.max);
+        : '<span class="dim-vals dim-vals--1">' + dimNum(opts.field, getPath(opts.field), opts.min, opts.max) + '</span>';
     } else {
       var sides = opts.type === 'box' ? ['T', 'R', 'B', 'L'] : ['Tl', 'Tr', 'Br', 'Bl'];
       vals = mode === 'ind'
         ? '<span class="dim-vals dim-vals--4">' + sides.map(function (sfx) {
             return dimNum(opts.field + sfx, getPath(opts.field + sfx), opts.min, opts.max);
           }).join('') + '</span>'
-        : dimNum(opts.field, getPath(opts.field), opts.min, opts.max);
+        : '<span class="dim-vals dim-vals--1">' + dimNum(opts.field, getPath(opts.field), opts.min, opts.max) + '</span>';
     }
 
     return '<div class="dim">' +
-      '<div class="dim__title">' + opts.label + '</div>' +
-      '<div class="dim__row">' + tabs + vals + unitSelect() + '</div>' +
+      '<div class="dim__header">' +
+        '<span class="dim__title">' + opts.label + '</span>' +
+        unitSelect() +
+      '</div>' +
+      '<div class="dim__row">' + tabs + vals + '</div>' +
     '</div>';
   }
 
@@ -158,9 +168,12 @@
 
 
   function select(bind, value, options) {
-    return '<select class="finput" data-bind="' + bind + '" style="flex:1">' + options.map(function (o) {
-      return '<option value="' + o.v + '"' + (String(o.v) === String(value) ? ' selected' : '') + '>' + o.l + '</option>';
-    }).join('') + '</select>';
+    return '<div class="fselect-field">' +
+      '<select class="fselect-input" data-bind="' + bind + '">' + options.map(function (o) {
+        return '<option value="' + o.v + '"' + (String(o.v) === String(value) ? ' selected' : '') + '>' + o.l + '</option>';
+      }).join('') + '</select>' +
+      icon('chevronDown', 'fselect-arrow') +
+    '</div>';
   }
 
 

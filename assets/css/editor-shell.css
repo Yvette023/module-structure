@@ -1630,6 +1630,59 @@ select::-ms-expand {
 .fprop-streamlined-group {
   margin-top: 14px;
 }
+/* 标题单独一行：圆角与内边距 */
+.fprop-header-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  margin-bottom: 6px;
+}
+.fprop-header-title {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ui-text-2);
+}
+
+/* 统一与独立双图标 Tab 选择器（固定 74px 宽，与下方标签/线型严格等宽） */
+.fprop-icon-tabs {
+  width: 74px;
+  height: 34px;
+  background: #f2f4f7;
+  border-radius: 8px;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.fprop-icon-tabs button {
+  flex: 1 1 50%;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: transparent;
+  border: 0;
+  color: #98a2b3;
+  cursor: pointer;
+  padding: 0;
+  transition: all .16s ease;
+}
+.fprop-icon-tabs button:hover {
+  color: #344054;
+}
+.fprop-icon-tabs button.is-on {
+  background: #ffffff;
+  color: #344054;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, .1), 0 1px 2px rgba(16, 24, 40, .06);
+}
+.fprop-icon-tabs button .ic {
+  width: 16px;
+  height: 16px;
+}
+
 .fprop-align-row {
   display: flex;
   align-items: center;

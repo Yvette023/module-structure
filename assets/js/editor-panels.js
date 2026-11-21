@@ -210,13 +210,29 @@
           '<span class="flabel" style="font-weight:600;color:#101828;font-size:13px">' + title + '</span>' +
         '</div>';
 
-      // 1. 圆角行（左侧 74px: 标签 + 切换小按钮；右侧: 输入框）
-      sHtml += '<div class="fprop-align-row">' +
+      var curUnit = (ED.state && ED.state.unit) || 'px';
+
+      // 1. 圆角区块：标题单独一行，统一/独立用 Tab 选择，右侧输入框严格左对齐
+      sHtml += '<div class="fprop-header-row" style="margin-top:12px">' +
+        '<span class="fprop-header-title">圆角</span>' +
+        '<span class="dim-unit-tag">' +
+          '<select class="funit dim-unit-select" data-bind="unit" title="单位">' +
+            '<option value="px"' + (curUnit === 'px' ? ' selected' : '') + '>px</option>' +
+            '<option value="rem"' + (curUnit === 'rem' ? ' selected' : '') + '>rem</option>' +
+          '</select>' +
+          icon('chevronDown', 'dim-unit-arrow') +
+        '</span>' +
+      '</div>' +
+      '<div class="fprop-align-row">' +
         '<div class="fprop-align-label">' +
-          '<span class="fprop-label-text">圆角</span>' +
-          '<button type="button" class="fprop-mode-toggle' + (rMode === 'ind' ? ' is-active' : '') + '" data-act="dim-mode" data-bind="' + prefix + '.radiusMode" data-value="' + (rMode === 'ind' ? 'uni' : 'ind') + '" title="' + (rMode === 'ind' ? '切换为统一圆角' : '切换为独立圆角') + '">' +
-            icon(rMode === 'ind' ? 'cornerInd' : 'cornerAll') +
-          '</button>' +
+          '<div class="fprop-icon-tabs">' +
+            '<button type="button" class="' + (rMode === 'uni' ? 'is-on' : '') + '" data-act="dim-mode" data-bind="' + prefix + '.radiusMode" data-value="uni" title="统一圆角">' +
+              icon('cornerAll') +
+            '</button>' +
+            '<button type="button" class="' + (rMode === 'ind' ? 'is-on' : '') + '" data-act="dim-mode" data-bind="' + prefix + '.radiusMode" data-value="ind" title="独立圆角">' +
+              icon('cornerInd') +
+            '</button>' +
+          '</div>' +
         '</div>' +
         '<div class="fprop-align-content">' +
           (rMode === 'ind'
@@ -297,13 +313,27 @@
         '</div>' +
       '</div>';
 
-      // 5. 内边距行（左侧 74px: 标签 + 切换小按钮；右侧: 输入框）
-      sHtml += '<div class="fprop-align-row">' +
+      // 5. 内边距区块：标题单独一行，统一/独立用 Tab 选择，右侧输入框严格左对齐
+      sHtml += '<div class="fprop-header-row" style="margin-top:12px">' +
+        '<span class="fprop-header-title">内边距</span>' +
+        '<span class="dim-unit-tag">' +
+          '<select class="funit dim-unit-select" data-bind="unit" title="单位">' +
+            '<option value="px"' + (curUnit === 'px' ? ' selected' : '') + '>px</option>' +
+            '<option value="rem"' + (curUnit === 'rem' ? ' selected' : '') + '>rem</option>' +
+          '</select>' +
+          icon('chevronDown', 'dim-unit-arrow') +
+        '</span>' +
+      '</div>' +
+      '<div class="fprop-align-row">' +
         '<div class="fprop-align-label">' +
-          '<span class="fprop-label-text">内边距</span>' +
-          '<button type="button" class="fprop-mode-toggle' + (pMode === 'ind' ? ' is-active' : '') + '" data-act="dim-mode" data-bind="' + prefix + '.padMode" data-value="' + (pMode === 'ind' ? 'uni' : 'ind') + '" title="' + (pMode === 'ind' ? '切换为统一内边距' : '切换为独立内边距') + '">' +
-            icon(pMode === 'ind' ? 'paddingInd' : 'paddingAll') +
-          '</button>' +
+          '<div class="fprop-icon-tabs">' +
+            '<button type="button" class="' + (pMode === 'uni' ? 'is-on' : '') + '" data-act="dim-mode" data-bind="' + prefix + '.padMode" data-value="uni" title="统一内边距">' +
+              icon('paddingAll') +
+            '</button>' +
+            '<button type="button" class="' + (pMode === 'ind' ? 'is-on' : '') + '" data-act="dim-mode" data-bind="' + prefix + '.padMode" data-value="ind" title="独立内边距">' +
+              icon('paddingInd') +
+            '</button>' +
+          '</div>' +
         '</div>' +
         '<div class="fprop-align-content">' +
           (pMode === 'ind'

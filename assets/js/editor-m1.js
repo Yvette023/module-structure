@@ -30,7 +30,7 @@
     var tab = ui.m1tab || 'hero';
     return '<div class="ed-coltab">' +
       '<button type="button" data-act="m1-tab" data-value="hero"' + (tab === 'hero' ? ' class="is-on"' : '') + '>主内容</button>' +
-      '<button type="button" data-act="m1-tab" data-value="list"' + (tab === 'list' ? ' class="is-on"' : '') + '>列表</button>' +
+      '<button type="button" data-act="m1-tab" data-value="list"' + (tab === 'list' ? ' class="is-on"' : '') + '>内部列表</button>' +
     '</div>';
   }
 

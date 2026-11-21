@@ -53,15 +53,20 @@
     var s = state;
     if (s.structure === 'm5') return m5ItemsSection();
     var isM4 = s.structure === 'm4';
+    var isM1 = s.structure === 'm1';
     var range = colRange(s);
     var colItems = s.items.slice(range.start, range.end);
     var selInCol = Math.max(0, ui.sel - range.start);
     var thumbs = colItems.map(function (it, i) {
       var idx = range.start + i;
+      var boxContent = isM1
+        ? '<span class="thumb__box thumb__box--icon">' + icon(it.icon || 'sparkle') + '</span>'
+        : '<span class="thumb__box"><img src="' + esc(it.img) + '" alt=""></span>';
+      var noLabel = isM1 ? ('图标' + (i + 1)) : ('图片' + (i + 1));
       return '<div class="thumb' + (ui.sel === idx ? ' is-on' : '') + '" data-act="sel" data-idx="' + idx + '">' +
         '<span class="thumb__del" data-act="del" data-idx="' + idx + '">' + icon('trash') + '</span>' +
-        '<span class="thumb__box"><img src="' + esc(it.img) + '" alt=""></span>' +
-        '<span class="thumb__no">图片' + (i + 1) + '</span>' +
+        boxContent +
+        '<span class="thumb__no">' + noLabel + '</span>' +
       '</div>';
     }).join('');
     var add = '<div class="thumb thumb--add" data-act="add">' +
@@ -70,7 +75,7 @@
     return row(
       '<span class="fcount">' + (selInCol + 1) + '/' + colItems.length + '</span>' +
       '<button class="flink" data-act="add">' + icon('plus') + '新增</button>') +
-      '<div class="thumbs">' + thumbs + add + '</div>'
+      '<div class="thumbs' + (isM1 ? ' thumbs--m5' : '') + '">' + thumbs + add + '</div>'
   }
 
 
@@ -210,7 +215,78 @@
         '<span class="flabel" style="font-weight:600;color:#101828;font-size:13px">' + title + '</span>' +
       '</div>';
 
-    // 1. 圆角（如果启用，容器背景默认无圆角）
+    // 1. 背景（左侧 74px: 勾选框 + 背景；右侧: 色块药丸卡片 + 调色板）
+    sHtml += '<div class="fprop-align-row">' +
+      '<div class="fprop-align-label">' +
+        '<div class="fprop-check" data-act="toggle" data-bind="' + prefix + '.bgOn">' +
+          icon(bgOn ? 'checkCircleFilled' : 'circleEmpty') +
+          '<span>背景</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="fprop-align-content">' +
+        '<div class="fprop-color-pill" title="点击选择背景色">' +
+          '<span class="fcolor-chip' + (!bgOn ? ' fcolor-chip--checker' : '') + '" style="' + (bgOn ? 'background-color:#' + bgHex : '') + '"></span>' +
+          '<span class="fcolor-text' + (!bgOn ? ' fcolor-text--empty' : '') + '">' + (bgOn ? bgHex : '未设置') + '</span>' +
+          '<input type="color" data-bind="' + prefix + '.bg" data-kind="color" value="#' + (bgHex.length === 6 ? bgHex : 'FFFFFF') + '">' +
+        '</div>' +
+        '<label class="fprop-btn-palette" title="打开调色板">' +
+          icon('palette') +
+          '<input type="color" data-bind="' + prefix + '.bg" data-kind="color" value="#' + (bgHex.length === 6 ? bgHex : 'FFFFFF') + '">' +
+        '</label>' +
+      '</div>' +
+    '</div>';
+
+    // 2. 描边行（左侧 74px: 勾选框 + 描边；右侧: 色块药丸卡片 + 调色板）
+    sHtml += '<div class="fprop-align-row">' +
+      '<div class="fprop-align-label">' +
+        '<div class="fprop-check" data-act="toggle" data-bind="' + prefix + '.borderOn">' +
+          icon(borderOn ? 'checkCircleFilled' : 'circleEmpty') +
+          '<span>描边</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="fprop-align-content">' +
+        '<div class="fprop-color-pill" title="点击选择描边色">' +
+          '<span class="fcolor-chip' + (!borderOn ? ' fcolor-chip--checker' : '') + '" style="' + (borderOn ? 'background-color:#' + borderHex : '') + '"></span>' +
+          '<span class="fcolor-text' + (!borderOn ? ' fcolor-text--empty' : '') + '">' + (borderOn ? borderHex : '未设置') + '</span>' +
+          '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : '111418') + '">' +
+        '</div>' +
+        '<label class="fprop-btn-palette" title="打开调色板">' +
+          icon('palette') +
+          '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : '111418') + '">' +
+        '</label>' +
+      '</div>' +
+    '</div>';
+
+    // 3. 描边线型与线宽行（左侧 74px: 实线/虚线下拉；右侧: 线宽输入框 + 方框模式按钮）
+    sHtml += '<div class="fprop-align-row">' +
+      '<div class="fprop-align-label">' +
+        '<select class="fprop-select-type" data-bind="' + prefix + '.borderStyle">' +
+          '<option value="solid"' + (borderStyle === 'solid' ? ' selected' : '') + '>实线</option>' +
+          '<option value="dashed"' + (borderStyle === 'dashed' ? ' selected' : '') + '>虚线</option>' +
+          '<option value="dotted"' + (borderStyle === 'dotted' ? ' selected' : '') + '>点线</option>' +
+        '</select>' +
+      '</div>' +
+      '<div class="fprop-align-content">' +
+        '<div class="fprop-stroke-w">' +
+          icon('lineWidth') +
+          '<input type="number" data-bind="' + prefix + '.borderWidth" data-px="1" min="0" max="16" value="' + borderWidth + '">' +
+          '<span class="unit">px</span>' +
+        '</div>' +
+        '<button type="button" class="fprop-icon-btn is-active" title="统一描边">' +
+          icon('boxSquare') +
+        '</button>' +
+      '</div>' +
+    '</div>';
+
+    // 相邻描边合并（卡片特有）
+    if (opts.hasMerge) {
+      sHtml += '<div class="fprop-align-row fprop-align-row--between" style="margin-top:10px">' +
+        '<span class="flabel" style="margin:0;font-size:12px;color:var(--ui-text-2)">相邻的描边合并</span>' +
+        sw(prefix + '.merge', bgObj.merge) +
+      '</div>';
+    }
+
+    // 4. 圆角（如果启用，放在内边距上方；容器背景默认无圆角）
     if (opts.hasCorner !== false && prefix !== 'container') {
       sHtml += '<div class="fprop-header-row" style="margin-top:12px">' +
         '<span class="fprop-header-title">' + (opts.cornerLabel || '圆角') + '</span>' +
@@ -247,77 +323,6 @@
               '</div>'
           ) +
         '</div>' +
-      '</div>';
-    }
-
-    // 2. 背景（左侧 74px: 勾选框 + 背景；右侧: 色块药丸卡片 + 调色板）
-    sHtml += '<div class="fprop-align-row">' +
-      '<div class="fprop-align-label">' +
-        '<div class="fprop-check" data-act="toggle" data-bind="' + prefix + '.bgOn">' +
-          icon(bgOn ? 'checkCircleFilled' : 'circleEmpty') +
-          '<span>背景</span>' +
-        '</div>' +
-      '</div>' +
-      '<div class="fprop-align-content">' +
-        '<div class="fprop-color-pill" title="点击选择背景色">' +
-          '<span class="fcolor-chip' + (!bgOn ? ' fcolor-chip--checker' : '') + '" style="' + (bgOn ? 'background-color:#' + bgHex : '') + '"></span>' +
-          '<span class="fcolor-text' + (!bgOn ? ' fcolor-text--empty' : '') + '">' + (bgOn ? bgHex : '未设置') + '</span>' +
-          '<input type="color" data-bind="' + prefix + '.bg" data-kind="color" value="#' + (bgHex.length === 6 ? bgHex : 'FFFFFF') + '">' +
-        '</div>' +
-        '<label class="fprop-btn-palette" title="打开调色板">' +
-          icon('palette') +
-          '<input type="color" data-bind="' + prefix + '.bg" data-kind="color" value="#' + (bgHex.length === 6 ? bgHex : 'FFFFFF') + '">' +
-        '</label>' +
-      '</div>' +
-    '</div>';
-
-    // 3. 描边行（左侧 74px: 勾选框 + 描边；右侧: 色块药丸卡片 + 调色板）
-    sHtml += '<div class="fprop-align-row">' +
-      '<div class="fprop-align-label">' +
-        '<div class="fprop-check" data-act="toggle" data-bind="' + prefix + '.borderOn">' +
-          icon(borderOn ? 'checkCircleFilled' : 'circleEmpty') +
-          '<span>描边</span>' +
-        '</div>' +
-      '</div>' +
-      '<div class="fprop-align-content">' +
-        '<div class="fprop-color-pill" title="点击选择描边色">' +
-          '<span class="fcolor-chip' + (!borderOn ? ' fcolor-chip--checker' : '') + '" style="' + (borderOn ? 'background-color:#' + borderHex : '') + '"></span>' +
-          '<span class="fcolor-text' + (!borderOn ? ' fcolor-text--empty' : '') + '">' + (borderOn ? borderHex : '未设置') + '</span>' +
-          '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : '111418') + '">' +
-        '</div>' +
-        '<label class="fprop-btn-palette" title="打开调色板">' +
-          icon('palette') +
-          '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : '111418') + '">' +
-        '</label>' +
-      '</div>' +
-    '</div>';
-
-    // 4. 描边线型与线宽行（左侧 74px: 实线/虚线下拉；右侧: 线宽输入框 + 方框模式按钮）
-    sHtml += '<div class="fprop-align-row">' +
-      '<div class="fprop-align-label">' +
-        '<select class="fprop-select-type" data-bind="' + prefix + '.borderStyle">' +
-          '<option value="solid"' + (borderStyle === 'solid' ? ' selected' : '') + '>实线</option>' +
-          '<option value="dashed"' + (borderStyle === 'dashed' ? ' selected' : '') + '>虚线</option>' +
-          '<option value="dotted"' + (borderStyle === 'dotted' ? ' selected' : '') + '>点线</option>' +
-        '</select>' +
-      '</div>' +
-      '<div class="fprop-align-content">' +
-        '<div class="fprop-stroke-w">' +
-          icon('lineWidth') +
-          '<input type="number" data-bind="' + prefix + '.borderWidth" data-px="1" min="0" max="16" value="' + borderWidth + '">' +
-          '<span class="unit">px</span>' +
-        '</div>' +
-        '<button type="button" class="fprop-icon-btn is-active" title="统一描边">' +
-          icon('boxSquare') +
-        '</button>' +
-      '</div>' +
-    '</div>';
-
-    // 相邻描边合并（卡片特有）
-    if (opts.hasMerge) {
-      sHtml += '<div class="fprop-align-row fprop-align-row--between" style="margin-top:10px">' +
-        '<span class="flabel" style="margin:0;font-size:12px;color:var(--ui-text-2)">相邻的描边合并</span>' +
-        sw(prefix + '.merge', bgObj.merge) +
       '</div>';
     }
 
@@ -404,7 +409,7 @@
       '</div>';
 
       if (ui.m5tab === 'list') {
-        /* 轮播列表 · 内部列表：列数设置 ➔ 容器对齐 ➔ 图文对齐 ➔ 宽度 ➔ 列中间距 ➔ 文字背景设置 */
+        /* 轮播列表 · 内部列表：列数设置 ➔ 容器对齐 ➔ 图文对齐 ➔ 宽度 ➔ 列中间距 ➔ 文字背景 */
         body += row(label('列数设置')) + select(lPrefix + '.listColumns', curLayout.listColumns || 3, [
           { v: 1, l: '1列' },
           { v: 2, l: '2列' },
@@ -429,11 +434,11 @@
         ], 'fseg--wide');
         body += row(label('宽度')) + range(lPrefix + '.listWidth', curLayout.listWidth != null ? curLayout.listWidth : 100, 30, 100, 1, '%');
         body += dimCtl({ label: '列中间距', field: lPrefix + '.listGap', modeBind: lPrefix + '.listGapMode', type: 'gap', min: 0, max: 48 });
-        body += fpropBgStrokeSection('文字背景设置', lPrefix + '.listTextBg', { hasFollowContent: false, streamlined: true });
+        body += fpropBgStrokeSection('文字背景', lPrefix + '.listTextBg', { hasFollowContent: false, streamlined: true });
         return body;
       }
 
-      /* 轮播列表 · 轮播主层：容器对齐 ➔ 文案对齐 ➔ 宽度 ➔ 列中间距 ➔ 文字背景设置 */
+      /* 轮播列表 · 轮播主层：容器对齐 ➔ 文案对齐 ➔ 宽度 ➔ 列中间距 ➔ 文字背景 */
       var m5HAlign = curLayout.align || 'start';
       var m5VAlign = curLayout.valign || 'center';
       body += alignDualField('容器对齐',
@@ -453,7 +458,7 @@
       ], 'fseg--wide');
       body += row(label('宽度')) + range(lPrefix + '.contentWidth', curLayout.contentWidth || curLayout.width || 54, 30, 100, 1, '%');
       body += dimCtl({ label: '列中间距', field: lPrefix + '.gap', modeBind: lPrefix + '.gapMode', type: 'gap', min: 0, max: 48 });
-      body += fpropBgStrokeSection('文字背景设置', lPrefix + '.textBg', { hasFollowContent: true, streamlined: true });
+      body += fpropBgStrokeSection('文字背景', lPrefix + '.textBg', { hasFollowContent: true, streamlined: true });
       return body;
     }
 
@@ -489,17 +494,17 @@
       body += dimCtl({ label: '列中间距', field: 'layout.gap', modeBind: 'layout.gapMode', type: 'gap', min: 0, max: 80 });
       body += '<div class="frow" style="margin-top:14px"><span class="flabel" style="font-weight:600;color:#1f2328">图文比例</span></div>';
       body += row(label('主内容') + range('layout.mainRatio', s.layout.mainRatio, 1, 12, 1, ''));
-      body += row(label('列表项') + range('layout.listRatio', s.layout.listRatio, 1, 12, 1, ''));
+      body += row(label('内部列表') + range('layout.listRatio', s.layout.listRatio, 1, 12, 1, ''));
       var horiz = isHoriz(s);
       if (horiz) {
-        body += row(label('图片') + range('layout.iconRatio', s.layout.iconRatio, 1, 6, 1, ''));
+        body += row(label('图标') + range('layout.iconRatio', s.layout.iconRatio, 1, 6, 1, ''));
         body += row(label('文字') + range('layout.textRatio', s.layout.textRatio, 1, 12, 1, ''));
       }
       return body;
     }
 
     if (s.structure === 'm4') {
-      /* 复合列表：列表布局 ➔ 列数设置 ➔ 容器对齐 ➔ 文案对齐 ➔ 宽度 ➔ 列中间距 ➔ 文字背景设置 */
+      /* 复合列表：列表布局 ➔ 列数设置 ➔ 容器对齐 ➔ 文案对齐 ➔ 宽度 ➔ 列中间距 ➔ 文字背景 */
       body = row(label('列表布局')) + select('layout.mode', s.layout.mode, m.options);
       if (s.layout.mode === 'grid') {
         body += row(label('列数设置')) + select('layout.columns', s.layout.columns || 2, [
@@ -516,7 +521,7 @@
       ], 'fseg--wide');
       body += row(label('宽度')) + range('layout.width', s.layout.width, 30, 100, 1, '%');
       body += dimCtl({ label: '列中间距', field: 'layout.gap', modeBind: 'layout.gapMode', type: 'gap', min: 0, max: 80 });
-      body += fpropBgStrokeSection('文字背景设置', 'layout.textBg', { hasFollowContent: false, maxPad: 48 });
+      body += fpropBgStrokeSection('文字背景', 'layout.textBg', { hasFollowContent: false, maxPad: 48 });
       return body;
     }
 

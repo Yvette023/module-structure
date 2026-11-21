@@ -159,7 +159,7 @@
           m1TabHTML() +
           (ui.m1tab === 'hero'
             ? sec('hero', '主图', heroSection())
-            : sec('items', '列表项', itemsSection())) +
+            : sec('items', '内部列表', itemsSection())) +
           m1Common;
       } else {
         var itemsTitle = state.structure === 'm4' ? '图文列表'

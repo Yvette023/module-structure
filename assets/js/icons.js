@@ -132,7 +132,18 @@
       '<path d="M9 4.5v12.9M14.4 6.6v12.9"/>',
     pin:
       '<path d="M12 21s6.4-6.1 6.4-10.9a6.4 6.4 0 1 0-12.8 0C5.6 14.9 12 21 12 21Z"/>' +
-      '<circle cx="12" cy="10" r="2.3"/>'
+      '<circle cx="12" cy="10" r="2.3"/>',
+    palette:
+      '<path d="M12 21a9 9 0 0 1-9-9c0-4.97 4.03-9 9-9 4.14 0 7.64 2.8 8.68 6.64.44 1.63-.82 3.36-2.5 3.36h-2.18c-1 0-1.82.82-1.82 1.82 0 .44.16.85.43 1.17.65.77.5 1.94-.3 2.58A8.93 8.93 0 0 1 12 21Z"/>' +
+      '<circle cx="7.5" cy="10.5" r="1.2" fill="currentColor"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor"/><circle cx="16.5" cy="10.5" r="1.2" fill="currentColor"/>',
+    checkCircleFilled:
+      '<circle cx="12" cy="12" r="10" fill="#1677ff" stroke="none"/><path d="m7.8 12.2 2.8 2.8 5.6-5.8" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>',
+    circleEmpty:
+      '<circle cx="12" cy="12" r="9.5" stroke="#d0d5dd" stroke-width="1.8" fill="#ffffff"/>',
+    lineWidth:
+      '<path d="M4 6.5h16M4 12h16M4 17.5h16"/>',
+    boxSquare:
+      '<rect x="4" y="4" width="16" height="16" rx="2" stroke-width="1.6"/>'
   };
 
   window.icon = function (name, cls) {

@@ -1305,6 +1305,203 @@ body.ed {
   box-shadow: 0 10px 24px -10px rgba(30, 111, 255, .9);
 }
 
+/* ================= 属性面板：一比一设计器高级控件 ================= */
+.fprop-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  width: 100%;
+}
+.fprop-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  min-width: 68px;
+  flex-shrink: 0;
+}
+.fprop-check .ic {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+.fprop-check span {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1f2328;
+}
+.fprop-color-pill {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 34px;
+  background: #f2f4f7;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  cursor: pointer;
+  position: relative;
+  transition: background .16s, box-shadow .16s;
+  overflow: hidden;
+}
+.fprop-color-pill:hover {
+  background: #eaedf1;
+}
+.fprop-color-pill .fcolor-chip {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08);
+}
+.fprop-color-pill .fcolor-chip--checker {
+  background-image: conic-gradient(#cbd5e1 25%, #ffffff 0 50%, #cbd5e1 0 75%, #ffffff 0);
+  background-size: 8px 8px;
+}
+.fprop-color-pill .fcolor-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f2328;
+  letter-spacing: .02em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+}
+.fprop-color-pill .fcolor-text--empty {
+  color: #98a2b3;
+  font-weight: 400;
+}
+.fprop-color-pill input[type="color"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.fprop-btn-palette {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  color: #475467;
+  cursor: pointer;
+  position: relative;
+  transition: color .16s, background .16s;
+}
+.fprop-btn-palette:hover {
+  color: #111418;
+  background: #f2f4f7;
+}
+.fprop-btn-palette .ic {
+  width: 19px;
+  height: 19px;
+}
+.fprop-btn-palette input[type="color"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* 描边第 2 行：样式 + 粗细 + 模式 */
+.fprop-stroke-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  width: 100%;
+}
+.fprop-select {
+  flex: 1 1 38%;
+  min-width: 0;
+  height: 34px;
+  background: #f2f4f7;
+  border: 0;
+  border-radius: 8px;
+  padding: 0 10px;
+  font-size: 12.5px;
+  color: #1f2328;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23667085' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 24px;
+}
+.fprop-select:focus {
+  background-color: #eaedf1;
+}
+
+.fprop-stroke-w {
+  flex: 1 1 42%;
+  min-width: 0;
+  height: 34px;
+  background: #f2f4f7;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+}
+.fprop-stroke-w .ic {
+  width: 16px;
+  height: 16px;
+  color: #667085;
+  flex-shrink: 0;
+}
+.fprop-stroke-w input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  color: #1f2328;
+  outline: none;
+}
+.fprop-stroke-w .unit {
+  font-size: 12px;
+  color: #98a2b3;
+  user-select: none;
+}
+
+.fprop-icon-btn {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  background: #f2f4f7;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  color: #475467;
+  cursor: pointer;
+  border: 0;
+  transition: all .16s ease;
+}
+.fprop-icon-btn:hover {
+  background: #eaedf1;
+  color: #111418;
+}
+.fprop-icon-btn.is-active {
+  background: #ffffff;
+  color: #1677ff;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, .1);
+}
+.fprop-icon-btn .ic {
+  width: 17px;
+  height: 17px;
+}
+
 /* ---- 窄屏：面板改抽屉 ---- */
 @media (max-width: 1080px) {
   .ed-panel { width: 280px; }

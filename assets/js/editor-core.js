@@ -394,6 +394,15 @@
     });
 
     panelEl.addEventListener('change', function (e) {
+      if (e.target && e.target.type === 'color') {
+        var b = e.target.dataset.bind;
+        if (b && (b.endsWith('.bg') || b.endsWith('.border'))) {
+          var onProp = b.endsWith('.bg') ? b.replace(/\.bg$/, '.bgOn') : b.replace(/\.border$/, '.borderOn');
+          setPath(onProp, true);
+        }
+        renderAll();
+        return;
+      }
       var el = e.target.closest('select[data-bind]');
       if (!el) return;
       setPath(el.dataset.bind, el.value);

@@ -177,6 +177,78 @@
       '</div>';
   }
 
+  function m5InnerListTextBgControl(prefix) {
+    var bgObj = getPath(prefix) || {};
+    var bgOn = !!bgObj.bgOn;
+    var borderOn = !!bgObj.borderOn;
+    var bgHex = String(bgObj.bg || '#ffffff').replace('#', '').toUpperCase();
+    var borderHex = String(bgObj.border || '#111418').replace('#', '').toUpperCase();
+    var borderStyle = bgObj.borderStyle || 'solid';
+    var borderWidth = bgObj.borderWidth != null ? bgObj.borderWidth : 1;
+
+    var html = '<div class="frow" style="margin-top:16px"><span class="flabel" style="font-weight:600;color:#1f2328">文案背景</span></div>';
+
+    // 1. 圆角
+    html += dimCtl({ label: '圆角', field: prefix + '.radius', modeBind: prefix + '.radiusMode', type: 'corner', min: 0, max: 48 });
+
+    // 2. 背景（勾选框 + 色块药丸卡片 + 调色盘图标）
+    html += '<div class="fprop-row">' +
+      '<div class="fprop-check" data-act="toggle" data-bind="' + prefix + '.bgOn">' +
+        icon(bgOn ? 'checkCircleFilled' : 'circleEmpty') +
+        '<span>背景</span>' +
+      '</div>' +
+      '<div class="fprop-color-pill" title="点击选择背景色">' +
+        '<span class="fcolor-chip' + (!bgOn ? ' fcolor-chip--checker' : '') + '" style="' + (bgOn ? 'background-color:#' + bgHex : '') + '"></span>' +
+        '<span class="fcolor-text' + (!bgOn ? ' fcolor-text--empty' : '') + '">' + (bgOn ? bgHex : '未设置') + '</span>' +
+        '<input type="color" data-bind="' + prefix + '.bg" data-kind="color" value="#' + (bgHex.length === 6 ? bgHex : 'FFFFFF') + '">' +
+      '</div>' +
+      '<label class="fprop-btn-palette" title="打开调色板">' +
+        icon('palette') +
+        '<input type="color" data-bind="' + prefix + '.bg" data-kind="color" value="#' + (bgHex.length === 6 ? bgHex : 'FFFFFF') + '">' +
+      '</label>' +
+    '</div>';
+
+    // 3. 描边（勾选框 + 色块药丸卡片 + 调色盘图标）
+    html += '<div class="fprop-row">' +
+      '<div class="fprop-check" data-act="toggle" data-bind="' + prefix + '.borderOn">' +
+        icon(borderOn ? 'checkCircleFilled' : 'circleEmpty') +
+        '<span>描边</span>' +
+      '</div>' +
+      '<div class="fprop-color-pill" title="点击选择描边色">' +
+        '<span class="fcolor-chip' + (!borderOn ? ' fcolor-chip--checker' : '') + '" style="' + (borderOn ? 'background-color:#' + borderHex : '') + '"></span>' +
+        '<span class="fcolor-text' + (!borderOn ? ' fcolor-text--empty' : '') + '">' + (borderOn ? borderHex : '未设置') + '</span>' +
+        '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : '111418') + '">' +
+      '</div>' +
+      '<label class="fprop-btn-palette" title="打开调色板">' +
+        icon('palette') +
+        '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : '111418') + '">' +
+      '</label>' +
+    '</div>';
+
+    // 描边第 2 行：样式下拉 + 粗细数字输入 + 模式切换
+    html += '<div class="fprop-stroke-sub">' +
+      '<select class="fprop-select" data-bind="' + prefix + '.borderStyle">' +
+        '<option value="">请选择</option>' +
+        '<option value="solid"' + (borderStyle === 'solid' ? ' selected' : '') + '>实线</option>' +
+        '<option value="dashed"' + (borderStyle === 'dashed' ? ' selected' : '') + '>虚线</option>' +
+        '<option value="dotted"' + (borderStyle === 'dotted' ? ' selected' : '') + '>点线</option>' +
+      '</select>' +
+      '<div class="fprop-stroke-w">' +
+        icon('lineWidth') +
+        '<input type="number" data-bind="' + prefix + '.borderWidth" data-px="1" min="0" max="16" value="' + borderWidth + '">' +
+        '<span class="unit">px</span>' +
+      '</div>' +
+      '<button type="button" class="fprop-icon-btn is-active" title="统一描边">' +
+        icon('boxSquare') +
+      '</button>' +
+    '</div>';
+
+    // 4. 内边距
+    html += dimCtl({ label: '内边距', field: prefix + '.pad', modeBind: prefix + '.padMode', type: 'box', min: 0, max: 64 });
+
+    return html;
+  }
+
   function textBgControl(prefix, hasFollowContent) {
     var bgObj = getPath(prefix) || {};
     var bgOn = !!bgObj.bgOn;
@@ -239,7 +311,7 @@
           { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
         ], 'fseg--wide');
         body += row(label('宽度')) + range('layout.listWidth', s.layout.listWidth != null ? s.layout.listWidth : 100, 30, 100, 1, '%');
-        body += textBgControl('layout.listTextBg', false);
+        body += m5InnerListTextBgControl('layout.listTextBg');
         body += dimCtl({ label: '列表间距', field: 'layout.listGap', modeBind: 'layout.listGapMode', type: 'gap', min: 0, max: 48 });
         return body;
       }

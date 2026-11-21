@@ -177,6 +177,36 @@
       '</div>';
   }
 
+  function textBgControl(prefix, hasFollowContent) {
+    var bgObj = getPath(prefix) || {};
+    var bgOn = !!bgObj.bgOn;
+    var borderOn = !!bgObj.borderOn;
+    var borderStyle = bgObj.borderStyle || 'solid';
+    var borderWidth = bgObj.borderWidth != null ? bgObj.borderWidth : 1;
+    var followContent = bgObj.followContent !== false;
+
+    var html = '<div class="frow" style="margin-top:16px"><span class="flabel" style="font-weight:600;color:#1f2328">文案背景</span></div>';
+    html += dimCtl({ label: '圆角', field: prefix + '.radius', modeBind: prefix + '.radiusMode', type: 'corner', min: 0, max: 48 });
+    html += row(label('背景') + sw(prefix + '.bgOn', bgOn)) +
+      (bgOn ? row(label('颜色') + color(prefix + '.bg', bgObj.bg || '#ffffff')) : '');
+    html += row(label('描边') + sw(prefix + '.borderOn', borderOn)) +
+      (borderOn ? row(label('颜色') + color(prefix + '.border', bgObj.border || '#111418')) +
+        row(
+          label('样式') +
+          select(prefix + '.borderStyle', borderStyle, [
+            { v: 'solid', l: '实线' },
+            { v: 'dashed', l: '虚线' },
+            { v: 'dotted', l: '点线' }
+          ])
+        ) +
+        row(label('粗细') + num(prefix + '.borderWidth', borderWidth, 'px', 0, 12)) : '');
+    html += dimCtl({ label: '内边距', field: prefix + '.pad', modeBind: prefix + '.padMode', type: 'box', min: 0, max: 64 });
+    if (hasFollowContent) {
+      html += row(label('文案跟随版心') + sw(prefix + '.followContent', followContent));
+    }
+    return html;
+  }
+
   function layoutPanel() {
     var state = ED.state, ui = ED.ui;
     var s = state;
@@ -185,7 +215,7 @@
 
     if (s.structure === 'm5') {
       if (ui.m5tab === 'list') {
-        /* 轮播列表 · 内部列表：列表布局（3列下拉）、容器对齐（仅左中右生效，上中下禁用）、图文对齐、宽度（仅列表组）、列表间距（卡片网格gap） */
+        /* 轮播列表 · 内部列表：列表布局（3列下拉）、容器对齐（仅左中右生效，上中下禁用）、图文对齐、宽度（仅列表组）、文案背景、列表间距（卡片网格gap） */
         body = row(label('列表布局')) + select('layout.listColumns', s.layout.listColumns || 3, [
           { v: 1, l: '1列' },
           { v: 2, l: '2列' },
@@ -209,11 +239,12 @@
           { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
         ], 'fseg--wide');
         body += row(label('宽度')) + range('layout.listWidth', s.layout.listWidth != null ? s.layout.listWidth : 100, 30, 100, 1, '%');
+        body += textBgControl('layout.listTextBg', false);
         body += dimCtl({ label: '列表间距', field: 'layout.listGap', modeBind: 'layout.listGapMode', type: 'gap', min: 0, max: 48 });
         return body;
       }
 
-      /* 轮播列表 · 轮播列表（主层）：容器对齐（9宫格）、文案对齐、宽度（大标题简介按钮整体）、间距（外层垂直间隙） */
+      /* 轮播列表 · 轮播列表（主层）：容器对齐（9宫格）、文案对齐、宽度（大标题简介按钮整体）、文案背景、间距（外层垂直间隙） */
       var m5HAlign = s.layout.align || 'start';
       var m5VAlign = s.layout.valign || 'center';
       body = alignDualField('容器对齐',
@@ -232,6 +263,7 @@
         { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
       ], 'fseg--wide');
       body += row(label('宽度')) + range('layout.contentWidth', s.layout.contentWidth || s.layout.width || 54, 30, 100, 1, '%');
+      body += textBgControl('layout.textBg', true);
       body += dimCtl({ label: '间距', field: 'layout.gap', modeBind: 'layout.gapMode', type: 'gap', min: 0, max: 48 });
       return body;
     }

@@ -145,6 +145,35 @@
       base.layout.listAlign = 'start'; /* 内部列表整体对齐（左/中/右，默认 start） */
       base.layout.listItemAlign = 'left'; /* 内部列表图文对齐（图标+文字一起对齐，默认 left） */
       base.layout.listGap = 12; /* 内部列表项之间网格间距（默认 12px） */
+      base.layout.textBg = {
+        bgOn: false,
+        bg: '#ffffffcc',
+        borderOn: false,
+        border: '#111418',
+        borderStyle: 'solid',
+        borderWidth: 1,
+        radius: 12,
+        radiusMode: 'uni',
+        radiusTl: 12, radiusTr: 12, radiusBr: 12, radiusBl: 12,
+        pad: 24,
+        padMode: 'uni',
+        padT: 24, padR: 24, padB: 24, padL: 24,
+        followContent: true
+      };
+      base.layout.listTextBg = {
+        bgOn: true,
+        bg: '#ffffff',
+        borderOn: true,
+        border: 'rgba(0,0,0,0.08)',
+        borderStyle: 'solid',
+        borderWidth: 1,
+        radius: 10,
+        radiusMode: 'uni',
+        radiusTl: 10, radiusTr: 10, radiusBr: 10, radiusBl: 10,
+        pad: 14,
+        padMode: 'uni',
+        padT: 14, padR: 10, padB: 14, padL: 10
+      };
       base.container.pad = 0; /* 整幅背景图铺满组件，不做内边距 */
       base.container.padMode = 'uni';
       base.container.bg = '#f6f8fa';

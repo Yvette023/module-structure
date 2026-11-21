@@ -39,12 +39,12 @@
 
     var body;
     if (ui.m5tab === 'list') {
-      /* 内部列表：选中轮播页里的那一组列表项（图标 + 标题） */
+      /* 内部列表：选中轮播页里的那一组列表项（图标 + 图片1/图片2...） */
       var innerThumbs = list.map(function (it, i) {
-        return '<div class="thumb thumb--m5item' + (sub === i ? ' is-on' : '') + '" data-act="sub" data-idx="' + i + '" title="' + esc(it.title || '') + '">' +
+        return '<div class="thumb thumb--m5item' + (sub === i ? ' is-on' : '') + '" data-act="sub" data-idx="' + i + '" title="图片' + (i + 1) + '">' +
           '<span class="thumb__del" data-act="del-sub" data-idx="' + i + '">' + icon('trash') + '</span>' +
           '<span class="thumb__box thumb__box--icon">' + icon(it.icon || 'sparkle') + '</span>' +
-          '<span class="thumb__no">' + esc(it.title || ('项' + (i + 1))) + '</span>' +
+          '<span class="thumb__no">图片' + (i + 1) + '</span>' +
         '</div>';
       }).join('');
       var addInnerBtn = '<div class="thumb thumb--add" data-act="add-sub">' +

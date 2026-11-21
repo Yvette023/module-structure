@@ -61,9 +61,15 @@
   gap: var(--m5-gap, 14px);
   width: var(--m5-w, 54%);
   max-width: 100%;
-  padding: clamp(28px, 3.5vw, 56px);
+  padding: clamp(24px, 3vw, 48px);
   box-sizing: border-box;
   color: #111418;
+}
+.m5__body.is-follow-content {
+  margin: clamp(14px, 2vw, 32px);
+}
+.m5__body.is-free-content {
+  margin: 0;
 }
 
 /* 容器水平对齐 */
@@ -144,14 +150,25 @@
 }
 .m5__cta { margin-top: 0; align-self: flex-start; }
 
-.m5 .btn.m5__cta {
-  background: #111418;
-  color: #fff;
+.m5 .btn.m5__cta,
+.m5 .ed-btn.m5__cta,
+.m5 a.m5__cta {
+  background: transparent !important;
+  color: #111418 !important;
+  border: 1.5px solid #111418 !important;
   border-radius: 8px;
   padding: 10px 22px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
+  box-shadow: none;
+  font-weight: 600;
+  transition: all .2s ease;
 }
-.m5 .btn.m5__cta:hover { background: #2b313a; }
+.m5 .btn.m5__cta:hover,
+.m5 .ed-btn.m5__cta:hover,
+.m5 a.m5__cta:hover {
+  background: rgba(17, 20, 24, .06) !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
 
 /* ---------- 内部列表：包裹容器、网格与图文对齐 ---------- */
 .m5__list-wrap {

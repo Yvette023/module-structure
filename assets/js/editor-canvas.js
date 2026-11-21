@@ -524,14 +524,42 @@
     var listItemAlign = s.layout.listItemAlign || 'left';
     var listGap = dimVal(s, s.layout.listGap != null ? s.layout.listGap : 12);
 
+    /* 轮播列表主文案背景 */
+    var tb = s.layout.textBg || {};
+    var tbStyle = '';
+    if (tb.bgOn) tbStyle += 'background-color:' + esc(tb.bg || '#ffffffcc') + ';';
+    if (tb.borderOn) {
+      tbStyle += 'border:' + dimVal(s, tb.borderWidth != null ? tb.borderWidth : 1) + ' ' +
+        (tb.borderStyle || 'solid') + ' ' + esc(tb.border || '#111418') + ';';
+    }
+    if (tb.radius != null || tb.radiusTl != null) tbStyle += 'border-radius:' + radiusCSS(s, tb, 'radius') + ';';
+    if (tb.pad != null || tb.padT != null) tbStyle += 'padding:' + padCSS(s, tb, 'pad') + ';';
+
+    var followContent = tb.followContent !== false;
+
+    /* 内部列表项文案背景 */
+    var ltb = s.layout.listTextBg || {};
+    var ltbStyle = '';
+    if (ltb.bgOn) ltbStyle += 'background-color:' + esc(ltb.bg || '#ffffff') + ';';
+    else ltbStyle += 'background-color:transparent;';
+    if (ltb.borderOn) {
+      ltbStyle += 'border:' + dimVal(s, ltb.borderWidth != null ? ltb.borderWidth : 1) + ' ' +
+        (ltb.borderStyle || 'solid') + ' ' + esc(ltb.border || 'rgba(0,0,0,0.08)') + ';';
+    } else {
+      ltbStyle += 'border:none;';
+    }
+    if (ltb.radius != null || ltb.radiusTl != null) ltbStyle += 'border-radius:' + radiusCSS(s, ltb, 'radius') + ';';
+    if (ltb.pad != null || ltb.padT != null) ltbStyle += 'padding:' + padCSS(s, ltb, 'pad') + ';';
+
     function m5Item(it, i) {
       var title = '<div class="m5__text"><h4>' + esc(it.title) + '</h4></div>';
-      return '<li class="m5__item" data-sub="' + i + '"><span class="m5__icon">' + icon(it.icon || 'sparkle') +
+      return '<li class="m5__item" data-sub="' + i + '" style="' + ltbStyle + '"><span class="m5__icon">' + icon(it.icon || 'sparkle') +
         '</span>' + title + '</li>';
     }
 
-    var bodyCls = 'm5__body is-align-' + hAlign + ' is-valign-' + vAlign + ' is-text-' + textAlign;
-    var bodyStyle = '--m5-w:' + widthPct + '%;--m5-gap:' + gapVal + ';gap:' + gapVal + ';';
+    var bodyCls = 'm5__body is-align-' + hAlign + ' is-valign-' + vAlign + ' is-text-' + textAlign +
+      (followContent ? ' is-follow-content' : ' is-free-content');
+    var bodyStyle = '--m5-w:' + widthPct + '%;--m5-gap:' + gapVal + ';gap:' + gapVal + ';' + tbStyle;
 
     var grads = (window.DATA && window.DATA.m5Gradients) || [
       'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000"><defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23e8edf5"/><stop offset="50%" stop-color="%23eff3f8"/><stop offset="100%" stop-color="%23f6f3eb"/></linearGradient></defs><rect width="1600" height="1000" fill="url(%23g1)"/></svg>',

@@ -427,7 +427,11 @@
       }
       var el = e.target.closest('select[data-bind]');
       if (!el) return;
-      setPath(el.dataset.bind, el.value);
+      var val = /^-?\d+(\.\d+)?$/.test(el.value) ? Number(el.value) : el.value;
+      setPath(el.dataset.bind, val);
+      if (el.dataset.bind === 'layout.columns' && state.structure === 'm1') {
+        state.layout.dir = val >= 4 ? 'h' : 'v';
+      }
       renderAll();
     });
   }

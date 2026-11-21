@@ -316,7 +316,8 @@
   /* ---------- 结构1：中心图 + 左右双排列表 ----------
      画布只渲染模块本身（不带头部文字/按钮）；数量由「列表项」内容决定 */
   function renderM1(s) {
-    var dir = s.layout.dir || 'v';
+    var cols = Number(s.layout.columns) || (s.layout.dir === 'h' ? 4 : 2);
+    var dir = cols >= 4 ? 'h' : 'v';
     var items = s.items;
     function split(arr) {
       if (dir === 'v') {

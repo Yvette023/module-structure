@@ -404,8 +404,8 @@
       '</div>';
 
       if (ui.m5tab === 'list') {
-        /* 轮播列表 · 内部列表：列表布局（3列下拉）、容器对齐（仅左中右生效，上中下禁用）、图文对齐、宽度（仅列表组）、文案背景、列表间距（卡片网格gap） */
-        body += row(label('列表布局')) + select(lPrefix + '.listColumns', curLayout.listColumns || 3, [
+        /* 轮播列表 · 内部列表：列数设置 ➔ 容器对齐 ➔ 图文对齐 ➔ 宽度 ➔ 列中间距 ➔ 文字背景设置 */
+        body += row(label('列数设置')) + select(lPrefix + '.listColumns', curLayout.listColumns || 3, [
           { v: 1, l: '1列' },
           { v: 2, l: '2列' },
           { v: 3, l: '3列' },
@@ -428,12 +428,12 @@
           { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
         ], 'fseg--wide');
         body += row(label('宽度')) + range(lPrefix + '.listWidth', curLayout.listWidth != null ? curLayout.listWidth : 100, 30, 100, 1, '%');
-        body += fpropBgStrokeSection('文案背景', lPrefix + '.listTextBg', { hasFollowContent: false, streamlined: true });
-        body += dimCtl({ label: '列表间距', field: lPrefix + '.listGap', modeBind: lPrefix + '.listGapMode', type: 'gap', min: 0, max: 48 });
+        body += dimCtl({ label: '列中间距', field: lPrefix + '.listGap', modeBind: lPrefix + '.listGapMode', type: 'gap', min: 0, max: 48 });
+        body += fpropBgStrokeSection('文字背景设置', lPrefix + '.listTextBg', { hasFollowContent: false, streamlined: true });
         return body;
       }
 
-      /* 轮播列表 · 轮播列表（主层）：容器对齐（9宫格）、文案对齐、宽度（大标题简介按钮整体）、文案背景、间距（外层垂直间隙） */
+      /* 轮播列表 · 轮播主层：容器对齐 ➔ 文案对齐 ➔ 宽度 ➔ 列中间距 ➔ 文字背景设置 */
       var m5HAlign = curLayout.align || 'start';
       var m5VAlign = curLayout.valign || 'center';
       body += alignDualField('容器对齐',
@@ -452,13 +452,13 @@
         { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
       ], 'fseg--wide');
       body += row(label('宽度')) + range(lPrefix + '.contentWidth', curLayout.contentWidth || curLayout.width || 54, 30, 100, 1, '%');
-      body += fpropBgStrokeSection('文案背景', lPrefix + '.textBg', { hasFollowContent: true, streamlined: true });
-      body += dimCtl({ label: '间距', field: lPrefix + '.gap', modeBind: lPrefix + '.gapMode', type: 'gap', min: 0, max: 48 });
+      body += dimCtl({ label: '列中间距', field: lPrefix + '.gap', modeBind: lPrefix + '.gapMode', type: 'gap', min: 0, max: 48 });
+      body += fpropBgStrokeSection('文字背景设置', lPrefix + '.textBg', { hasFollowContent: true, streamlined: true });
       return body;
     }
 
     if (s.structure === 'm1') {
-      /* 双排列表：去掉 A/B/C/D 变体，固定「双列均布」，改为「图文布局」 */
+      /* 双排列表：图文布局 ➔ 列数设置 ➔ 图文对齐/文案对齐 ➔ 上下对齐 ➔ 列中间距 ➔ 图文比例 */
       body = row(label('图文布局')) + select('layout.imgText', s.layout.imgText, [
         { v: 'tb', l: '上图下文' },
         { v: 'bt', l: '下图上文' },
@@ -467,25 +467,12 @@
         { v: 'inner', l: '图片靠内' },
         { v: 'outer', l: '图片靠外' }
       ]);
-    } else {
-      body = row(label(m.label)) + select('layout.mode', s.layout.mode, m.options);
-    }
-
-    if (s.structure === 'm1') {
-      body += row(label('排布方向')) + seg('layout.dir', s.layout.dir, [
-        { v: 'v', l: '竖向排列' }, { v: 'h', l: '横向排列' }
-      ], 'fseg--wide');
-    }
-    if (s.structure === 'm4' && s.layout.mode === 'grid') {
-      body += row(label('列数')) + seg('layout.columns', s.layout.columns, [
-        { v: 2, l: '2列' }, { v: 3, l: '3列' }, { v: 4, l: '4列' }
-      ], 'fseg--wide');
-    }
-    if (s.structure === 'm2') {
-      body += row(label('图文位置') + sw('layout.reverse', s.layout.reverse));
-    }
-    if (s.structure === 'm1') {
-      /* 双排列表：竖向 = 「图文对齐」(左中右)；横向（左图右文/右图左文/图片靠内/图片靠外） = 「文案对齐」(左中右) */
+      body += row(label('列数设置')) + select('layout.columns', s.layout.columns || (s.layout.dir === 'h' ? 4 : 2), [
+        { v: 1, l: '1列' },
+        { v: 2, l: '2列' },
+        { v: 3, l: '3列' },
+        { v: 4, l: '4列' }
+      ]);
       var vert = isVert(s);
       if (vert) {
         body += row(label('图文对齐')) + seg('layout.imgAlignX', s.layout.imgAlignX, [
@@ -496,18 +483,6 @@
           { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
         ], 'fseg--wide');
       }
-    } else if (s.structure !== 'm5') {
-      body += row(label('容器对齐')) + seg('layout.align', s.layout.align, [
-        { v: 'start', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'end', icon: 'alignRight' }
-      ], 'fseg--wide');
-    }
-    if (s.structure !== 'm1' && s.structure !== 'm5') {
-      body += row(label('文案对齐')) + seg('layout.textAlign', s.layout.textAlign, [
-        { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
-      ], 'fseg--wide');
-    }
-    if (s.structure === 'm1') {
-      /* 双排列表：上下对齐（主图 vs 列表），列中间距 + 图文比例 */
       body += row(label('上下对齐')) + seg('layout.valign', s.layout.valign, [
         { v: 'top', l: '上' }, { v: 'center', l: '中' }, { v: 'bottom', l: '下' }
       ], 'fseg--wide');
@@ -515,19 +490,48 @@
       body += '<div class="frow" style="margin-top:14px"><span class="flabel" style="font-weight:600;color:#1f2328">图文比例</span></div>';
       body += row(label('主内容') + range('layout.mainRatio', s.layout.mainRatio, 1, 12, 1, ''));
       body += row(label('列表项') + range('layout.listRatio', s.layout.listRatio, 1, 12, 1, ''));
-      /* 横向布局：列表项内部 图标:文字 比例 */
       var horiz = isHoriz(s);
       if (horiz) {
         body += row(label('图片') + range('layout.iconRatio', s.layout.iconRatio, 1, 6, 1, ''));
         body += row(label('文字') + range('layout.textRatio', s.layout.textRatio, 1, 12, 1, ''));
       }
-    } else if (s.structure !== 'm5') {
-      body += row(label('宽度')) + range('layout.width', s.layout.width, 30, 100, 1, '%');
+      return body;
     }
+
     if (s.structure === 'm4') {
+      /* 复合列表：列表布局 ➔ 列数设置 ➔ 容器对齐 ➔ 文案对齐 ➔ 宽度 ➔ 列中间距 ➔ 文字背景设置 */
+      body = row(label('列表布局')) + select('layout.mode', s.layout.mode, m.options);
+      if (s.layout.mode === 'grid') {
+        body += row(label('列数设置')) + select('layout.columns', s.layout.columns || 2, [
+          { v: 2, l: '2列' },
+          { v: 3, l: '3列' },
+          { v: 4, l: '4列' }
+        ]);
+      }
+      body += row(label('容器对齐')) + seg('layout.align', s.layout.align, [
+        { v: 'start', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'end', icon: 'alignRight' }
+      ], 'fseg--wide');
+      body += row(label('文案对齐')) + seg('layout.textAlign', s.layout.textAlign, [
+        { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
+      ], 'fseg--wide');
+      body += row(label('宽度')) + range('layout.width', s.layout.width, 30, 100, 1, '%');
       body += dimCtl({ label: '列中间距', field: 'layout.gap', modeBind: 'layout.gapMode', type: 'gap', min: 0, max: 80 });
-      body += fpropBgStrokeSection('文案背景', 'layout.textBg', { hasFollowContent: false, maxPad: 48 });
+      body += fpropBgStrokeSection('文字背景设置', 'layout.textBg', { hasFollowContent: false, maxPad: 48 });
+      return body;
     }
+
+    /* m2 / m3 等其他列表组件：列表布局 ➔ 图文布局(m2) ➔ 容器对齐 ➔ 文案对齐 ➔ 宽度 */
+    body = row(label(m.label)) + select('layout.mode', s.layout.mode, m.options);
+    if (s.structure === 'm2') {
+      body += row(label('图文位置') + sw('layout.reverse', s.layout.reverse));
+    }
+    body += row(label('容器对齐')) + seg('layout.align', s.layout.align, [
+      { v: 'start', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'end', icon: 'alignRight' }
+    ], 'fseg--wide');
+    body += row(label('文案对齐')) + seg('layout.textAlign', s.layout.textAlign, [
+      { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
+    ], 'fseg--wide');
+    body += row(label('宽度')) + range('layout.width', s.layout.width, 30, 100, 1, '%');
     return body;
   }
 
@@ -561,29 +565,27 @@
       row(label('图片效果')) + select(bind + '.effect', g.effect, [
         { v: 'none', l: '原图' }, { v: 'gray', l: '黑白' },
         { v: 'blur', l: '柔化' }, { v: 'zoom', l: '放大裁切' }
-      ]) +
-      (opts.main ? '' :
-        row(label('图片背景') + sw(bind + '.bgOn', g.bgOn)) +
-        (g.bgOn ? row(label('颜色') + color(bind + '.bg', g.bg)) : '') +
-        row(label('图片描边') + sw(bind + '.borderOn', g.borderOn)) +
-        (g.borderOn ? row(label('颜色') + color(bind + '.border', g.border)) : '') +
-        dimCtl({ label: '圆角', field: bind + '.radius', modeBind: bind + '.radiusMode', type: 'corner', min: 0, max: 48 }) +
-        (opts.noAlign ? '' :
-          row(label('图片对齐')) + seg(bind + '.align', g.align, [
-            { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
-          ], 'fseg--wide')) +
-        dimCtl({ label: '内边距', field: bind + '.pad', modeBind: bind + '.padMode', type: 'box', min: 0, max: 40 }) +
-        /* 开启蒙层：图片上叠黑色半透明遮罩，开启后再给透明度滑杆 + 数值 */
-        (function () {
-          var m = g.mask || {};
-          var on = !!m.on;
-          return row(label('开启蒙层') + sw(bind + '.mask.on', on)) +
-            (on
-              ? row(label('蒙层透明度')) + '<div class="frow">' +
-                  range(bind + '.mask.opacity', m.opacity != null ? m.opacity : 0.3, 0, 1, 0.05, '') +
-                '</div>'
-              : '');
-        })());
+      ]);
+    if (!opts.noAlign) {
+      body += row(label('图片对齐')) + seg(bind + '.align', g.align, [
+        { v: 'left', icon: 'alignLeft' }, { v: 'center', icon: 'alignCenter' }, { v: 'right', icon: 'alignRight' }
+      ], 'fseg--wide');
+    }
+
+    if (!opts.main) {
+      /* 图片风格背景描边：同步使用全局最新的圆角、背景、描边、内边距规范 */
+      body += fpropBgStrokeSection('背景描边', bind, { maxRadius: 48, maxPad: 40, marginTop: 14 });
+
+      /* 开启蒙层：图片上叠黑色半透明遮罩，开启后再给透明度滑杆 + 数值 */
+      var m = g.mask || {};
+      var on = !!m.on;
+      body += row(label('开启蒙层') + sw(bind + '.mask.on', on)) +
+        (on
+          ? row(label('蒙层透明度')) + '<div class="frow">' +
+              range(bind + '.mask.opacity', m.opacity != null ? m.opacity : 0.3, 0, 1, 0.05, '') +
+            '</div>'
+          : '');
+    }
     return body;
   }
 

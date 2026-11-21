@@ -189,32 +189,31 @@
     var borderWidth = bgObj.borderWidth != null ? bgObj.borderWidth : 1;
     var followContent = bgObj.followContent !== false;
 
-    // 如果启用精简对齐模式（用户体验优化：统一左侧基准线对齐，精简层级，消除拥挤感）
-    if (opts.streamlined) {
-      var rMode = bgObj.radiusMode || 'uni';
-      var rVal = bgObj.radius != null ? toDisplay(bgObj.radius) : 10;
-      var rTl = bgObj.radiusTl != null ? toDisplay(bgObj.radiusTl) : rVal;
-      var rTr = bgObj.radiusTr != null ? toDisplay(bgObj.radiusTr) : rVal;
-      var rBr = bgObj.radiusBr != null ? toDisplay(bgObj.radiusBr) : rVal;
-      var rBl = bgObj.radiusBl != null ? toDisplay(bgObj.radiusBl) : rVal;
+    var rMode = bgObj.radiusMode || 'uni';
+    var rVal = bgObj.radius != null ? toDisplay(bgObj.radius) : 10;
+    var rTl = bgObj.radiusTl != null ? toDisplay(bgObj.radiusTl) : rVal;
+    var rTr = bgObj.radiusTr != null ? toDisplay(bgObj.radiusTr) : rVal;
+    var rBr = bgObj.radiusBr != null ? toDisplay(bgObj.radiusBr) : rVal;
+    var rBl = bgObj.radiusBl != null ? toDisplay(bgObj.radiusBl) : rVal;
 
-      var pMode = bgObj.padMode || 'uni';
-      var pVal = bgObj.pad != null ? toDisplay(bgObj.pad) : 14;
-      var pT = bgObj.padT != null ? toDisplay(bgObj.padT) : pVal;
-      var pR = bgObj.padR != null ? toDisplay(bgObj.padR) : pVal;
-      var pB = bgObj.padB != null ? toDisplay(bgObj.padB) : pVal;
-      var pL = bgObj.padL != null ? toDisplay(bgObj.padL) : pVal;
+    var pMode = bgObj.padMode || 'uni';
+    var pVal = bgObj.pad != null ? toDisplay(bgObj.pad) : 14;
+    var pT = bgObj.padT != null ? toDisplay(bgObj.padT) : pVal;
+    var pR = bgObj.padR != null ? toDisplay(bgObj.padR) : pVal;
+    var pB = bgObj.padB != null ? toDisplay(bgObj.padB) : pVal;
+    var pL = bgObj.padL != null ? toDisplay(bgObj.padL) : pVal;
 
-      var sHtml = '<div class="fprop-streamlined-group">' +
-        '<div class="frow" style="margin-top:' + (opts.marginTop != null ? opts.marginTop : 16) + 'px;margin-bottom:6px">' +
-          '<span class="flabel" style="font-weight:600;color:#101828;font-size:13px">' + title + '</span>' +
-        '</div>';
+    var curUnit = (ED.state && ED.state.unit) || 'px';
 
-      var curUnit = (ED.state && ED.state.unit) || 'px';
+    var sHtml = '<div class="fprop-streamlined-group">' +
+      '<div class="frow" style="margin-top:' + (opts.marginTop != null ? opts.marginTop : 16) + 'px;margin-bottom:6px">' +
+        '<span class="flabel" style="font-weight:600;color:#101828;font-size:13px">' + title + '</span>' +
+      '</div>';
 
-      // 1. 圆角区块：标题单独一行，统一/独立用 Tab 选择，右侧输入框严格左对齐
+    // 1. 圆角（如果启用，容器背景默认无圆角）
+    if (opts.hasCorner !== false && prefix !== 'container') {
       sHtml += '<div class="fprop-header-row" style="margin-top:12px">' +
-        '<span class="fprop-header-title">圆角</span>' +
+        '<span class="fprop-header-title">' + (opts.cornerLabel || '圆角') + '</span>' +
         '<span class="dim-unit-tag">' +
           '<select class="funit dim-unit-select" data-bind="unit" title="单位">' +
             '<option value="px"' + (curUnit === 'px' ? ' selected' : '') + '>px</option>' +
@@ -237,85 +236,95 @@
         '<div class="fprop-align-content">' +
           (rMode === 'ind'
             ? '<div class="fprop-4grid">' +
-                '<input type="number" data-bind="' + prefix + '.radiusTl" data-px="1" value="' + rTl + '" min="0" max="64" title="左上">' +
-                '<input type="number" data-bind="' + prefix + '.radiusTr" data-px="1" value="' + rTr + '" min="0" max="64" title="右上">' +
-                '<input type="number" data-bind="' + prefix + '.radiusBr" data-px="1" value="' + rBr + '" min="0" max="64" title="右下">' +
-                '<input type="number" data-bind="' + prefix + '.radiusBl" data-px="1" value="' + rBl + '" min="0" max="64" title="左下">' +
+                '<input type="number" data-bind="' + prefix + '.radiusTl" data-px="1" value="' + rTl + '" min="0" max="' + (opts.maxRadius || 64) + '" title="左上">' +
+                '<input type="number" data-bind="' + prefix + '.radiusTr" data-px="1" value="' + rTr + '" min="0" max="' + (opts.maxRadius || 64) + '" title="右上">' +
+                '<input type="number" data-bind="' + prefix + '.radiusBr" data-px="1" value="' + rBr + '" min="0" max="' + (opts.maxRadius || 64) + '" title="右下">' +
+                '<input type="number" data-bind="' + prefix + '.radiusBl" data-px="1" value="' + rBl + '" min="0" max="' + (opts.maxRadius || 64) + '" title="左下">' +
               '</div>'
             : '<div class="fprop-num-box">' +
-                '<input type="number" data-bind="' + prefix + '.radius" data-px="1" value="' + rVal + '" min="0" max="64">' +
+                '<input type="number" data-bind="' + prefix + '.radius" data-px="1" value="' + rVal + '" min="0" max="' + (opts.maxRadius || 64) + '">' +
                 '<span class="fprop-num-unit">px</span>' +
               '</div>'
           ) +
         '</div>' +
       '</div>';
+    }
 
-      // 2. 背景行（左侧 74px: 勾选框 + 背景；右侧: 色块药丸卡片 + 调色板）
-      sHtml += '<div class="fprop-align-row">' +
-        '<div class="fprop-align-label">' +
-          '<div class="fprop-check" data-act="toggle" data-bind="' + prefix + '.bgOn">' +
-            icon(bgOn ? 'checkCircleFilled' : 'circleEmpty') +
-            '<span>背景</span>' +
-          '</div>' +
+    // 2. 背景（左侧 74px: 勾选框 + 背景；右侧: 色块药丸卡片 + 调色板）
+    sHtml += '<div class="fprop-align-row">' +
+      '<div class="fprop-align-label">' +
+        '<div class="fprop-check" data-act="toggle" data-bind="' + prefix + '.bgOn">' +
+          icon(bgOn ? 'checkCircleFilled' : 'circleEmpty') +
+          '<span>背景</span>' +
         '</div>' +
-        '<div class="fprop-align-content">' +
-          '<div class="fprop-color-pill" title="点击选择背景色">' +
-            '<span class="fcolor-chip' + (!bgOn ? ' fcolor-chip--checker' : '') + '" style="' + (bgOn ? 'background-color:#' + bgHex : '') + '"></span>' +
-            '<span class="fcolor-text' + (!bgOn ? ' fcolor-text--empty' : '') + '">' + (bgOn ? bgHex : '未设置') + '</span>' +
-            '<input type="color" data-bind="' + prefix + '.bg" data-kind="color" value="#' + (bgHex.length === 6 ? bgHex : 'FFFFFF') + '">' +
-          '</div>' +
-          '<label class="fprop-btn-palette" title="打开调色板">' +
-            icon('palette') +
-            '<input type="color" data-bind="' + prefix + '.bg" data-kind="color" value="#' + (bgHex.length === 6 ? bgHex : 'FFFFFF') + '">' +
-          '</label>' +
+      '</div>' +
+      '<div class="fprop-align-content">' +
+        '<div class="fprop-color-pill" title="点击选择背景色">' +
+          '<span class="fcolor-chip' + (!bgOn ? ' fcolor-chip--checker' : '') + '" style="' + (bgOn ? 'background-color:#' + bgHex : '') + '"></span>' +
+          '<span class="fcolor-text' + (!bgOn ? ' fcolor-text--empty' : '') + '">' + (bgOn ? bgHex : '未设置') + '</span>' +
+          '<input type="color" data-bind="' + prefix + '.bg" data-kind="color" value="#' + (bgHex.length === 6 ? bgHex : 'FFFFFF') + '">' +
         '</div>' +
+        '<label class="fprop-btn-palette" title="打开调色板">' +
+          icon('palette') +
+          '<input type="color" data-bind="' + prefix + '.bg" data-kind="color" value="#' + (bgHex.length === 6 ? bgHex : 'FFFFFF') + '">' +
+        '</label>' +
+      '</div>' +
+    '</div>';
+
+    // 3. 描边行（左侧 74px: 勾选框 + 描边；右侧: 色块药丸卡片 + 调色板）
+    sHtml += '<div class="fprop-align-row">' +
+      '<div class="fprop-align-label">' +
+        '<div class="fprop-check" data-act="toggle" data-bind="' + prefix + '.borderOn">' +
+          icon(borderOn ? 'checkCircleFilled' : 'circleEmpty') +
+          '<span>描边</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="fprop-align-content">' +
+        '<div class="fprop-color-pill" title="点击选择描边色">' +
+          '<span class="fcolor-chip' + (!borderOn ? ' fcolor-chip--checker' : '') + '" style="' + (borderOn ? 'background-color:#' + borderHex : '') + '"></span>' +
+          '<span class="fcolor-text' + (!borderOn ? ' fcolor-text--empty' : '') + '">' + (borderOn ? borderHex : '未设置') + '</span>' +
+          '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : '111418') + '">' +
+        '</div>' +
+        '<label class="fprop-btn-palette" title="打开调色板">' +
+          icon('palette') +
+          '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : '111418') + '">' +
+        '</label>' +
+      '</div>' +
+    '</div>';
+
+    // 4. 描边线型与线宽行（左侧 74px: 实线/虚线下拉；右侧: 线宽输入框 + 方框模式按钮）
+    sHtml += '<div class="fprop-align-row">' +
+      '<div class="fprop-align-label">' +
+        '<select class="fprop-select-type" data-bind="' + prefix + '.borderStyle">' +
+          '<option value="solid"' + (borderStyle === 'solid' ? ' selected' : '') + '>实线</option>' +
+          '<option value="dashed"' + (borderStyle === 'dashed' ? ' selected' : '') + '>虚线</option>' +
+          '<option value="dotted"' + (borderStyle === 'dotted' ? ' selected' : '') + '>点线</option>' +
+        '</select>' +
+      '</div>' +
+      '<div class="fprop-align-content">' +
+        '<div class="fprop-stroke-w">' +
+          icon('lineWidth') +
+          '<input type="number" data-bind="' + prefix + '.borderWidth" data-px="1" min="0" max="16" value="' + borderWidth + '">' +
+          '<span class="unit">px</span>' +
+        '</div>' +
+        '<button type="button" class="fprop-icon-btn is-active" title="统一描边">' +
+          icon('boxSquare') +
+        '</button>' +
+      '</div>' +
+    '</div>';
+
+    // 相邻描边合并（卡片特有）
+    if (opts.hasMerge) {
+      sHtml += '<div class="fprop-align-row fprop-align-row--between" style="margin-top:10px">' +
+        '<span class="flabel" style="margin:0;font-size:12px;color:var(--ui-text-2)">相邻的描边合并</span>' +
+        sw(prefix + '.merge', bgObj.merge) +
       '</div>';
+    }
 
-      // 3. 描边行（左侧 74px: 勾选框 + 描边；右侧: 色块药丸卡片 + 调色板）
-      sHtml += '<div class="fprop-align-row">' +
-        '<div class="fprop-align-label">' +
-          '<div class="fprop-check" data-act="toggle" data-bind="' + prefix + '.borderOn">' +
-            icon(borderOn ? 'checkCircleFilled' : 'circleEmpty') +
-            '<span>描边</span>' +
-          '</div>' +
-        '</div>' +
-        '<div class="fprop-align-content">' +
-          '<div class="fprop-color-pill" title="点击选择描边色">' +
-            '<span class="fcolor-chip' + (!borderOn ? ' fcolor-chip--checker' : '') + '" style="' + (borderOn ? 'background-color:#' + borderHex : '') + '"></span>' +
-            '<span class="fcolor-text' + (!borderOn ? ' fcolor-text--empty' : '') + '">' + (borderOn ? borderHex : '未设置') + '</span>' +
-            '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : '111418') + '">' +
-          '</div>' +
-          '<label class="fprop-btn-palette" title="打开调色板">' +
-            icon('palette') +
-            '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : '111418') + '">' +
-          '</label>' +
-        '</div>' +
-      '</div>';
-
-      // 4. 描边线型与线宽行（左侧 74px: 实线/虚线下拉；右侧: 线宽输入框 + 方框模式按钮）
-      sHtml += '<div class="fprop-align-row">' +
-        '<div class="fprop-align-label">' +
-          '<select class="fprop-select-type" data-bind="' + prefix + '.borderStyle">' +
-            '<option value="solid"' + (borderStyle === 'solid' ? ' selected' : '') + '>实线</option>' +
-            '<option value="dashed"' + (borderStyle === 'dashed' ? ' selected' : '') + '>虚线</option>' +
-            '<option value="dotted"' + (borderStyle === 'dotted' ? ' selected' : '') + '>点线</option>' +
-          '</select>' +
-        '</div>' +
-        '<div class="fprop-align-content">' +
-          '<div class="fprop-stroke-w">' +
-            icon('lineWidth') +
-            '<input type="number" data-bind="' + prefix + '.borderWidth" data-px="1" min="0" max="16" value="' + borderWidth + '">' +
-            '<span class="unit">px</span>' +
-          '</div>' +
-          '<button type="button" class="fprop-icon-btn is-active" title="统一描边">' +
-            icon('boxSquare') +
-          '</button>' +
-        '</div>' +
-      '</div>';
-
-      // 5. 内边距区块：标题单独一行，统一/独立用 Tab 选择，右侧输入框严格左对齐
+    // 5. 内边距（如果启用）
+    if (opts.hasPad !== false) {
       sHtml += '<div class="fprop-header-row" style="margin-top:12px">' +
-        '<span class="fprop-header-title">内边距</span>' +
+        '<span class="fprop-header-title">' + (opts.padLabel || '内边距') + '</span>' +
         '<span class="dim-unit-tag">' +
           '<select class="funit dim-unit-select" data-bind="unit" title="单位">' +
             '<option value="px"' + (curUnit === 'px' ? ' selected' : '') + '>px</option>' +
@@ -338,125 +347,35 @@
         '<div class="fprop-align-content">' +
           (pMode === 'ind'
             ? '<div class="fprop-4grid">' +
-                '<input type="number" data-bind="' + prefix + '.padT" data-px="1" value="' + pT + '" min="0" max="64" title="上">' +
-                '<input type="number" data-bind="' + prefix + '.padR" data-px="1" value="' + pR + '" min="0" max="64" title="右">' +
-                '<input type="number" data-bind="' + prefix + '.padB" data-px="1" value="' + pB + '" min="0" max="64" title="下">' +
-                '<input type="number" data-bind="' + prefix + '.padL" data-px="1" value="' + pL + '" min="0" max="64" title="左">' +
+                '<input type="number" data-bind="' + prefix + '.padT" data-px="1" value="' + pT + '" min="0" max="' + (opts.maxPad || 64) + '" title="上">' +
+                '<input type="number" data-bind="' + prefix + '.padR" data-px="1" value="' + pR + '" min="0" max="' + (opts.maxPad || 64) + '" title="右">' +
+                '<input type="number" data-bind="' + prefix + '.padB" data-px="1" value="' + pB + '" min="0" max="' + (opts.maxPad || 64) + '" title="下">' +
+                '<input type="number" data-bind="' + prefix + '.padL" data-px="1" value="' + pL + '" min="0" max="' + (opts.maxPad || 64) + '" title="左">' +
               '</div>'
             : '<div class="fprop-num-box">' +
-                '<input type="number" data-bind="' + prefix + '.pad" data-px="1" value="' + pVal + '" min="0" max="64">' +
+                '<input type="number" data-bind="' + prefix + '.pad" data-px="1" value="' + pVal + '" min="0" max="' + (opts.maxPad || 64) + '">' +
                 '<span class="fprop-num-unit">px</span>' +
               '</div>'
           ) +
         '</div>' +
       '</div>';
-
-      // 6. 文案跟随版心（轮播主层）
-      if (opts.hasFollowContent) {
-        sHtml += '<div class="fprop-align-row fprop-align-row--between" style="margin-top:10px">' +
-          '<span class="flabel" style="margin:0;font-size:12px;color:var(--ui-text-2)">文案跟随版心</span>' +
-          sw(prefix + '.followContent', followContent) +
-        '</div>';
-      }
-
-      sHtml += '</div>';
-      return sHtml;
     }
 
-    var html = '<div class="frow" style="margin-top:' + (opts.marginTop != null ? opts.marginTop : 16) + 'px"><span class="flabel" style="font-weight:600;color:#1f2328">' + title + '</span></div>';
-
-    // 1. 圆角（如果启用）
-    if (opts.hasCorner !== false) {
-      html += dimCtl({
-        label: opts.cornerLabel || '圆角',
-        field: prefix + '.radius',
-        modeBind: prefix + '.radiusMode',
-        type: 'corner',
-        min: 0,
-        max: opts.maxRadius || 48
-      });
-    }
-
-    // 2. 背景（勾选框 + 色块药丸卡片 + 调色盘图标）
-    html += '<div class="fprop-row">' +
-      '<div class="fprop-check" data-act="toggle" data-bind="' + prefix + '.bgOn">' +
-        icon(bgOn ? 'checkCircleFilled' : 'circleEmpty') +
-        '<span>背景</span>' +
-      '</div>' +
-      '<div class="fprop-color-pill" title="点击选择背景色">' +
-        '<span class="fcolor-chip' + (!bgOn ? ' fcolor-chip--checker' : '') + '" style="' + (bgOn ? 'background-color:#' + bgHex : '') + '"></span>' +
-        '<span class="fcolor-text' + (!bgOn ? ' fcolor-text--empty' : '') + '">' + (bgOn ? bgHex : '未设置') + '</span>' +
-        '<input type="color" data-bind="' + prefix + '.bg" data-kind="color" value="#' + (bgHex.length === 6 ? bgHex : 'FFFFFF') + '">' +
-      '</div>' +
-      '<label class="fprop-btn-palette" title="打开调色板">' +
-        icon('palette') +
-        '<input type="color" data-bind="' + prefix + '.bg" data-kind="color" value="#' + (bgHex.length === 6 ? bgHex : 'FFFFFF') + '">' +
-      '</label>' +
-    '</div>';
-
-    // 3. 描边第 1 行（勾选框 + 色块药丸卡片 + 调色盘图标）
-    html += '<div class="fprop-row">' +
-      '<div class="fprop-check" data-act="toggle" data-bind="' + prefix + '.borderOn">' +
-        icon(borderOn ? 'checkCircleFilled' : 'circleEmpty') +
-        '<span>描边</span>' +
-      '</div>' +
-      '<div class="fprop-color-pill" title="点击选择描边色">' +
-        '<span class="fcolor-chip' + (!borderOn ? ' fcolor-chip--checker' : '') + '" style="' + (borderOn ? 'background-color:#' + borderHex : '') + '"></span>' +
-        '<span class="fcolor-text' + (!borderOn ? ' fcolor-text--empty' : '') + '">' + (borderOn ? borderHex : '未设置') + '</span>' +
-        '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : '111418') + '">' +
-      '</div>' +
-      '<label class="fprop-btn-palette" title="打开调色板">' +
-        icon('palette') +
-        '<input type="color" data-bind="' + prefix + '.border" data-kind="color" value="#' + (borderHex.length === 6 ? borderHex : '111418') + '">' +
-      '</label>' +
-    '</div>';
-
-    // 描边第 2 行：样式下拉 + 粗细数字输入 + 模式切换
-    html += '<div class="fprop-stroke-sub">' +
-      '<select class="fprop-select" data-bind="' + prefix + '.borderStyle">' +
-        '<option value="">请选择</option>' +
-        '<option value="solid"' + (borderStyle === 'solid' ? ' selected' : '') + '>实线</option>' +
-        '<option value="dashed"' + (borderStyle === 'dashed' ? ' selected' : '') + '>虚线</option>' +
-        '<option value="dotted"' + (borderStyle === 'dotted' ? ' selected' : '') + '>点线</option>' +
-      '</select>' +
-      '<div class="fprop-stroke-w">' +
-        icon('lineWidth') +
-        '<input type="number" data-bind="' + prefix + '.borderWidth" data-px="1" min="0" max="16" value="' + borderWidth + '">' +
-        '<span class="unit">px</span>' +
-      '</div>' +
-      '<button type="button" class="fprop-icon-btn is-active" title="统一描边">' +
-        icon('boxSquare') +
-      '</button>' +
-    '</div>';
-
-    // 相邻描边合并（卡片特有）
-    if (opts.hasMerge) {
-      html += row(label('相邻的描边合并') + sw(prefix + '.merge', bgObj.merge));
-    }
-
-    // 4. 内边距（如果启用）
-    if (opts.hasPad !== false) {
-      html += dimCtl({
-        label: opts.padLabel || '内边距',
-        field: prefix + '.pad',
-        modeBind: prefix + '.padMode',
-        type: 'box',
-        min: 0,
-        max: opts.maxPad || 64
-      });
-    }
-
-    // 阴影（卡片 / 容器特有）
+    // 6. 投影（卡片 / 容器特有）
     if (opts.hasShadow) {
-      html += shadowCtl(prefix + '.shadow');
+      sHtml += shadowCtl(prefix + '.shadow');
     }
 
-    // 5. 文案跟随版心（仅轮播列表主层）
+    // 7. 文案跟随版心（轮播主层）
     if (opts.hasFollowContent) {
-      html += row(label('文案跟随版心') + sw(prefix + '.followContent', followContent));
+      sHtml += '<div class="fprop-align-row fprop-align-row--between" style="margin-top:10px">' +
+        '<span class="flabel" style="margin:0;font-size:12px;color:var(--ui-text-2)">文案跟随版心</span>' +
+        sw(prefix + '.followContent', followContent) +
+      '</div>';
     }
 
-    return html;
+    sHtml += '</div>';
+    return sHtml;
   }
 
   function layoutPanel() {

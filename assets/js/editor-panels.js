@@ -388,6 +388,53 @@
       '</div>';
     }
 
+    // 5.1 外边距（如果在图片风格等启用）
+    if (opts.hasMargin) {
+      var mMode = bgObj.marginMode || 'uni';
+      var mVal = bgObj.margin != null ? toDisplay(bgObj.margin) : 0;
+      var mT = bgObj.marginT != null ? toDisplay(bgObj.marginT) : mVal;
+      var mR = bgObj.marginR != null ? toDisplay(bgObj.marginR) : mVal;
+      var mB = bgObj.marginB != null ? toDisplay(bgObj.marginB) : mVal;
+      var mL = bgObj.marginL != null ? toDisplay(bgObj.marginL) : mVal;
+
+      sHtml += '<div class="fprop-header-row" style="margin-top:12px">' +
+        '<span class="fprop-header-title">' + (opts.marginLabel || '外边距') + '</span>' +
+        '<span class="dim-unit-tag">' +
+          '<select class="funit dim-unit-select" data-bind="unit" title="单位">' +
+            '<option value="px"' + (curUnit === 'px' ? ' selected' : '') + '>px</option>' +
+            '<option value="rem"' + (curUnit === 'rem' ? ' selected' : '') + '>rem</option>' +
+          '</select>' +
+          icon('chevronDown', 'dim-unit-arrow') +
+        '</span>' +
+      '</div>' +
+      '<div class="fprop-align-row">' +
+        '<div class="fprop-align-label">' +
+          '<div class="fprop-icon-tabs">' +
+            '<button type="button" class="' + (mMode === 'uni' ? 'is-on' : '') + '" data-act="dim-mode" data-bind="' + prefix + '.marginMode" data-value="uni" title="统一外边距">' +
+              icon('marginAll') +
+            '</button>' +
+            '<button type="button" class="' + (mMode === 'ind' ? 'is-on' : '') + '" data-act="dim-mode" data-bind="' + prefix + '.marginMode" data-value="ind" title="独立外边距">' +
+              icon('marginInd') +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="fprop-align-content">' +
+          (mMode === 'ind'
+            ? '<div class="fprop-4grid">' +
+                '<input type="number" data-bind="' + prefix + '.marginT" data-px="1" value="' + mT + '" min="0" max="' + (opts.maxMargin || 64) + '" title="上">' +
+                '<input type="number" data-bind="' + prefix + '.marginR" data-px="1" value="' + mR + '" min="0" max="' + (opts.maxMargin || 64) + '" title="右">' +
+                '<input type="number" data-bind="' + prefix + '.marginB" data-px="1" value="' + mB + '" min="0" max="' + (opts.maxMargin || 64) + '" title="下">' +
+                '<input type="number" data-bind="' + prefix + '.marginL" data-px="1" value="' + mL + '" min="0" max="' + (opts.maxMargin || 64) + '" title="左">' +
+              '</div>'
+            : '<div class="fprop-num-box">' +
+                '<input type="number" data-bind="' + prefix + '.margin" data-px="1" value="' + mVal + '" min="0" max="' + (opts.maxMargin || 64) + '">' +
+                '<span class="fprop-num-unit">px</span>' +
+              '</div>'
+          ) +
+        '</div>' +
+      '</div>';
+    }
+
     // 6. 投影（卡片 / 容器特有）
     if (opts.hasShadow) {
       sHtml += shadowCtl(prefix + '.shadow');
@@ -600,8 +647,8 @@
     }
 
     if (!opts.main) {
-      /* 图片风格背景描边：同步使用全局最新的圆角、背景、描边、内边距规范 */
-      body += fpropBgStrokeSection('背景描边', bind, { maxRadius: 48, maxPad: 40, marginTop: 14 });
+      /* 图片风格背景描边：同步使用全局最新的圆角、背景、描边、内边距、外边距规范 */
+      body += fpropBgStrokeSection('背景描边', bind, { maxRadius: 48, maxPad: 40, marginTop: 14, hasMargin: true });
 
       /* 开启蒙层：图片上叠黑色半透明遮罩，开启后再给透明度滑杆 + 数值 */
       var m = g.mask || {};

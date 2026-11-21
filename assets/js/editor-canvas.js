@@ -46,12 +46,24 @@
     return (Math.round(n * 100) / 100) + (s.unit === 'rem' ? 'rem' : 'px');
   }
   function padCSS(s, o, f) {
+    if (!o) return '0';
+    f = f || 'pad';
+    if ((o[f + 'Mode'] || 'uni') === 'ind') {
+      return [o[f + 'T'], o[f + 'R'], o[f + 'B'], o[f + 'L']].map(function (v) { return dimVal(s, v || 0); }).join(' ');
+    }
+    return dimVal(s, o[f]);
+  }
+  function marginCSS(s, o, f) {
+    if (!o) return '0';
+    f = f || 'margin';
     if ((o[f + 'Mode'] || 'uni') === 'ind') {
       return [o[f + 'T'], o[f + 'R'], o[f + 'B'], o[f + 'L']].map(function (v) { return dimVal(s, v || 0); }).join(' ');
     }
     return dimVal(s, o[f]);
   }
   function radiusCSS(s, o, f) {
+    if (!o) return '0';
+    f = f || 'radius';
     if ((o[f + 'Mode'] || 'uni') === 'ind') {
       return [o[f + 'Tl'], o[f + 'Tr'], o[f + 'Br'], o[f + 'Bl']].map(function (v) { return dimVal(s, v || 0); }).join(' ');
     }
@@ -107,14 +119,38 @@
   }
 
   function mediaStyle(s) {
-    var g = s.img;
+    var g = s.img || {};
     var st = {
       'border-radius': radiusCSS(s, g, 'radius'),
       background: g.bgOn ? g.bg : 'transparent',
-      border: g.borderOn ? '1px solid ' + g.border : '0',
+      border: g.borderOn ? (g.borderWidth || 1) + 'px ' + (g.borderStyle || 'solid') + ' ' + (g.border || '#111418') : '0',
       padding: padCSS(s, g, 'pad')
     };
+    if (g.margin != null || g.marginMode === 'ind') {
+      st.margin = marginCSS(s, g, 'margin');
+    }
     if (g.ratio !== 'none') st['aspect-ratio'] = g.ratio.replace(':', '/');
+    return style(st);
+  }
+
+  function iconBoxStyle(s) {
+    var g = s.img || {};
+    var st = {};
+    if (g.bgOn) st['background-color'] = g.bg;
+    if (g.borderOn) {
+      st['border-width'] = (g.borderWidth != null ? g.borderWidth : 1) + 'px';
+      st['border-style'] = g.borderStyle || 'solid';
+      st['border-color'] = g.border || '#111418';
+    }
+    if (g.radius != null || g.radiusMode === 'ind') {
+      st['border-radius'] = radiusCSS(s, g, 'radius');
+    }
+    if (g.pad != null || g.padMode === 'ind') {
+      st['padding'] = padCSS(s, g, 'pad');
+    }
+    if (g.margin != null || g.marginMode === 'ind') {
+      st['margin'] = marginCSS(s, g, 'margin');
+    }
     return style(st);
   }
 
@@ -340,9 +376,11 @@
     var horiz = (window.ED && window.ED.isHoriz ? window.ED.isHoriz(s) : (it === 'lr' || it === 'rl' || it === 'inner' || it === 'outer'));
     var iconFlex = horiz ? 'flex:' + (s.layout.iconRatio || 1) + ' 1 0%;' : '';
     var textFlex = horiz ? 'flex:' + (s.layout.textRatio || 3) + ' 1 0%;' : '';
+    var icStyle = iconBoxStyle(s);
     function list(arr, listStyle) {
       return '<ul class="m1__list" style="' + listStyle + '">' + arr.map(function (it) {
-        var badge = '<span class="m1__icon" style="' + iconFlex + '">' + icon(it.icon || 'sparkle') + '</span>';
+        var badgeStyle = iconFlex ? (icStyle ? iconFlex + ';' + icStyle : iconFlex) : icStyle;
+        var badge = '<span class="m1__icon" style="' + badgeStyle + '">' + icon(it.icon || 'sparkle') + '</span>';
         return '<li class="m1__item">' + badge +
           '<div class="m1__text ' + taCls + '" style="' + textFlex + '"><h3>' + esc(it.title) + '</h3><p>' + esc(it.desc) + '</p></div></li>';
       }).join('') + '</ul>';
@@ -417,10 +455,11 @@
   function renderM2(s) {
     var t = s.text;
     var mode = s.layout.mode === 'grid' ? 'check' : s.layout.mode;
+    var icStyle = iconBoxStyle(s);
     var list;
     if (mode === 'check') {
       list = '<ul class="m2__list m2__list--check">' + s.items.slice(0, 6).map(function (it) {
-        return '<li class="m2__item">' + icon('checkCircle', 'is-accent') + '<span>' + esc(it.title) + '</span></li>';
+        return '<li class="m2__item"><span class="m2__badge" style="' + icStyle + '">' + icon('checkCircle', 'is-accent') + '</span><span>' + esc(it.title) + '</span></li>';
       }).join('') + '</ul>';
     } else if (mode === 'num') {
       list = '<ul class="m2__list m2__list--num">' + s.items.slice(0, 4).map(function (it, i) {
@@ -434,7 +473,7 @@
       }).join('') + '</ul>';
     } else {
       list = '<ul class="m2__list m2__list--icon">' + s.items.slice(0, 4).map(function (it) {
-        return '<li class="m2__item"><span class="m2__badge">' + icon(it.icon || 'sparkle') + '</span>' +
+        return '<li class="m2__item"><span class="m2__badge" style="' + icStyle + '">' + icon(it.icon || 'sparkle') + '</span>' +
           '<div class="m2__text"><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div></li>';
       }).join('') + '</ul>';
     }
@@ -492,8 +531,9 @@
     var split = s.layout.split || 8;
     var col1 = s.items.slice(0, split);
     var col2 = s.items.slice(split);
+    var icStyle = iconBoxStyle(s);
     var apps = '<ul class="m3__apps">' + col1.slice(0, 8).map(function (it) {
-      return '<li class="m3__app">' + icon(it.icon || 'sparkle') + '<span>' + esc(it.title) + '</span></li>';
+      return '<li class="m3__app"><span class="m3__icon" style="' + icStyle + '">' + icon(it.icon || 'sparkle') + '</span><span>' + esc(it.title) + '</span></li>';
     }).join('') + '</ul>';
     var cards = '<ul class="m3__cards">' + col2.slice(0, 2).map(function (it) {
       return '<li class="m3__card"><figure><img src="' + esc(it.img) + '" alt="">' + imgMaskHTML(s) + '</figure>' +
@@ -597,9 +637,10 @@
       if (ltb.radius != null || ltb.radiusTl != null) ltbStyle += 'border-radius:' + radiusCSS(s, ltb, 'radius') + ';';
       if (ltb.pad != null || ltb.padT != null) ltbStyle += 'padding:' + padCSS(s, ltb, 'pad') + ';';
 
+      var icStyle = iconBoxStyle(s);
       function m5Item(it, j) {
         var title = '<div class="m5__text"><h4>' + esc(it.title) + '</h4></div>';
-        return '<li class="m5__item" data-sub="' + j + '" style="' + ltbStyle + '"><span class="m5__icon">' + icon(it.icon || 'sparkle') +
+        return '<li class="m5__item" data-sub="' + j + '" style="' + ltbStyle + '"><span class="m5__icon" style="' + icStyle + '">' + icon(it.icon || 'sparkle') +
           '</span>' + title + '</li>';
       }
 

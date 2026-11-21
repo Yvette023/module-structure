@@ -156,7 +156,11 @@
     paddingAll:
       '<rect x="3.5" y="3.5" width="17" height="17" rx="3" stroke="currentColor" stroke-width="1.6"/><rect x="8.5" y="8.5" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.6"/>',
     paddingInd:
-      '<rect x="3.5" y="3.5" width="17" height="17" rx="3" stroke="currentColor" stroke-width="1.6"/><rect x="8.5" y="8.5" width="7" height="7" rx="1.5" stroke="#1677ff" stroke-width="2" fill="#1677ff" fill-opacity="0.12"/>'
+      '<rect x="3.5" y="3.5" width="17" height="17" rx="3" stroke="currentColor" stroke-width="1.6"/><rect x="8.5" y="8.5" width="7" height="7" rx="1.5" stroke="#1677ff" stroke-width="2" fill="#1677ff" fill-opacity="0.12"/>',
+    marginAll:
+      '<rect x="2.5" y="2.5" width="19" height="19" rx="3" stroke="currentColor" stroke-dasharray="2.5 2" stroke-width="1.4"/><rect x="6.5" y="6.5" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/>',
+    marginInd:
+      '<rect x="2.5" y="2.5" width="19" height="19" rx="3" stroke="#1677ff" stroke-dasharray="2.5 2" stroke-width="1.6"/><rect x="6.5" y="6.5" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/>'
   };
 
   window.icon = function (name, cls) {

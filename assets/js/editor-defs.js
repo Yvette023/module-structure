@@ -103,6 +103,7 @@
         ratio: '3:4', effect: 'none', align: 'center',
         radius: 0, radiusMode: 'uni', radiusTl: 0, radiusTr: 0, radiusBr: 0, radiusBl: 0,
         pad: 0, padMode: 'uni', padT: 0, padR: 0, padB: 0, padL: 0,
+        margin: 0, marginMode: 'uni', marginT: 0, marginR: 0, marginB: 0, marginL: 0,
         bgOn: false, bg: '#22262e', borderOn: false, border: '#2a2f38',
         /* 蒙层：开启后在图片上叠一层黑色半透明遮罩，透明度 0–1 */
         mask: { on: false, opacity: 0.3 }

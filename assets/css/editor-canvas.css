@@ -263,6 +263,21 @@
   overflow: hidden;
   border-radius: inherit;
 }
+
+/* 图标盒模型：保证 padding 生效内间距，margin 生效外间距 */
+.ed-mod .m1__icon,
+.ed-mod .m2__badge,
+.ed-mod .m3__icon,
+.ed-mod .m5__icon {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.ed-mod .m3__icon {
+  min-width: 32px;
+  min-height: 32px;
+}
 .ed-mod .m2__media img { width: 100%; height: 100%; object-fit: cover; }
 .ed-mod .m3__media img { max-height: 620px; object-fit: cover; }
 .ed-mod .m3__card figure,

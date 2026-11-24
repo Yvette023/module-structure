@@ -151,27 +151,83 @@
   }
 
 
+  /* ---------- 按钮设置（对照后台截图） ----------
+     [+] 新增 | [图标样式] | 图标位置 ▾
+     [按钮文字 ............] [魔法棒]
+     [Aa 配色方案 ▾]
+     [按钮类型 ▾]
+  ------------------------------------------------ */
+  var BTN_SCHEMES = [
+    { v: 'red-white', l: '红色-白底黑字', c1: '#e4342f', c2: '#f8dedd' },
+    { v: 'red-solid', l: '红色-红底白字', c1: '#e4342f', c2: '#b92521' },
+    { v: 'dark',      l: '黑色-黑底白字', c1: '#14161a', c2: '#4b4f57' },
+    { v: 'white',     l: '白色-白底黑字', c1: '#ffffff', c2: '#c3c8d0' },
+    { v: 'ghost',     l: '描边-透明底（图片上）', c1: '#9aa3af', c2: '#ffffff' },
+    { v: 'blue',      l: '蓝色-蓝底白字', c1: '#1e6fff', c2: '#0f4fd0' }
+  ];
+  var BTN_TYPES = [
+    { v: 'primary', l: '主按钮' },
+    { v: 'secondary', l: '次按钮' },
+    { v: 'text', l: '文字按钮' }
+  ];
+  var BTN_ICONS = ['arrow', 'chevron', 'sparkle', 'check', 'none'];
+  var BTN_ICON_LABEL = { arrow: '箭头', chevron: '折角', sparkle: '星标', check: '对勾', none: '无图标' };
+  var BTN_SUGGEST = ['Read more', 'Learn more', 'Buy now', 'Shop the collection', 'Get started', 'Contact us'];
+
   function buttonSection() {
     var state = ED.state;
-    var b = state.text.button;
-    var body = '<button class="ftile" data-act="toggle" data-bind="text.button.on" title="新增/移除按钮">' +
-      icon(b.on ? 'check' : 'plus') + '</button>' +
-      row(label('图标位置')) +
-      seg('text.button.icon', b.icon, [
-        { v: 'left', l: '居左' }, { v: 'none', l: '无' }, { v: 'right', l: '居右' }
-      ], 'fseg--wide') +
-      '<div style="height:10px"></div>' +
-      inp('text.button.text', b.text, '按钮文字') +
-      row(label('配色方案')) +
-      select('text.button.theme', b.theme, [
-        { v: 'ghost', l: '描边（适合图片上）' },
-        { v: 'solid', l: '主色实心' },
-        { v: 'light', l: '白色实心' },
-        { v: 'dark', l: '深色实心' }
-      ]) +
-      row(label('按钮链接')) +
-      inp('text.button.link', b.link, 'https:// 或 /path');
-    return body;
+    var b = state.text.button || {};
+    var scheme = BTN_SCHEMES.filter(function (x) { return x.v === b.scheme; })[0] || BTN_SCHEMES[0];
+    var iconStyle = b.iconStyle || 'arrow';
+    var glyph = iconStyle === 'none' ? icon('sliders') : icon(iconStyle);
+
+    /* 第一行：新增按钮方块 + 图标样式 + 图标位置下拉 */
+    var head = '<div class="btnrow">' +
+      '<button type="button" class="btnadd" data-act="toggle" data-bind="text.button.on" title="新增 / 移除按钮">' +
+        icon('plus') +
+      '</button>' +
+      '<button type="button" class="btnico" data-act="btn-icon" title="图标样式：' + BTN_ICON_LABEL[iconStyle] + '">' +
+        glyph +
+      '</button>' +
+      '<div class="fselect-field btnrow__sel">' +
+        '<select class="fselect-input" data-bind="text.button.icon">' +
+          [['left', '图标居左'], ['none', '无图标'], ['right', '图标居右']].map(function (o) {
+            return '<option value="' + o[0] + '"' + (b.icon === o[0] ? ' selected' : '') + '>' + o[1] + '</option>';
+          }).join('') +
+        '</select>' +
+        icon('chevronDown', 'fselect-arrow') +
+      '</div>' +
+    '</div>';
+
+    /* 第二行：按钮文字 + 魔法棒（智能推荐文案） */
+    var textRow = '<div class="btnrow btnrow--text">' +
+      '<input class="finput btnrow__input" data-bind="text.button.text" value="' + esc(b.text) + '" placeholder="按钮文字">' +
+      '<button type="button" class="btnico" data-act="btn-suggest" title="智能推荐文案">' +
+        icon('wand') +
+      '</button>' +
+    '</div>';
+
+    /* 第三行：配色方案（色卡 + 下拉） */
+    var schemeRow = '<div class="btnrow btnrow--scheme">' +
+      '<div class="fselect-field btnrow__scheme">' +
+        '<span class="btnsw" style="--c1:' + scheme.c1 + ';--c2:' + scheme.c2 + '">' +
+          '<b>Aa</b><i></i><i></i>' +
+        '</span>' +
+        '<select class="fselect-input btnrow__scheme-sel" data-bind="text.button.scheme">' +
+          BTN_SCHEMES.map(function (o) {
+            return '<option value="' + o.v + '"' + (b.scheme === o.v ? ' selected' : '') + '>' + o.l + '</option>';
+          }).join('') +
+        '</select>' +
+        icon('chevronDown', 'fselect-arrow') +
+      '</div>' +
+    '</div>';
+
+    /* 第四行：按钮类型 */
+    var typeRow = '<div class="btnrow btnrow--type">' +
+      select('text.button.type', b.type, BTN_TYPES) +
+    '</div>';
+
+    return head + textRow + schemeRow + typeRow;
   }
 
 

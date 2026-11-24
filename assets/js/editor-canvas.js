@@ -177,19 +177,41 @@
   }
 
   /* ---------- 文案块（标题/副标题/简介/按钮） ---------- */
+  /* 按钮配色（对应面板「配色方案」） */
+  var BTN_PAL = {
+    'red-white': { bg: '#ffffff', fg: '#14161a', border: '#e4342f', accent: '#e4342f' },
+    'red-solid': { bg: '#e4342f', fg: '#ffffff', border: '0', accent: '#e4342f' },
+    dark:        { bg: '#14161a', fg: '#ffffff', border: '0', accent: '#14161a' },
+    white:       { bg: '#ffffff', fg: '#14161a', border: '#d0d5dd', accent: '#14161a' },
+    ghost:       { bg: 'transparent', fg: '#ffffff', border: 'rgba(255,255,255,.72)', accent: '#ffffff' },
+    blue:        { bg: '#1e6fff', fg: '#ffffff', border: '0', accent: '#1e6fff' }
+  };
+
   function btnHTML(s, extra, opts) {
     var b = s.text.button;
     if (!s.show.button || !b.on) return '';
     opts = opts || {};
-    var theme = b.theme || 'ghost';
+    var key = b.scheme || 'red-white';
+    var pal = BTN_PAL[key] || BTN_PAL['red-white'];
     var lightBg = !isDark(s.container.bgOn ? s.container.bg : '#ffffff');
-    // 浅色容器上的描边/白色按钮会看不见，自动换成深色（浮在图片上时跳过）
-    if (!opts.onImage && lightBg && (theme === 'ghost' || theme === 'light')) theme = 'dark';
-    var cls = 'ed-btn ed-btn--' + theme;
-    var ic = b.icon === 'left' ? icon('arrow') : '';
-    var icR = b.icon === 'right' ? icon('arrow') : '';
-    return '<a class="' + cls + (extra ? ' ' + extra : '') + '" href="' + esc(b.link || '#') + '">' +
-      ic + '<span>' + esc(b.text) + '</span>' + icR + '</a>';
+    /* 浅色容器上的白字描边按钮会看不见，自动换成深色（浮在图片上时跳过） */
+    if (!opts.onImage && lightBg && key === 'ghost') { key = 'dark'; pal = BTN_PAL.dark; }
+    var type = b.type || 'primary';
+    var st;
+    if (type === 'text') {
+      st = 'background:transparent;border:0;color:' + pal.accent + ';padding:4px 2px;';
+    } else if (type === 'secondary') {
+      st = 'background:transparent;border:1px solid ' + pal.accent + ';color:' + pal.accent + ';';
+    } else {
+      st = 'background:' + pal.bg + ';color:' + pal.fg + ';' +
+        (pal.border !== '0' ? 'border:1px solid ' + pal.border + ';' : 'border:0;');
+    }
+    var iconName = b.iconStyle || 'arrow';
+    var glyph = (b.icon !== 'none' && iconName !== 'none') ? icon(iconName) : '';
+    var icL = b.icon === 'left' ? glyph : '';
+    var icR = b.icon === 'right' ? glyph : '';
+    return '<a class="ed-btn ed-btn--' + type + (extra ? ' ' + extra : '') + '" style="' + st + '" href="' + esc(b.link || '#') + '">' +
+      icL + '<span>' + esc(b.text) + '</span>' + icR + '</a>';
   }
 
   function textBlock(s, opts) {

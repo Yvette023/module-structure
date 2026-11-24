@@ -138,6 +138,13 @@
     palette:
       '<path d="M12 21a9 9 0 0 1-9-9c0-4.97 4.03-9 9-9 4.14 0 7.64 2.8 8.68 6.64.44 1.63-.82 3.36-2.5 3.36h-2.18c-1 0-1.82.82-1.82 1.82 0 .44.16.85.43 1.17.65.77.5 1.94-.3 2.58A8.93 8.93 0 0 1 12 21Z"/>' +
       '<circle cx="7.5" cy="10.5" r="1.2" fill="currentColor"/><circle cx="12" cy="7.5" r="1.2" fill="currentColor"/><circle cx="16.5" cy="10.5" r="1.2" fill="currentColor"/>',
+    sliders:
+      '<path d="M3.8 8h16.4M3.8 16h16.4"/>' +
+      '<circle cx="9" cy="8" r="2.4" fill="#fff"/><circle cx="15.6" cy="16" r="2.4" fill="#fff"/>',
+    wand:
+      '<path d="M4.2 19.8 14.9 9.1"/>' +
+      '<path d="M16.5 3.4l.9 2.2 2.2.9-2.2.9-.9 2.2-.9-2.2-2.2-.9 2.2-.9.9-2.2Z"/>' +
+      '<path d="M6.6 4.6l.5 1.2 1.2.5-1.2.5-.5 1.2-.5-1.2-1.2-.5 1.2-.5.5-1.2Z"/>',
     checkCircleFilled:
       '<circle cx="12" cy="12" r="10" fill="#1677ff" stroke="none"/><path d="m7.8 12.2 2.8 2.8 5.6-5.8" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>',
     circleEmpty:

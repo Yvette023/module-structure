@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>装修 · 小鱼AI · banner生成</title>
+<link rel="stylesheet" href="assets/css/base.css?v=20261123c">
+<link rel="stylesheet" href="assets/css/editor.css?v=20261123c">
+</head>
+<body class="ed-ai">
+
+<!-- ================= 画布顶栏 ================= -->
+<header class="canvas-top">
+  <div class="canvas-top__left">
+    <a class="back-wf" id="backWf" href="admin.html?view=workflow" title="返回工作流编排">
+      <span data-ic="back"></span><span class="back-wf__txt">工作流</span>
+    </a>
+    <span class="canvas-div"></span>
+    <button class="top-ic is-on" title="组件"><span data-ic="grid"></span></button>
+    <button class="top-ic" title="图层"><span data-ic="layers"></span></button>
+    <button class="top-ic" title="模块"><span data-ic="cube"></span></button>
+    <button class="top-ic" title="结构"><span data-ic="node"></span></button>
+    <button class="top-ic" title="样式"><span data-ic="brush"></span></button>
+  </div>
+  <div class="canvas-top__center">
+    <button class="canvas-pill"><span data-ic="monitor"></span><span>PC</span><span class="chev" data-ic="chevronDown"></span></button>
+    <span class="canvas-div"></span>
+    <button class="canvas-pill"><span data-ic="store"></span><span>Home</span><span class="chev" data-ic="chevronDown"></span></button>
+    <span class="canvas-div"></span>
+    <button class="top-ic top-ic--page is-on" title="当前页面"><span data-ic="page"></span></button>
+  </div>
+  <div class="canvas-top__right">
+    <button class="ai-entry" id="aiEntry" title="打开小鱼AI" aria-label="打开小鱼AI" hidden><span data-ic="sparkle"></span></button>
+    <span class="avatar" title="liyuaner">L</span>
+    <div class="save-split">
+      <button class="save-split__main">保存</button>
+      <button class="save-split__more" aria-label="更多保存选项"><span data-ic="chevronDown"></span></button>
+    </div>
+  </div>
+</header>
+
+<main class="ed-main">
+  <!-- ================= 店铺画布 ================= -->
+  <section class="storefront" id="storefront">
+    <div class="site">
+      <div class="site-top">
+        <span>Perfect balance between aesthetic and function.</span>
+        <div class="site-top__right">
+          <span class="social">f</span><span class="social">♪</span><span class="social">▶</span><span class="social">···</span>
+          <span class="site-search"><span data-ic="search"></span> no more language</span>
+        </div>
+      </div>
+
+      <div class="site-header">
+        <div class="site-logo"><span>WILDHAVEN</span></div>
+        <nav class="site-nav">
+          <a>COLLECTION</a><a>TREVI COLLECTION</a><a>EASY COLLECTION</a><a>SERVICE</a><a>ABOUT</a><a>BLOG</a><a>CONTACT</a>
+        </nav>
+        <div class="site-share">Share with: <b>f</b><b>◎</b><b>✕</b><b>in</b><b>p</b><b>···</b></div>
+      </div>
+
+      <div class="hero-wrap is-selected" id="heroWrap" title="当前选中：轮播图">
+        <div class="hero-slides" id="heroSlides"></div>
+        <span class="sel-tag">轮播图</span>
+        <div class="hero-dots" id="heroDots"></div>
+        <button class="hero-nav hero-nav--prev" id="heroPrev" aria-label="上一张">‹</button>
+        <button class="hero-nav hero-nav--next" id="heroNext" aria-label="下一张">›</button>
+      </div>
+
+      <div class="site-section">
+        <div class="site-section__head">
+          <div>
+            <span class="site-eyebrow">FEATURED COLLECTION</span>
+            <h2>Objects for the way you listen.</h2>
+          </div>
+          <a class="site-link">VIEW ALL →</a>
+        </div>
+        <div class="site-grid">
+          <figure><div class="site-card-img site-card-img--1"></div><figcaption>Studio Headphones <span>$299</span></figcaption></figure>
+          <figure><div class="site-card-img site-card-img--2"></div><figcaption>Daily Formula <span>$39</span></figcaption></figure>
+          <figure><div class="site-card-img site-card-img--3"></div><figcaption>Lounge Chair <span>$489</span></figcaption></figure>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= 小鱼AI 面板 ================= -->
+  <aside class="ai-panel" id="aiPanel">
+    <header class="ai-head">
+      <b>小鱼AI助手</b>
+      <div class="ai-head__acts">
+        <button class="iconbtn" title="历史记录"><span data-ic="history"></span></button>
+        <button class="iconbtn" title="帮助"><span data-ic="help"></span></button>
+        <button class="iconbtn" title="展开"><span data-ic="expand"></span></button>
+        <button class="iconbtn" id="closeAi" title="收起"><span data-ic="close"></span></button>
+      </div>
+    </header>
+
+    <div class="ai-body" id="chatBody">
+      <div class="ai-hello" id="aiHello">
+        <span class="ai-logo"><span data-ic="sparkle"></span></span>
+        <h2>小鱼Agent能帮你些什么？</h2>
+      </div>
+
+      <div class="chat" id="chat"></div>
+    </div>
+
+    <div class="composer">
+      <div class="obj-row">
+        <span class="obj-chip"><span data-ic="image"></span>轮播图<button class="obj-x" title="取消选中">×</button></span>
+        <div class="obj-acts">
+          <button class="circle-btn" id="autoPick" title="智能识别当前对象"><span data-ic="sparkle"></span></button>
+          <button class="circle-btn" id="tplBtn" title="打开提示词模版"><span data-ic="book"></span></button>
+        </div>
+      </div>
+
+      <div class="input-box">
+        <div class="input-media" id="inputMedia" hidden></div>
+        <textarea id="promptInput" rows="2" placeholder="请输入要求，例如：生成一张耳机新品 banner"></textarea>
+        <div class="input-tools">
+          <div class="input-tools__left">
+            <button class="tool-circle" id="attachBtn" title="添加参考图（走图生图 id:6）"><span data-ic="plus"></span></button>
+            <button class="tool-pill" id="genBtn"><span data-ic="image"></span>banner生成</button>
+            <button class="tool-circle" id="settingsBtn" title="生成配置"><span data-ic="sliders"></span></button>
+          </div>
+          <button class="send-btn" id="sendBtn" disabled title="发送"><span data-ic="send"></span></button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <input type="file" id="refFile" accept="image/*" multiple hidden>
+  <button class="ai-fab" id="aiFab" hidden><span data-ic="sparkle"></span>小鱼AI</button>
+</main>
+
+<!-- ================= 生成配置（悬浮弹层） ================= -->
+<div class="cfg-pop" id="cfgPop" aria-hidden="true">
+  <div class="cfg-pop__head">
+    <span class="cfg-pop__title"><span data-ic="sliders"></span>生成配置</span>
+    <span class="tpl-applied" id="appliedTpl" hidden>
+      <span data-ic="book"></span><span id="appliedName">模版</span>
+      <button id="clearTpl" title="取消模版">×</button>
+    </span>
+    <button class="cfg-api" id="cfgApiBtn" title="接入真实生图接口">接口</button>
+    <button class="iconbtn cfg-pop__close" id="cfgClose" aria-label="关闭"><span data-ic="close"></span></button>
+  </div>
+  <div class="cfg-pop__body">
+    <div class="cfg-grid">
+      <label class="cfg-field"><span>文本模型</span>
+        <select class="sel cfg-sel" id="textModel"></select>
+      </label>
+      <label class="cfg-field"><span>图片模型</span>
+        <select class="sel cfg-sel" id="imageModel"></select>
+      </label>
+      <label class="cfg-field"><span>比例</span>
+        <select class="sel cfg-sel" id="ratioSel"><option>16:9</option><option>1:1</option><option>4:3</option></select>
+      </label>
+      <label class="cfg-field"><span>生成数量</span>
+        <select class="sel cfg-sel" id="countSel"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+      </label>
+      <label class="cfg-field"><span>图文布局</span>
+        <select class="sel cfg-sel" id="layoutSel"></select>
+      </label>
+      <label class="cfg-field"><span>生成文案</span>
+        <select class="sel cfg-sel" id="copySel">
+          <option value="1">生成文案（图片 + 文案）</option>
+          <option value="0">不生成文案（仅图片）</option>
+        </select>
+      </label>
+      <label class="cfg-field cfg-field--full"><span>分辨率</span>
+        <select class="sel cfg-sel" id="resSel"><option>1K</option><option>2K</option></select>
+      </label>
+      <div class="cfg-field cfg-field--full">
+        <span>尺寸</span>
+        <div class="size-row">
+          <label><em>W</em><input id="sizeW" value="1024" readonly></label>
+          <label><em>H</em><input id="sizeH" value="1024" readonly></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 提示词模版弹层 ================= -->
+<div class="tpl-pop" id="tplPop" aria-hidden="true">
+  <div class="tpl-pop__head">
+    <span class="tpl-pop__title">提示词模版</span>
+    <button class="iconbtn" id="tplClose" aria-label="关闭"><span data-ic="close"></span></button>
+  </div>
+  <div class="tpl-pop__tabs" role="tablist">
+    <button class="tpl-pop__tab is-active" data-cat="all">全部</button>
+    <button class="tpl-pop__tab" data-cat="banner模块">Banner</button>
+    <button class="tpl-pop__tab" data-cat="产品图">产品图</button>
+    <button class="tpl-pop__tab" data-cat="封面图">封面图</button>
+  </div>
+  <div class="tpl-pop__list" id="tplList"></div>
+</div>
+
+
+<!-- ================= 生图接口配置 ================= -->
+<div class="modal" id="apiModal" aria-hidden="true">
+  <div class="modal__mask" data-close></div>
+  <div class="modal__panel modal__panel--md" role="dialog" aria-modal="true" aria-labelledby="apiTitle">
+    <header class="modal__head">
+      <div>
+        <h3 id="apiTitle">生图接口</h3>
+        <p class="modal__sub">已接入 Qwen Image 3.0（ModelVerse），留空 Key 则回退本地合成。</p>
+      </div>
+      <button class="iconbtn" data-close aria-label="关闭"><span data-ic="close"></span></button>
+    </header>
+    <div class="modal__body">
+      <div class="field" style="margin-bottom:12px">
+        <label class="field__label" for="apiBase">接口地址</label>
+        <input class="inp" id="apiBase" placeholder="https://api.modelverse.cn/v1">
+        <span class="field__hint">POST {接口地址}/images/generations</span>
+      </div>
+      <div class="field" style="margin-bottom:12px">
+        <label class="field__label" for="apiKey">API Key</label>
+        <input class="inp" id="apiKey" type="password" placeholder="Bearer Token">
+        <span class="field__hint">只保存在本地浏览器，不会上传。</span>
+      </div>
+      <div class="field">
+        <span class="field__label">出图方式</span>
+        <div class="api-modes" id="apiModes">
+          <label class="api-mode">
+            <input type="radio" name="apiMode" value="compose" checked>
+            <span class="api-mode__body"><b>AI 底图 + 本地排版</b><em>文字用工作流布局精确排入，最稳</em></span>
+          </label>
+          <label class="api-mode">
+            <input type="radio" name="apiMode" value="full">
+            <span class="api-mode__body"><b>AI 整图生成</b><em>文字也交给模型画，风格更野</em></span>
+          </label>
+        </div>
+        <label class="api-check">
+          <input type="checkbox" id="apiExtend">
+          <span><b>开启提示词智能改写</b><em>模型会二次扩写提示词，出图更丰富，但耗时约 40s（关闭约 4-15s）</em></span>
+        </label>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <button class="btn" data-close>取消</button>
+      <button class="btn btn--primary" id="apiSave">保存</button>
+    </footer>
+  </div>
+</div>
+
+<!-- ================= 选择对象：两级选择器 ================= -->
+<div class="picker" id="objPicker" aria-hidden="true">
+  <!-- 第一级：页面组件列表 -->
+  <div class="picker__pane is-active" data-pane="list">
+    <div class="picker__search">
+      <input type="text" id="pickerSearch" placeholder="搜索当前页面中的组件名称">
+    </div>
+    <div class="picker__body" id="pickerList"></div>
+  </div>
+
+  <!-- 第二级：选中组件的元素列表 -->
+  <div class="picker__pane" data-pane="elements">
+    <div class="picker__back">
+      <button class="picker__back-btn" id="pickerBack" aria-label="返回">
+        <span data-ic="chevronLeft"></span>
+      </button>
+      <span id="pickerTitle">选择组件元素</span>
+    </div>
+    <div class="picker__body" id="pickerElements"></div>
+  </div>
+
+  <!-- 底部：当前选择 -->
+  <div class="picker__foot">
+    <button class="picker__pick" id="pickerPick" title="在画布中定位">
+      <span data-ic="expand"></span>
+    </button>
+    <button class="picker__current" id="pickerCurrent">
+      <span id="pickerCurrentName">轮播图</span>
+      <span class="picker__caret" data-ic="chevronDown"></span>
+    </button>
+  </div>
+</div>
+
+<!-- ================= 大图预览 ================= -->
+<div class="modal" id="lightbox" aria-hidden="true">
+  <div class="modal__mask" data-close></div>
+  <div class="lightbox" role="dialog" aria-modal="true" aria-label="生成结果预览">
+    <div class="lightbox__head">
+      <span>生成结果 · 1:1</span>
+      <button class="iconbtn" data-close aria-label="关闭"><span data-ic="close"></span></button>
+    </div>
+    <div class="lightbox__banner" id="lbHost"></div>
+    <div class="lightbox__cap" id="lbCap"></div>
+  </div>
+</div>
+
+<script src="assets/js/img-data.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/render.js"></script>
+<script src="assets/js/editor.js?v=20261123c"></script>
+</body>
+</html>

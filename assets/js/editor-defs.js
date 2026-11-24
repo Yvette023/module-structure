@@ -57,7 +57,7 @@
         title: 'Successful Cases',
         subtitle: '',
         intro: 'We have cooperated with 200 companies from various industries.',
-        button: { on: true, text: 'Read More', icon: 'none', theme: 'ghost', link: '' }
+        button: { on: true, text: 'Read More', icon: 'none', iconStyle: 'arrow', theme: 'ghost', scheme: 'red-white', type: 'primary', link: '' }
       },
       show: { title: true, subtitle: false, intro: true, button: true },
       layout: {
@@ -166,14 +166,14 @@
         base.text.title = D.m2.title || base.text.title;
         base.text.subtitle = D.m2.eyebrow || base.text.subtitle;
         base.text.intro = D.m2.lede || base.text.intro;
-        base.text.button = { on: true, text: D.m2.cta || 'Read the full story', icon: 'right', theme: 'solid', link: '#m2' };
+        base.text.button = { on: true, text: D.m2.cta || 'Read the full story', icon: 'right', iconStyle: 'arrow', theme: 'solid', scheme: 'red-solid', type: 'primary', link: '#m2' };
       }
     }
     if (structure === 'm3' && D.m3) {
       base.text.title = D.m3.title || base.text.title;
       base.text.subtitle = D.m3.eyebrow || base.text.subtitle;
       base.text.intro = D.m3.para || base.text.intro;
-      base.text.button = { on: true, text: D.m3.cta || 'See all rooms', icon: 'right', theme: 'solid', link: '#m3' };
+      base.text.button = { on: true, text: D.m3.cta || 'See all rooms', icon: 'right', iconStyle: 'arrow', theme: 'solid', scheme: 'red-solid', type: 'primary', link: '#m3' };
     }
     if (structure === 'm5') {
       base.carousel.on = true;
@@ -295,19 +295,19 @@
   var PRESETS = [
     {
       id: 'p1', name: '暗色海报', desc: '黑底 + 直角铺满 + 描边按钮',
-      apply: { container: { bgOn: true, bg: '#0b0b0c', radius: 0, pad: 40 }, card: { radius: 0, pad: 0, bgOn: false, shadow: { on: false } }, layout: { gap: 8, textAlign: 'left' }, img: { radius: 0, ratio: '4:3' }, text: { button: { theme: 'ghost' } } }
+      apply: { container: { bgOn: true, bg: '#0b0b0c', radius: 0, pad: 40 }, card: { radius: 0, pad: 0, bgOn: false, shadow: { on: false } }, layout: { gap: 8, textAlign: 'left' }, img: { radius: 0, ratio: '4:3' }, text: { button: { theme: 'ghost', scheme: 'ghost', type: 'secondary' } } }
     },
     {
       id: 'p2', name: '圆角卡片', desc: '深灰卡片 + 16px 圆角 + 投影',
-      apply: { container: { bgOn: true, bg: '#0f1216', radius: 0, pad: 28 }, card: { radius: 16, pad: 10, bgOn: true, bg: '#181c22', shadow: { on: true, x: 0, y: 14, blur: 34, spread: -16 } }, layout: { gap: 14 }, img: { radius: 10, ratio: '4:3' }, text: { button: { theme: 'solid' } } }
+      apply: { container: { bgOn: true, bg: '#0f1216', radius: 0, pad: 28 }, card: { radius: 16, pad: 10, bgOn: true, bg: '#181c22', shadow: { on: true, x: 0, y: 14, blur: 34, spread: -16 } }, layout: { gap: 14 }, img: { radius: 10, ratio: '4:3' }, text: { button: { theme: 'solid', scheme: 'red-solid', type: 'primary' } } }
     },
     {
       id: 'p3', name: '明亮画册', desc: '白底 + 大留白 + 深色按钮',
-      apply: { container: { bgOn: true, bg: '#ffffff', radius: 0, pad: 48 }, card: { radius: 0, pad: 0, bgOn: false, shadow: { on: false } }, layout: { gap: 20, textAlign: 'left' }, img: { radius: 4, ratio: '4:3' }, text: { button: { theme: 'dark' } } }
+      apply: { container: { bgOn: true, bg: '#ffffff', radius: 0, pad: 48 }, card: { radius: 0, pad: 0, bgOn: false, shadow: { on: false } }, layout: { gap: 20, textAlign: 'left' }, img: { radius: 4, ratio: '4:3' }, text: { button: { theme: 'dark', scheme: 'dark', type: 'primary' } } }
     },
     {
       id: 'p4', name: '居中文字', desc: '文字居中 + 半透明文案底',
-      apply: { container: { bgOn: true, bg: '#0b0b0c', pad: 32 }, card: { radius: 8, pad: 0 }, layout: { gap: 12, textAlign: 'center', textBg: { on: true, color: '#000000b3', radius: 10, pad: 18 } }, img: { radius: 8, ratio: '1:1' }, text: { button: { theme: 'light' } } }
+      apply: { container: { bgOn: true, bg: '#0b0b0c', pad: 32 }, card: { radius: 8, pad: 0 }, layout: { gap: 12, textAlign: 'center', textBg: { on: true, color: '#000000b3', radius: 10, pad: 18 } }, img: { radius: 8, ratio: '1:1' }, text: { button: { theme: 'light', scheme: 'white', type: 'primary' } } }
     }
   ];
 

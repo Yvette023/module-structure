@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Banner 智能体 · 从配置到生成的原型</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/hub.css">
+</head>
+<body class="hub">
+
+<div class="hub-wrap">
+  <!-- 顶部导航 -->
+  <header class="hub-nav">
+    <div class="brand">
+      <span class="brand__mark"><span data-ic="sparkle"></span></span>
+      <span class="brand__txt">
+        <span class="brand__name">小鱼 · Banner Agent</span>
+        <span class="brand__sub">运营后台 × 装修小鱼AI · 交互原型</span>
+      </span>
+    </div>
+    <nav class="hub-nav__links">
+      <a class="hub-nav__link" href="#flow">完整链路</a>
+      <a class="hub-nav__link" href="#scenarios">场景预览</a>
+      <a class="btn btn--primary" href="admin.html?view=workflow">开始体验 <span data-ic="arrowRight"></span></a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero__copy">
+      <span class="hero__badge"><span data-ic="sparkle"></span> 5 种图文布局 · 2 种文案模式 <span class="pulse"></span></span>
+      <h1>让一张 banner，<br><span class="accent">自带好结构。</span></h1>
+      <p class="hero__desc">
+        把「怎么排」交给智能体。运营后台一次配置图文布局与生成文案，提示词模版各自绑定结构；
+        装修端的小鱼AI 只需一次选择，就能按正确结构产出高质量 banner。
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="admin.html?view=workflow">进入运营后台 <span data-ic="arrowUpRight"></span></a>
+        <a class="btn" href="editor-ai.html?from=hub">看装修端生成 <span data-ic="arrowRight"></span></a>
+      </div>
+      <div class="hero__meta">
+        <div class="hero__meta-item"><b>5</b><span>图文布局</span></div>
+        <span class="hero__meta-sep"></span>
+        <div class="hero__meta-item"><b>2</b><span>文案模式</span></div>
+        <span class="hero__meta-sep"></span>
+        <div class="hero__meta-item"><b>4</b><span>可调用模版</span></div>
+        <span class="hero__meta-sep"></span>
+        <div class="hero__meta-item"><b>0</b><span>额外操作成本</span></div>
+      </div>
+    </div>
+
+    <aside class="preview-card" aria-label="图文布局实时预览">
+      <div class="preview-card__top">
+        <span class="preview-card__dots"><i></i><i></i><i></i></span>
+        <span class="preview-card__label"><span class="dot"></span> 实时结构预览</span>
+      </div>
+      <div class="preview-card__stage" id="heroBanner"></div>
+      <div class="preview-card__switch" id="heroLayouts"></div>
+      <div class="preview-card__foot">
+        <span>默认模版 · <b>极简大片</b> · <b id="heroLayoutName">左图右文</b></span>
+        <span>16:9 · 生成文案</span>
+      </div>
+    </aside>
+  </section>
+
+  <!-- 流程 -->
+  <section class="flow" id="flow">
+    <div class="flow__head">
+      <span class="flow__title">从复制到生成，一条完整链路</span>
+      <span class="flow__sub">4 步 · 每一步都可在原型中体验</span>
+    </div>
+    <div class="flow__steps">
+      <button type="button" class="flow-step" data-act="copy" id="flowCopy">
+        <span class="flow-step__num" id="flowCopyNum">1</span>
+        <span class="flow-step__body">
+          <span class="flow-step__name">复制智能体</span>
+          <span class="flow-step__desc">在「图文生成」中复制「banner生成」</span>
+          <span class="flow-step__act" id="flowCopyAct">演示复制 <span data-ic="chevronRight"></span></span>
+        </span>
+      </button>
+      <a class="flow-step" href="admin.html?view=workflow">
+        <span class="flow-step__num">2</span>
+        <span class="flow-step__body">
+          <span class="flow-step__name">配置工作流</span>
+          <span class="flow-step__desc">生成文案开关 + 两路图文布局</span>
+        </span>
+      </a>
+      <a class="flow-step" href="admin.html?view=template">
+        <span class="flow-step__num">3</span>
+        <span class="flow-step__body">
+          <span class="flow-step__name">绑定提示词模版</span>
+          <span class="flow-step__desc">每个模版对应一种结构</span>
+        </span>
+      </a>
+      <a class="flow-step" href="editor-ai.html?from=hub">
+        <span class="flow-step__num">4</span>
+        <span class="flow-step__body">
+          <span class="flow-step__name">小鱼AI 生成</span>
+          <span class="flow-step__desc">默认左图右文，也可选模版联动</span>
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 场景 -->
+  <section class="scenarios" id="scenarios">
+    <div class="sec-head">
+      <div>
+        <h2>四个场景，串起一条生成链路</h2>
+        <p>运营后台负责「定义结构」，装修端负责「低成本调用」。</p>
+      </div>
+      <span class="sec-head__hint">点击卡片进入对应原型 · 1440px 桌面端</span>
+    </div>
+
+    <div class="pre-copy" id="preCopy">
+      <span class="pre-copy__ic" id="preCopyIc" data-ic="copy"></span>
+      <div class="pre-copy__txt">
+        <b>前置流程：从「图文生成」复制「banner生成」智能体</b>
+        <p>复制后得到独立副本，工作流、生成配置与 4 个提示词模版一并继承，互不影响。</p>
+      </div>
+      <button class="btn btn--soft btn--sm" data-act="copy" id="preCopyBtn">演示复制过程</button>
+    </div>
+
+    <div class="sc-grid">
+      <!-- P1 -->
+      <a class="sc-card" href="admin.html?view=workflow">
+        <div class="sc-card__body">
+          <div class="sc-card__tags"><span class="sc-card__tag">P1</span><span class="tag tag--blue">运营后台</span></div>
+          <h3>工作流配置</h3>
+          <p class="sc-card__desc">角色定义新增「生成文案」单选；两路图像生成新增「图文布局」下拉，5 种结构随取随用。</p>
+          <div class="sc-card__chips">
+            <span class="sc-card__chip">生成文案 / 仅图片</span>
+            <span class="sc-card__chip">左图右文默认</span>
+            <span class="sc-card__chip">两路同步</span>
+          </div>
+          <span class="sc-card__go">查看工作流 <span data-ic="arrowRight"></span></span>
+        </div>
+        <div class="mock mock--wf" aria-hidden="true">
+          <span class="mock__pill" style="margin-bottom:6px">新增 · 图文布局</span>
+          <div class="mock__card">
+            <div class="mock__row"><span class="mock__line mock__line--dark" style="width:26px"></span><span>角色定义 · id:2</span></div>
+            <div class="mock__field" style="margin-top:6px"><span>文案</span><span>图片+文案</span></div>
+          </div>
+          <div class="mock__card is-new">
+            <div class="mock__row"><span class="mock__line mock__line--blue" style="width:26px"></span><span>图像生成 · id:8</span></div>
+            <div class="mock__field" style="margin-top:6px"><span>布局</span><span>左图右文</span></div>
+          </div>
+          <div class="mock__card">
+            <div class="mock__row"><span class="mock__line" style="width:26px"></span><span>图像生成 · id:6</span></div>
+            <div class="mock__field" style="margin-top:6px"><span>布局</span><span>左图右文</span></div>
+          </div>
+        </div>
+      </a>
+
+      <!-- P2 -->
+      <a class="sc-card" href="admin.html?view=template">
+        <div class="sc-card__body">
+          <div class="sc-card__tags"><span class="sc-card__tag sc-card__tag--p2">P2</span><span class="tag tag--purple">提示词模版</span></div>
+          <h3>模版绑定结构</h3>
+          <p class="sc-card__desc">「参考素材」下方新增图文布局。装修端调用哪个模版，生成配置就自动切到对应结构。</p>
+          <div class="sc-card__chips">
+            <span class="sc-card__chip">参考素材下新增</span>
+            <span class="sc-card__chip">调用即联动</span>
+            <span class="sc-card__chip">结构可视化</span>
+          </div>
+          <span class="sc-card__go">编辑模版 <span data-ic="arrowRight"></span></span>
+        </div>
+        <div class="mock mock--tpl" aria-hidden="true">
+          <div class="mock__row-item">
+            <span class="lyt lyt--left"><i class="lyt__img"></i><span class="lyt__txt"><i></i><i></i><i></i></span></span>
+            <div style="flex:1"><div style="font-size:8px;color:#3d4450;font-weight:600">极简大片</div><span class="mock__pill" style="margin-top:3px">左图右文</span></div>
+          </div>
+          <div class="mock__row-item">
+            <span class="lyt lyt--center"><i class="lyt__img"></i><span class="lyt__txt"><i></i><i></i><i></i></span></span>
+            <div style="flex:1"><div style="font-size:8px;color:#3d4450;font-weight:600">秋日促销</div><span class="mock__pill" style="margin-top:3px">文字居中</span></div>
+          </div>
+          <div class="mock__row-item">
+            <span class="lyt lyt--top"><i class="lyt__img"></i><span class="lyt__txt"><i></i><i></i><i></i></span></span>
+            <div style="flex:1"><div style="font-size:8px;color:#3d4450;font-weight:600">纯净商品</div><span class="mock__pill mock__pill--green" style="margin-top:3px">不生成文案</span></div>
+          </div>
+        </div>
+      </a>
+
+      <!-- P3 -->
+      <a class="sc-card" href="editor-ai.html?modal=settings">
+        <div class="sc-card__body">
+          <div class="sc-card__tags"><span class="sc-card__tag sc-card__tag--p3">P3</span><span class="tag tag--green">装修 · 小鱼AI</span></div>
+          <h3>生成设置</h3>
+          <p class="sc-card__desc">点击输入框下方的设置按钮，5 种结构与文案开关一屏选完，右侧实时预览排版效果。</p>
+          <div class="sc-card__chips">
+            <span class="sc-card__chip">默认左图右文</span>
+            <span class="sc-card__chip">默认生成文案</span>
+            <span class="sc-card__chip">实时预览</span>
+          </div>
+          <span class="sc-card__go">打开生成设置 <span data-ic="arrowRight"></span></span>
+        </div>
+        <div class="mock mock--set" aria-hidden="true">
+          <div class="mock__card">
+            <div class="mock__row" style="justify-content:space-between"><span>生成设置</span><span class="mock__pill">新增 2 项</span></div>
+            <div class="mock__lyts">
+              <span class="lyt lyt--left is-on"><i class="lyt__img"></i><span class="lyt__txt"><i></i><i></i><i></i></span></span>
+              <span class="lyt lyt--right"><i class="lyt__img"></i><span class="lyt__txt"><i></i><i></i><i></i></span></span>
+              <span class="lyt lyt--top"><i class="lyt__img"></i><span class="lyt__txt"><i></i><i></i><i></i></span></span>
+              <span class="lyt lyt--bottom"><i class="lyt__img"></i><span class="lyt__txt"><i></i><i></i><i></i></span></span>
+              <span class="lyt lyt--center"><i class="lyt__img"></i><span class="lyt__txt"><i></i><i></i><i></i></span></span>
+            </div>
+            <div class="mock__field" style="margin-top:6px"><span>生成文案</span><span>图片 + 文案</span></div>
+          </div>
+        </div>
+      </a>
+
+      <!-- P4 -->
+      <a class="sc-card" href="editor-ai.html?modal=templates">
+        <div class="sc-card__body">
+          <div class="sc-card__tags"><span class="sc-card__tag sc-card__tag--p4">P4</span><span class="tag tag--orange">装修 · 模版联动</span></div>
+          <h3>选择即改写</h3>
+          <p class="sc-card__desc">打开提示词模版，点击不同模版立即改写生成配置；关闭弹窗后对话生成，AI 按模版结构返回成图。</p>
+          <div class="sc-card__chips">
+            <span class="sc-card__chip">全部 / banner模块</span>
+            <span class="sc-card__chip">结构标签</span>
+            <span class="sc-card__chip">对话出图</span>
+          </div>
+          <span class="sc-card__go">体验模版联动 <span data-ic="arrowRight"></span></span>
+        </div>
+        <div class="mock mock--pop" aria-hidden="true">
+          <div class="mock__card" style="width:72%">
+            <div class="mock__row"><span class="mock__line mock__line--blue" style="width:45px"></span></div>
+            <div class="mock__line" style="width:80%;margin-top:5px"></div>
+            <div class="mock__field" style="margin-top:6px"><span>图文布局</span><span>右图左文</span></div>
+          </div>
+          <div class="mock__pop">
+            <div class="mock__row" style="justify-content:space-between;margin-bottom:5px"><span style="font-size:8px;font-weight:600">发布文章模版</span><span style="font-size:7px">全部 · banner模块</span></div>
+            <div class="mock__tpl-row is-sel">
+              <span class="lyt lyt--center"><i class="lyt__img"></i><span class="lyt__txt"><i></i><i></i><i></i></span></span>
+              <span style="font-size:7.5px;flex:1">秋日促销 <span class="mock__pill" style="margin-left:3px">文字居中</span></span>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <footer class="hub-foot">
+    <span>小鱼 · Banner Agent 原型 · 静态页面，交互均可体验</span>
+    <span><b>图文布局</b> × 5 · <b>生成文案</b> × 2 · <b>提示词模版</b> × 4</span>
+  </footer>
+</div>
+
+<!-- 复制智能体弹窗 -->
+<div class="modal" id="copyModal" aria-hidden="true">
+  <div class="modal__mask" data-close></div>
+  <div class="modal__panel modal__panel--md" role="dialog" aria-modal="true" aria-labelledby="copyTitle">
+    <header class="modal__head">
+      <div>
+        <h3 id="copyTitle">复制智能体</h3>
+        <p class="modal__sub">复制「banner生成」的工作流与提示词模版，得到一份可独立编辑的副本。</p>
+      </div>
+      <button class="iconbtn" data-close aria-label="关闭"><span data-ic="close"></span></button>
+    </header>
+    <div class="modal__body">
+      <div class="copy-src">
+        <span class="copy-src__avatar">图</span>
+        <div class="copy-src__body">
+          <div class="copy-src__name">banner生成 <span class="tag tag--green">已发布</span></div>
+          <div class="copy-src__sub">应用场景：装修小鱼AI · 工作流 9 个节点 · 提示词模版 4 个</div>
+        </div>
+        <span class="tag tag--blue">源智能体</span>
+      </div>
+      <div class="copy-arrow" data-ic="arrowDown"></div>
+      <div class="field">
+        <label class="field__label" for="copyName">副本名称</label>
+        <input class="inp" id="copyName" value="banner生成-副本" maxlength="24" placeholder="请输入副本名称">
+        <span class="field__hint">副本与源智能体互不影响，发布后可由装修端小鱼AI 调用。</span>
+      </div>
+      <div class="copy-checks">
+        <label class="check-row">
+          <input type="checkbox" checked>
+          <span class="check-row__body"><b>工作流与生成配置</b><span>9 个节点、生成文案设置、两路图文布局</span></span>
+        </label>
+        <label class="check-row">
+          <input type="checkbox" checked>
+          <span class="check-row__body"><b>提示词模版（4）</b><span>极简大片 / 秋日促销 / 纯净商品 / 暮色空间</span></span>
+        </label>
+      </div>
+      <div class="hint" style="margin-top:14px">
+        <span data-ic="info"></span>
+        <span>复制完成后，在「工作流配置」中调整图文布局与生成文案即可发布。</span>
+      </div>
+    </div>
+    <footer class="modal__foot">
+      <button class="btn" data-close>取消</button>
+      <button class="btn btn--primary" id="copyConfirm">确认复制</button>
+    </footer>
+  </div>
+</div>
+
+<script src="assets/js/img-data.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/hub.js"></script>
+</body>
+</html>

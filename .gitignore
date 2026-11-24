@@ -1,4 +1,5 @@
 .DS_Store
 .chrome-profile/
+.chrome-profile*/
 .shots*/
 tools/*.json

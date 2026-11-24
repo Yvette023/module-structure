@@ -307,6 +307,23 @@
         renderAll();
         return;
       }
+      /* 按钮设置：切换图标样式（箭头/折角/星标/对勾/无） */
+      if (act === 'btn-icon') {
+        var ICONS = ['arrow', 'chevron', 'sparkle', 'check', 'none'];
+        var curIcon = state.text.button.iconStyle || 'arrow';
+        var nextIcon = ICONS[(ICONS.indexOf(curIcon) + 1) % ICONS.length];
+        setPath('text.button.iconStyle', nextIcon);
+        renderAll();
+        return;
+      }
+      /* 按钮设置：魔法棒一键推荐文案 */
+      if (act === 'btn-suggest') {
+        var SUG = ['Read more', 'Learn more', 'Buy now', 'Shop the collection', 'Get started', 'Contact us'];
+        var curText = state.text.button.text || '';
+        setPath('text.button.text', SUG[(SUG.indexOf(curText) + 1) % SUG.length]);
+        renderAll();
+        return;
+      }
       if (act === 'sel') {
         ui.sel = Number(el.dataset.idx);
         ui.sub = 0;

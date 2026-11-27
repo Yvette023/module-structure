@@ -237,9 +237,6 @@
       setTimeout(function () { node.classList.remove('is-focus'); }, 1600);
     });
   }
-  $$('.focus-chip').forEach(function (b) {
-    b.addEventListener('click', function () { focusNode(b.getAttribute('data-focus')); });
-  });
   window.addEventListener('resize', UI.debounce(function () { if (view === 'workflow') fitCanvas(); }, 160));
 
   /* ================= 提示词模版 ================= */

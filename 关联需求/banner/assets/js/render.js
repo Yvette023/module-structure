@@ -152,8 +152,9 @@
   function drawCopy(ctx, area, copy, theme, opts) {
     var t = THEMES[theme] || THEMES.dark;
     var center = !!opts.center;
-    var pad = area.w * (area.tall ? 0.075 : 0.09);
-    area = { x: area.x, y: area.y, w: area.w, h: area.h, pad: pad };
+    var tall = !!area.tall;
+    var pad = area.w * (tall ? 0.075 : 0.09);
+    area = { x: area.x, y: area.y, w: area.w, h: area.h, pad: pad, tall: tall };
 
     /* 侧栏布局以文案栏宽度为基准，上下/居中布局以画布宽度为基准 */
     var baseW = center || area.tall ? area.w : area.w;
@@ -179,7 +180,8 @@
 
     var x = area.x + pad;
     var cx = area.x + area.w / 2;
-    var align = center ? 'center' : 'left';
+    /* 文字居中 + 上图下文/下图上文（tall）→ 水平居中；左右布局 → 左对齐 */
+    var align = (center || area.tall) ? 'center' : 'left';
     var y = area.y + (area.h - total) / 2;
 
     ctx.textBaseline = 'middle';

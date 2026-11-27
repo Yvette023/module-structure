@@ -532,10 +532,14 @@ svg { display: block; }
 .bnr--right-img .bnr__copy { flex: 1; }
 .bnr--top-img { flex-direction: column; }
 .bnr--top-img .bnr__media { width: 100%; height: 60%; }
-.bnr--top-img .bnr__copy { flex: 1; padding: 4.4cqw 6cqw; }
+.bnr--top-img .bnr__copy { flex: 1; padding: 4.4cqw 6cqw; align-items: center; text-align: center; }
 .bnr--bottom-img { flex-direction: column-reverse; }
 .bnr--bottom-img .bnr__media { width: 100%; height: 60%; }
-.bnr--bottom-img .bnr__copy { flex: 1; padding: 4.4cqw 6cqw; }
+.bnr--bottom-img .bnr__copy { flex: 1; padding: 4.4cqw 6cqw; align-items: center; text-align: center; }
+.bnr--top-img .bnr__copy .bnr__cta,
+.bnr--bottom-img .bnr__copy .bnr__cta { align-self: center; }
+.bnr--top-img .bnr__copy .bnr__desc,
+.bnr--bottom-img .bnr__copy .bnr__desc { margin-left: auto; margin-right: auto; }
 .bnr--center .bnr__media { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
 .bnr--center::before {
   content: "";
